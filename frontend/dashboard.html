@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FitAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .stat-card {
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-8">
+                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent"> FitAI</h1>
+                    <div class="hidden md:flex gap-6">
+                        <a href="dashboard.html" class="text-purple-600 font-medium">Dashboard</a>
+                        <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
+                        <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
+                        <a href="chat.html" class="text-gray-700 hover:text-purple-600">Chat</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="username" class="text-gray-700 font-medium"></span>
+                    <button onclick="logout()" class="text-gray-600 hover:text-red-600">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Welcome Header -->
+        <div class="gradient-bg rounded-xl p-8 mb-8 text-white">
+            <h1 class="text-3xl font-bold mb-2">Welcome back, <span id="welcomeUser"></span>! 👋</h1>
+            <p class="text-purple-100">Here's your personalized fitness plan</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-20">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">Loading your dashboard...</p>
+        </div>
+
+        <!-- Main Content (hidden until loaded) -->
+        <div id="mainContent" class="hidden">
+
+            <!-- Stats Overview -->
+            <div class="grid md:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-600 text-sm font-medium">Daily Calories</span>
+                        <span class="text-2xl"></span>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900" id="statCalories">-</p>
+                    <p class="text-sm text-gray-500 mt-1" id="statCaloriesDesc">Target</p>
+                </div>
+
+                <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-600 text-sm font-medium">Protein Goal</span>
+                        <span class="text-2xl"></span>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900" id="statProtein">-</p>
+                    <p class="text-sm text-gray-500 mt-1">grams/day</p>
+                </div>
+
+                <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-600 text-sm font-medium">Workout Days</span>
+                        <span class="text-2xl"></span>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900" id="statWorkouts">-</p>
+                    <p class="text-sm text-gray-500 mt-1">days/week</p>
+                </div>
+
+                <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-600 text-sm font-medium">Weekly Target</span>
+                        <span class="text-2xl"></span>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900" id="statTarget">-</p>
+                    <p class="text-sm text-gray-500 mt-1" id="statTargetDesc">kg/week</p>
+                </div>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div class="grid lg:grid-cols-3 gap-8">
+                
+                <!-- Left Column (2/3 width) -->
+                <div class="lg:col-span-2 space-y-8">
+                    
+                    <!-- Today's Plan -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <h2 class="text-2xl font-bold mb-4 text-gray-900"> Today's Meal Plan</h2>
+                        <div class="space-y-4" id="mealPlanContainer">
+                            <!-- Meals will be injected here -->
+                        </div>
+                        <a href="meals.html" class="inline-block mt-4 text-purple-600 hover:text-purple-700 font-medium">
+                            Log meals →
+                        </a>
+                    </div>
+
+                    <!-- Workout Schedule -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <h2 class="text-2xl font-bold mb-4 text-gray-900"> This Week's Workout</h2>
+                        <div class="mb-4">
+                            <p class="text-gray-600 font-medium" id="workoutTemplate">-</p>
+                        </div>
+                        <div class="space-y-3" id="workoutSchedule">
+                            <!-- Workout days will be injected here -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column (1/3 width) -->
+                <div class="space-y-8">
+                    
+                    <!-- Plan Overview -->
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-sm p-6 border border-purple-200">
+                        <h3 class="text-xl font-bold mb-4 text-purple-900"> Your Plan</h3>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-sm text-purple-700">Goal</p>
+                                <p class="font-bold text-purple-900 capitalize" id="planGoal">-</p>
+                            </div>
+                            
+                            <div>
+                                <p class="text-sm text-purple-700">Plan Type</p>
+                                <p class="font-bold text-purple-900 capitalize" id="planDifficulty">-</p>
+                            </div>
+                            
+                            <div>
+                                <p class="text-sm text-purple-700">BMI</p>
+                                <p class="font-bold text-purple-900" id="planBMI">-</p>
+                            </div>
+                            
+                            <div>
+                                <p class="text-sm text-purple-700">TDEE</p>
+                                <p class="font-bold text-purple-900" id="planTDEE">-</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-4 border-t border-purple-300">
+                            <p class="text-sm text-purple-700 mb-2">AI Reasoning:</p>
+                            <p class="text-sm text-purple-900" id="planReasoning">-</p>
+                        </div>
+                    </div>
+
+                    <!-- Macros Breakdown -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <h3 class="text-xl font-bold mb-4 text-gray-900"> Macros</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm text-gray-600">Protein</span>
+                                    <span class="text-sm font-bold" id="macroProtein">-g</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-red-500 h-2 rounded-full" id="macroProteinBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm text-gray-600">Carbs</span>
+                                    <span class="text-sm font-bold" id="macroCarbs">-g</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" id="macroCarbsBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm text-gray-600">Fat</span>
+                                    <span class="text-sm font-bold" id="macroFat">-g</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" id="macroFatBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Success Tips -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <h3 class="text-xl font-bold mb-4 text-gray-900"> Success Tips</h3>
+                        <ul class="space-y-2 text-sm text-gray-700" id="successTips">
+                            <!-- Tips will be injected here -->
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let userId = localStorage.getItem('user_id');
+        let username = localStorage.getItem('username');
+
+        // Check if logged in
+        if (!userId) {
+            window.location.href = 'login.html';
+        }
+
+        // Set username
+        document.getElementById('username').textContent = username;
+        document.getElementById('welcomeUser').textContent = username;
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                // Fetch user's plan
+                const response = await fetch(`${API_URL}/user/${userId}/plan`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const plan = data.data;
+                    displayPlan(plan);
+                    
+                    // Hide loading, show content
+                    document.getElementById('loadingState').classList.add('hidden');
+                    document.getElementById('mainContent').classList.remove('hidden');
+                } else {
+                    alert('Failed to load plan: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                alert('Error loading dashboard. Please make sure the server is running.');
+            }
+        }
+
+        function displayPlan(plan) {
+            // Stats
+            document.getElementById('statCalories').textContent = plan.plan_overview.daily_calories;
+            document.getElementById('statProtein').textContent = plan.plan_overview.macros.protein_g + 'g';
+            document.getElementById('statWorkouts').textContent = plan.workout_schedule.days.length;
+            document.getElementById('statTarget').textContent = Math.abs(plan.weekly_targets.weight_change);
+            document.getElementById('statTargetDesc').textContent = plan.weekly_targets.weight_change < 0 ? 'loss/week' : 'gain/week';
+
+            // Plan Overview
+            document.getElementById('planGoal').textContent = plan.plan_overview.goal.replace('_', ' ');
+            document.getElementById('planDifficulty').textContent = plan.plan_overview.difficulty;
+            document.getElementById('planBMI').textContent = `${plan.user_profile.bmi} (${plan.user_profile.bmi_category})`;
+            document.getElementById('planTDEE').textContent = `${plan.user_profile.tdee} cal/day`;
+            document.getElementById('planReasoning').textContent = plan.plan_overview.reasoning;
+
+            // Macros
+            const macros = plan.plan_overview.macros;
+            const totalMacros = macros.protein_g + macros.carbs_g + macros.fat_g;
+            
+            document.getElementById('macroProtein').textContent = macros.protein_g + 'g';
+            document.getElementById('macroCarbs').textContent = macros.carbs_g + 'g';
+            document.getElementById('macroFat').textContent = macros.fat_g + 'g';
+            
+            document.getElementById('macroProteinBar').style.width = (macros.protein_g / totalMacros * 100) + '%';
+            document.getElementById('macroCarbsBar').style.width = (macros.carbs_g / totalMacros * 100) + '%';
+            document.getElementById('macroFatBar').style.width = (macros.fat_g / totalMacros * 100) + '%';
+
+            // Meal Plan
+            const mealPlanHTML = plan.meal_plan.map(meal => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-gray-900">${meal.meal}</h4>
+                        <span class="text-purple-600 font-bold">${meal.calories} cal</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">Protein: ${meal.protein}g</p>
+                    <p class="text-sm text-gray-500">Suggestions: ${meal.suggestions.join(', ')}</p>
+                </div>
+            `).join('');
+            document.getElementById('mealPlanContainer').innerHTML = mealPlanHTML;
+
+            // Workout Schedule
+            document.getElementById('workoutTemplate').textContent = plan.workout_schedule.template_name;
+            
+            const workoutHTML = plan.workout_schedule.days.map(day => {
+                const exercises = plan.workout_schedule.routine[day];
+                return `
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-900 mb-2">${day}</h4>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            ${exercises.slice(0, 3).map(ex => `<li>• ${ex}</li>`).join('')}
+                            ${exercises.length > 3 ? `<li class="text-purple-600">+ ${exercises.length - 3} more...</li>` : ''}
+                        </ul>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('workoutSchedule').innerHTML = workoutHTML;
+
+            // Success Tips
+            const tipsHTML = plan.success_tips.map(tip => `
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2">✓</span>
+                    <span>${tip}</span>
+                </li>
+            `).join('');
+            document.getElementById('successTips').innerHTML = tipsHTML;
+        }
+
+        function logout() {
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('username');
+            window.location.href = 'index.html';
+        }
+
+        // Load dashboard on page load
+        loadDashboard();
+    </script>
+
+</body>
+</html>

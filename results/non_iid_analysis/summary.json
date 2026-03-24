@@ -1,0 +1,39 @@
+{
+  "total_users": 30,
+  "total_samples": 450,
+  "n_clients": 3,
+  "weight_heterogeneity": 13.182116246913544,
+  "avg_heterogeneity_cv": 10.756410561555747,
+  "client_stats": [
+    {
+      "client": 1,
+      "n_users": 10,
+      "n_samples": 150,
+      "mean_weight": 74.51533333333333,
+      "mean_age": 34.6,
+      "male_percentage": 50.0,
+      "mean_gym_days": 1.0333333333333334,
+      "mean_calories": 1955.5133333333333
+    },
+    {
+      "client": 2,
+      "n_users": 10,
+      "n_samples": 150,
+      "mean_weight": 69.90333333333334,
+      "mean_age": 37.3,
+      "male_percentage": 40.0,
+      "mean_gym_days": 1.4533333333333334,
+      "mean_calories": 2117.8100000000004
+    },
+    {
+      "client": 3,
+      "n_users": 10,
+      "n_samples": 150,
+      "mean_weight": 78.79466666666666,
+      "mean_age": 30.6,
+      "male_percentage": 50.0,
+      "mean_gym_days": 0.9466666666666667,
+      "mean_calories": 2374.7533333333326
+    }
+  ]
+}

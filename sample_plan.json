@@ -1,0 +1,96 @@
+{
+  "user_profile": {
+    "bmi": 27.8,
+    "bmi_category": "Overweight",
+    "tdee": 2788.0,
+    "estimated_body_fat": 24.0
+  },
+  "plan_overview": {
+    "goal": "weight_loss",
+    "difficulty": "moderate",
+    "daily_calories": 2488.0,
+    "macros": {
+      "protein_g": 128.6,
+      "carbs_g": 325.4,
+      "fat_g": 74.6,
+      "calories": 2488.0
+    },
+    "reasoning": "Moderate adherence predicted - balanced approach recommended"
+  },
+  "meal_plan": [
+    {
+      "meal": "Breakfast",
+      "calories": 746,
+      "protein": 39,
+      "suggestions": [
+        "Poha",
+        "Upma",
+        "Idli with Sambar",
+        "Paratha with Curd"
+      ]
+    },
+    {
+      "meal": "Lunch",
+      "calories": 995,
+      "protein": 51,
+      "suggestions": [
+        "Daal Bhat",
+        "Rajma Chawal",
+        "Chicken with Rice",
+        "Vegetarian Thali"
+      ]
+    },
+    {
+      "meal": "Dinner",
+      "calories": 746,
+      "protein": 39,
+      "suggestions": [
+        "Roti with Dal",
+        "Grilled Chicken with Veggies",
+        "Fish Curry",
+        "Paneer Sabzi"
+      ]
+    }
+  ],
+  "workout_schedule": {
+    "template_name": "3-Day Full Body (Beginner)",
+    "days": [
+      "Monday",
+      "Wednesday",
+      "Friday"
+    ],
+    "routine": {
+      "Monday": [
+        "Squats 3x10",
+        "Push-ups 3x8",
+        "Rows 3x10",
+        "Plank 3x30s"
+      ],
+      "Wednesday": [
+        "Deadlifts 3x8",
+        "Bench Press 3x8",
+        "Lat Pulldown 3x10",
+        "Crunches 3x15"
+      ],
+      "Friday": [
+        "Lunges 3x10",
+        "Shoulder Press 3x10",
+        "Pull-ups 3x6",
+        "Leg Raises 3x12"
+      ]
+    }
+  },
+  "weekly_targets": {
+    "weight_change": -0.5,
+    "description": "Lose 0.5 kg per week",
+    "water_intake": 2.8
+  },
+  "success_tips": [
+    "Track your meals consistently",
+    "Stay hydrated - drink water throughout the day",
+    "Get 7-8 hours of sleep",
+    "Eat protein with every meal to stay full",
+    "Focus on whole foods over processed",
+    "Don't skip meals - it leads to overeating later"
+  ]
+}

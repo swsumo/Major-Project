@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitAI - Your AI-Powered Fitness Coach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .hero-animation {
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">FitAI</h1>
+                </div>
+                <div class="flex gap-4">
+                    <a href="login.html" class="text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md font-medium">Login</a>
+                    <a href="signup.html" class="bg-purple-600 text-white px-6 py-2 rounded-md font-medium hover:bg-purple-700 transition">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center hero-animation">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                    Your AI-Powered<br>Fitness Coach
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-purple-100 max-w-3xl mx-auto">
+                    Personalized diet plans, adaptive workout schedules, and real-time progress tracking—all powered by federated learning and AI agents.
+                </p>
+                <div class="flex gap-4 justify-center">
+                    <a href="signup.html" class="bg-white text-purple-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition shadow-lg">
+                        Start Your Journey
+                    </a>
+                    <a href="#features" class="border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-purple-600 transition">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Why FitAI?</h2>
+                <p class="text-xl text-gray-600">Advanced AI technology meets personalized fitness</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-4xl mb-4"></div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900">AI Agent Brain</h3>
+                    <p class="text-gray-600">
+                        Our intelligent agent analyzes your profile, predicts adherence, and creates adaptive plans that evolve with your progress.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-4xl mb-4"></div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900">Privacy First</h3>
+                    <p class="text-gray-600">
+                        Federated Learning ensures your sensitive health data never leaves your device. Train AI models while keeping data private.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-4xl mb-4"></div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900">Indian Cuisine</h3>
+                    <p class="text-gray-600">
+                        Track 50+ Indian dishes with accurate macros. From Daal Bhat to Butter Chicken—we've got you covered.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-4xl mb-4"></div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900">Smart Predictions</h3>
+                    <p class="text-gray-600">
+                        FL models predict your weight loss, adherence patterns, and optimal macro split based on users like you.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-4xl mb-4"></div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900">Adaptive Workouts</h3>
+                    <p class="text-gray-600">
+                        Workout plans that match your gym availability and experience level, with progressive overload built in.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-4xl mb-4"></div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900">Weekly Adaptation</h3>
+                    <p class="text-gray-600">
+                        AI monitors actual vs. predicted progress and adjusts your plan weekly for optimal results.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+                <p class="text-xl text-gray-600">Get started in 3 simple steps</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="text-center">
+                    <div class="bg-purple-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
+                    <h3 class="text-xl font-bold mb-3">Sign Up & Profile</h3>
+                    <p class="text-gray-600">Tell us about yourself: age, weight, fitness goals, and gym availability.</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="bg-purple-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
+                    <h3 class="text-xl font-bold mb-3">Get AI Plan</h3>
+                    <p class="text-gray-600">Our FL models and AI agent create your personalized meal and workout plan instantly.</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="bg-purple-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
+                    <h3 class="text-xl font-bold mb-3">Track & Adapt</h3>
+                    <p class="text-gray-600">Log meals, track progress, and watch your plan adapt weekly based on results.</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="signup.html" class="inline-block bg-purple-600 text-white px-10 py-4 rounded-lg font-bold text-lg hover:bg-purple-700 transition shadow-lg">
+                    Start Free Today →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Powered By Advanced AI</h2>
+                <p class="text-xl text-gray-600">Built with cutting-edge machine learning technology</p>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-6 text-center">
+                <div class="p-6 bg-gray-50 rounded-lg">
+                    <div class="text-3xl mb-2"></div>
+                    <h4 class="font-bold">AI Agents</h4>
+                    <p class="text-sm text-gray-600">Autonomous decision-making</p>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-lg">
+                    <div class="text-3xl mb-2"></div>
+                    <h4 class="font-bold">Federated Learning</h4>
+                    <p class="text-sm text-gray-600">Privacy-preserving ML</p>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-lg">
+                    <div class="text-3xl mb-2"></div>
+                    <h4 class="font-bold">Predictive Models</h4>
+                    <p class="text-sm text-gray-600">3 ML models trained</p>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-lg">
+                    <div class="text-3xl mb-2"></div>
+                    <h4 class="font-bold">Encrypted Storage</h4>
+                    <p class="text-sm text-gray-600">AES-256 encryption</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-2xl font-bold mb-4">FitAI</h3>
+            <p class="text-gray-400 mb-6">AI-Powered Personalized Fitness Planning with Federated Learning</p>
+            <p class="text-gray-500 text-sm">© 2026 FitAI - Final Year Project</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Tracking - FitAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-8">
+                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">FitAI</h1>
+                    <div class="hidden md:flex gap-6">
+                        <a href="dashboard.html" class="text-gray-700 hover:text-purple-600">Dashboard</a>
+                        <a href="meals.html" class="text-purple-600 font-medium">Meals</a>
+                        <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
+                        <a href="chat.html" class="text-gray-700 hover:text-purple-600">Chat</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="username" class="text-gray-700 font-medium"></span>
+                    <button onclick="logout()" class="text-gray-600 hover:text-red-600">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Meal Tracking</h1>
+            <p class="text-gray-600">Log what you eat and track your daily nutrition</p>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="grid lg:grid-cols-3 gap-8">
+            
+            <!-- Left: Log Meal Form -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-900">Log a Meal</h2>
+
+                    <form id="mealForm" class="space-y-4">
+                        
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Meal Type</label>
+                                <select id="mealType" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    <option value="">Select meal type</option>
+                                    <option value="breakfast">Breakfast</option>
+                                    <option value="lunch">Lunch</option>
+                                    <option value="dinner">Dinner</option>
+                                    <option value="snack">Snack</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                                <input type="date" id="mealDate" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            </div>
+                        </div>
+
+                        <!-- Indian Meals Quick Select -->
+                        <!-- REPLACE the entire "Indian Meals Quick Select" div with this -->
+<!-- Find: <div> <label class="block text-sm font-medium text-gray-700 mb-2">Quick Select (Indian Meals)</label> -->
+<!-- Replace with this entire block: -->
+
+                        <!-- Food Search (nutrition.csv) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                🔍 Search Food Database (8,000+ foods)
+                            </label>
+                            <div class="relative">
+                                <input type="text" id="foodSearch"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    placeholder="Type to search e.g. chicken, rice, egg..."
+                                    autocomplete="off">
+                                <div id="searchSpinner" class="hidden absolute right-3 top-3">
+                                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600"></div>
+                                </div>
+                            </div>
+                            <!-- Search Results Dropdown -->
+                            <div id="searchResults" class="hidden mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10 relative">
+                            </div>
+                            <!-- Selected Food Badge -->
+                            <div id="selectedFood" class="hidden mt-2 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2">
+                                <div class="flex justify-between items-center">
+                                    <span id="selectedFoodName" class="text-purple-700 font-medium text-sm"></span>
+                                    <button type="button" onclick="clearSelectedFood()" class="text-purple-400 hover:text-purple-600 text-xs">✕ Clear</button>
+                                </div>
+                                <p id="selectedFoodInfo" class="text-purple-600 text-xs mt-1"></p>
+                            </div>
+                        </div>
+
+                        <!-- Indian Meals Quick Select (kept as fallback) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Quick Select (Indian Meals)
+                            </label>
+                            <select id="quickMeal" onchange="selectQuickMeal()"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                <option value="">Choose a common Indian dish...</option>
+                                <optgroup label="Rice Dishes">
+                                    <option value="daal_bhat_light">Daal Bhat - Light (300 cal, 12g protein)</option>
+                                    <option value="daal_bhat_regular">Daal Bhat - Regular (450 cal, 18g protein)</option>
+                                    <option value="daal_bhat_heavy">Daal Bhat - Heavy (600 cal, 24g protein)</option>
+                                    <option value="rajma_chawal">Rajma Chawal - Regular (480 cal, 16g protein)</option>
+                                    <option value="biryani">Chicken Biryani - Regular (550 cal, 25g protein)</option>
+                                </optgroup>
+                                <optgroup label="Roti/Paratha">
+                                    <option value="roti_dal">2 Roti with Dal (380 cal, 14g protein)</option>
+                                    <option value="paratha_curd">Paratha with Curd (420 cal, 12g protein)</option>
+                                </optgroup>
+                                <optgroup label="South Indian">
+                                    <option value="idli_sambar">Idli (2pc) with Sambar (250 cal, 8g protein)</option>
+                                    <option value="dosa">Plain Dosa with Chutney (320 cal, 9g protein)</option>
+                                    <option value="upma">Upma (280 cal, 7g protein)</option>
+                                </optgroup>
+                                <optgroup label="Snacks">
+                                    <option value="samosa">Samosa (2pc) (380 cal, 6g protein)</option>
+                                    <option value="poha">Poha (260 cal, 5g protein)</option>
+                                </optgroup>
+                                <optgroup label="Non-Veg">
+                                    <option value="butter_chicken">Butter Chicken with Naan (620 cal, 32g protein)</option>
+                                    <option value="chicken_rice">Grilled Chicken with Rice (480 cal, 38g protein)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <p class="text-center text-gray-500 text-sm">OR enter manually:</p>
+ 
+
+                        <!-- Manual Entry -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Meal Name</label>
+                            <input type="text" id="mealName" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                placeholder="e.g., Chicken Tikka Masala">
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Calories</label>
+                                <input type="number" id="calories" required min="0"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    placeholder="e.g., 450">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Protein (g)</label>
+                                <input type="number" id="protein" required min="0"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    placeholder="e.g., 25">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Carbs (g)</label>
+                                <input type="number" id="carbs" required min="0"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    placeholder="e.g., 55">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Fat (g)</label>
+                                <input type="number" id="fat" required min="0"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    placeholder="e.g., 12">
+                            </div>
+                        </div>
+
+                        <div id="successMessage" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                            <p>Meal logged successfully!</p>
+                        </div>
+
+                        <button type="submit" id="submitBtn"
+                            class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition">
+                            Log Meal
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Today's Logged Meals -->
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900">Today's Meals</h2>
+                    <div id="todayMeals" class="space-y-3">
+                        <p class="text-gray-500 text-center py-8">No meals logged yet today</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Today's Summary -->
+            <div class="space-y-6">
+                
+                <!-- Daily Summary -->
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-sm p-6 border border-purple-200">
+                    <h3 class="text-xl font-bold mb-4 text-purple-900">Today's Total</h3>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-purple-700">Calories</span>
+                            <span class="text-2xl font-bold text-purple-900">
+                                <span id="totalCalories">0</span> / <span id="targetCalories">-</span>
+                            </span>
+                        </div>
+                        
+                        <div class="w-full bg-purple-200 rounded-full h-3">
+                            <div class="bg-purple-600 h-3 rounded-full transition-all" id="calorieBar" style="width: 0%"></div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+                            <div class="bg-white rounded-lg p-3">
+                                <p class="text-xs text-gray-600">Protein</p>
+                                <p class="text-lg font-bold text-gray-900"><span id="totalProtein">0</span>g</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3">
+                                <p class="text-xs text-gray-600">Carbs</p>
+                                <p class="text-lg font-bold text-gray-900"><span id="totalCarbs">0</span>g</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3">
+                                <p class="text-xs text-gray-600">Fat</p>
+                                <p class="text-lg font-bold text-gray-900"><span id="totalFat">0</span>g</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Targets -->
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h3 class="text-xl font-bold mb-4 text-gray-900">Your Targets</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Daily Calories:</span>
+                            <span class="font-bold" id="targetCal2">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Protein:</span>
+                            <span class="font-bold" id="targetProtein">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Carbs:</span>
+                            <span class="font-bold" id="targetCarbs">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Fat:</span>
+                            <span class="font-bold" id="targetFat">-</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let userId = localStorage.getItem('user_id');
+        let username = localStorage.getItem('username');
+
+        if (!userId) {
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('username').textContent = username;
+
+        // Set today's date
+        document.getElementById('mealDate').valueAsDate = new Date();
+
+        // Indian meals database (matching backend)
+        // ── NUTRITION SEARCH ──────────────────────────────────────────────────
+        let searchTimeout = null;
+
+        document.getElementById('foodSearch').addEventListener('input', function() {
+            const query = this.value.trim();
+            clearTimeout(searchTimeout);
+
+            if (query.length < 2) {
+                document.getElementById('searchResults').classList.add('hidden');
+                return;
+            }
+
+            // Debounce — wait 400ms after user stops typing
+            searchTimeout = setTimeout(() => searchFood(query), 400);
+        });
+
+        // Close search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#foodSearch') && !e.target.closest('#searchResults')) {
+                document.getElementById('searchResults').classList.add('hidden');
+            }
+        });
+
+        async function searchFood(query) {
+            document.getElementById('searchSpinner').classList.remove('hidden');
+            document.getElementById('searchResults').classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_URL}/nutrition/search?q=${encodeURIComponent(query)}&limit=8`);
+                const data = await response.json();
+
+                document.getElementById('searchSpinner').classList.add('hidden');
+
+                if (data.success && data.data.length > 0) {
+                    renderSearchResults(data.data);
+                } else {
+                    renderNoResults(query);
+                }
+            } catch (error) {
+                document.getElementById('searchSpinner').classList.add('hidden');
+                console.error('Search error:', error);
+            }
+        }
+
+        function renderSearchResults(foods) {
+            const container = document.getElementById('searchResults');
+            container.innerHTML = foods.map(food => `
+                <div class="px-4 py-3 hover:bg-purple-50 cursor-pointer border-b border-gray-100 last:border-0"
+                     onclick="selectFood(${JSON.stringify(food).replace(/"/g, '&quot;')})">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-medium text-gray-900 text-sm">${food.name}</p>
+                            <p class="text-xs text-gray-500">Per ${food.serving}</p>
+                        </div>
+                        <div class="text-right ml-4">
+                            <p class="text-purple-600 font-bold text-sm">${Math.round(food.calories)} cal</p>
+                            <p class="text-xs text-gray-500">P: ${food.protein.toFixed(1)}g</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 mt-1">
+                        <span class="text-xs text-gray-400">Carbs: ${food.carbs.toFixed(1)}g</span>
+                        <span class="text-xs text-gray-400">Fat: ${food.fat.toFixed(1)}g</span>
+                        <span class="text-xs text-gray-400">Fiber: ${food.fiber.toFixed(1)}g</span>
+                    </div>
+                </div>
+            `).join('');
+            container.classList.remove('hidden');
+        }
+
+        function renderNoResults(query) {
+            const container = document.getElementById('searchResults');
+            container.innerHTML = `
+                <div class="px-4 py-3 text-gray-500 text-sm text-center">
+                    No results for "${query}". Try Indian Meals dropdown or enter manually.
+                </div>
+            `;
+            container.classList.remove('hidden');
+        }
+
+        function selectFood(food) {
+            // Fill form fields with selected food data
+            document.getElementById('mealName').value = food.name;
+            document.getElementById('calories').value = Math.round(food.calories);
+            document.getElementById('protein').value = food.protein.toFixed(1);
+            document.getElementById('carbs').value = food.carbs.toFixed(1);
+            document.getElementById('fat').value = food.fat.toFixed(1);
+
+            // Show selected food badge
+            document.getElementById('selectedFoodName').textContent = food.name;
+            document.getElementById('selectedFoodInfo').textContent =
+                `${Math.round(food.calories)} cal | P: ${food.protein.toFixed(1)}g | C: ${food.carbs.toFixed(1)}g | F: ${food.fat.toFixed(1)}g | Per ${food.serving}`;
+            document.getElementById('selectedFood').classList.remove('hidden');
+
+            // Clear search
+            document.getElementById('foodSearch').value = '';
+            document.getElementById('searchResults').classList.add('hidden');
+
+            // Reset quick meal dropdown
+            document.getElementById('quickMeal').value = '';
+        }
+
+        function clearSelectedFood() {
+            document.getElementById('selectedFood').classList.add('hidden');
+            document.getElementById('mealName').value = '';
+            document.getElementById('calories').value = '';
+            document.getElementById('protein').value = '';
+            document.getElementById('carbs').value = '';
+            document.getElementById('fat').value = '';
+        }
+        // ── END NUTRITION SEARCH ──────────────────────────────────────────────
+        function selectQuickMeal() {
+            const selected = document.getElementById('quickMeal').value;
+            if (selected && INDIAN_MEALS[selected]) {
+                const meal = INDIAN_MEALS[selected];
+                document.getElementById('mealName').value = meal.name;
+                document.getElementById('calories').value = meal.calories;
+                document.getElementById('protein').value = meal.protein;
+                document.getElementById('carbs').value = meal.carbs;
+                document.getElementById('fat').value = meal.fat;
+            }
+        }
+
+        // Load user's plan for targets
+        async function loadTargets() {
+            try {
+                const response = await fetch(`${API_URL}/user/${userId}/plan`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const macros = data.data.plan_overview.macros;
+                    document.getElementById('targetCalories').textContent = macros.calories;
+                    document.getElementById('targetCal2').textContent = macros.calories + ' cal';
+                    document.getElementById('targetProtein').textContent = macros.protein_g + 'g';
+                    document.getElementById('targetCarbs').textContent = macros.carbs_g + 'g';
+                    document.getElementById('targetFat').textContent = macros.fat_g + 'g';
+                }
+            } catch (error) {
+                console.error('Error loading targets:', error);
+            }
+        }
+
+        // Load today's meals
+        async function loadTodayMeals() {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const response = await fetch(`${API_URL}/user/${userId}/meals?date=${today}`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    displayMeals(data.data);
+                    calculateTotals(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading meals:', error);
+            }
+        }
+
+        function displayMeals(meals) {
+            const container = document.getElementById('todayMeals');
+            
+            if (meals.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No meals logged yet today</p>';
+                return;
+            }
+
+            const html = meals.map(meal => `
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <span class="text-xs font-medium text-purple-600 uppercase">${meal.meal_type}</span>
+                            <h4 class="font-bold text-gray-900">${meal.meal_name}</h4>
+                        </div>
+                        <span class="text-purple-600 font-bold">${meal.calories} cal</span>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        P: ${meal.protein}g | C: ${meal.carbs}g | F: ${meal.fat}g
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        function calculateTotals(meals) {
+            const totals = meals.reduce((acc, meal) => ({
+                calories: acc.calories + meal.calories,
+                protein: acc.protein + meal.protein,
+                carbs: acc.carbs + meal.carbs,
+                fat: acc.fat + meal.fat
+            }), {calories: 0, protein: 0, carbs: 0, fat: 0});
+
+            document.getElementById('totalCalories').textContent = Math.round(totals.calories);
+            document.getElementById('totalProtein').textContent = Math.round(totals.protein);
+            document.getElementById('totalCarbs').textContent = Math.round(totals.carbs);
+            document.getElementById('totalFat').textContent = Math.round(totals.fat);
+
+            // Update calorie bar
+            const target = parseInt(document.getElementById('targetCalories').textContent) || 2000;
+            const percentage = Math.min((totals.calories / target) * 100, 100);
+            document.getElementById('calorieBar').style.width = percentage + '%';
+        }
+
+        // Submit meal
+        document.getElementById('mealForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const mealData = {
+                meal_type: document.getElementById('mealType').value,
+                meal_name: document.getElementById('mealName').value,
+                calories: parseFloat(document.getElementById('calories').value),
+                protein: parseFloat(document.getElementById('protein').value),
+                carbs: parseFloat(document.getElementById('carbs').value),
+                fat: parseFloat(document.getElementById('fat').value),
+                date: document.getElementById('mealDate').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/user/${userId}/meals`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(mealData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('successMessage').classList.remove('hidden');
+                    setTimeout(() => {
+                        document.getElementById('successMessage').classList.add('hidden');
+                    }, 3000);
+
+                    // Reset form
+                    document.getElementById('mealForm').reset();
+                    document.getElementById('mealDate').valueAsDate = new Date();
+                    document.getElementById('quickMeal').value = '';
+
+                    // Reload meals
+                    loadTodayMeals();
+                }
+            } catch (error) {
+                console.error('Error logging meal:', error);
+                alert('Error logging meal');
+            }
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        // Load on page load
+        loadTargets();
+        loadTodayMeals();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - FitAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .chat-container {
+            height: calc(100vh - 300px);
+            overflow-y: auto;
+        }
+        
+        .message-user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+        }
+        
+        .message-agent {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+        
+        .typing-indicator span {
+            animation: blink 1.4s infinite both;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes blink {
+            0%, 80%, 100% { opacity: 0; }
+            40% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-8">
+                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">🤖 FitAI</h1>
+                    <div class="hidden md:flex gap-6">
+                        <a href="dashboard.html" class="text-gray-700 hover:text-purple-600">Dashboard</a>
+                        <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
+                        <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
+                        <a href="chat.html" class="text-purple-600 font-medium">Chat</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="username" class="text-gray-700 font-medium"></span>
+                    <button onclick="logout()" class="text-gray-600 hover:text-red-600">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">💬 Chat with AI Agent</h1>
+            <p class="text-gray-600">Ask questions about your plan, nutrition, or workouts</p>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="chat-container p-6 space-y-4">
+                
+                <!-- Welcome Message -->
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
+                        🤖
+                    </div>
+                    <div class="message-agent max-w-md rounded-lg px-4 py-3">
+                        <p class="text-sm font-medium text-purple-600 mb-1">AI Agent</p>
+                        <p>Hello! I'm your AI fitness coach. I can help you with:</p>
+                        <ul class="mt-2 text-sm space-y-1">
+                            <li>• Questions about your meal plan</li>
+                            <li>• Workout advice and form tips</li>
+                            <li>• Motivation and accountability</li>
+                            <li>• Understanding your progress</li>
+                            <li>• General fitness and nutrition questions</li>
+                        </ul>
+                        <p class="mt-2">What would you like to know?</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Typing Indicator (hidden by default) -->
+            <div id="typingIndicator" class="hidden px-6 pb-4">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
+                    </div>
+                    <div class="bg-gray-100 rounded-lg px-4 py-3">
+                        <div class="typing-indicator flex gap-1">
+                            <span class="w-2 h-2 bg-gray-500 rounded-full"></span>
+                            <span class="w-2 h-2 bg-gray-500 rounded-full"></span>
+                            <span class="w-2 h-2 bg-gray-500 rounded-full"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="border-t border-gray-200 p-4">
+                <form id="chatForm" class="flex gap-3">
+                    <input type="text" id="messageInput" required
+                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Type your message...">
+                    <button type="submit" id="sendBtn"
+                        class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition">
+                        Send
+                    </button>
+                </form>
+
+                <!-- Quick Questions -->
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <button onclick="quickQuestion('I feel tired today, should I skip my workout?')"
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        💤 Feeling tired
+                    </button>
+                    <button onclick="quickQuestion('What are good high-protein vegetarian options?')"
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                         Vegetarian protein
+                    </button>
+                    <button onclick="quickQuestion('How do I track calories in Indian food?')"
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        Indian food tracking
+                    </button>
+                    <button onclick="quickQuestion('I had a cheat meal, what should I do?')"
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                         Cheat meal
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Info Box -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p class="text-sm text-blue-800">
+                <strong>Note:</strong> This chat uses AI to provide general fitness guidance. 
+                For personalized meal plans and workout schedules based on FL models, check your 
+                <a href="dashboard.html" class="underline font-medium">Dashboard</a>.
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let userId = localStorage.getItem('user_id');
+        let username = localStorage.getItem('username');
+
+        if (!userId) {
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('username').textContent = username;
+
+        // Load chat history
+        async function loadChatHistory() {
+            try {
+                const response = await fetch(`${API_URL}/user/${userId}/chat/history`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    // Clear welcome message
+                    document.getElementById('chatMessages').innerHTML = '';
+                    
+                    // Display messages
+                    data.data.forEach(msg => {
+                        addMessageToUI(msg.role, msg.message);
+                    });
+
+                    scrollToBottom();
+                }
+            } catch (error) {
+                console.error('Error loading chat history:', error);
+            }
+        }
+
+        function addMessageToUI(role, message) {
+            const chatMessages = document.getElementById('chatMessages');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start gap-3';
+            
+            if (role === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="ml-auto flex items-start gap-3 flex-row-reverse">
+                        <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
+                            ${username.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="message-user max-w-md rounded-lg px-4 py-3">
+                            <p class="text-sm font-medium mb-1">You</p>
+                            <p>${escapeHtml(message)}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
+                    
+                    </div>
+                    <div class="message-agent max-w-md rounded-lg px-4 py-3">
+                        <p class="text-sm font-medium text-purple-600 mb-1">AI Agent</p>
+                        <p>${escapeHtml(message)}</p>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').classList.remove('hidden');
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').classList.add('hidden');
+        }
+
+        function quickQuestion(question) {
+            document.getElementById('messageInput').value = question;
+            document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+        }
+
+        // Send message
+        document.getElementById('chatForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+
+            if (!message) return;
+
+            // Add user message to UI immediately
+            addMessageToUI('user', message);
+            messageInput.value = '';
+            scrollToBottom();
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            try {
+                const response = await fetch(`${API_URL}/user/${userId}/chat`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+
+                // Hide typing indicator
+                hideTypingIndicator();
+
+                if (data.success) {
+                    // Add agent response to UI
+                    addMessageToUI('agent', data.data.agent_response);
+                    scrollToBottom();
+                } else {
+                    // Error handling
+                    addMessageToUI('agent', 'Sorry, I encountered an error. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                hideTypingIndicator();
+                addMessageToUI('agent', 'Sorry, there was a network error. Please check if the server is running.');
+            }
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        // Load chat history on page load
+        loadChatHistory();
+
+        // Auto-focus input
+        document.getElementById('messageInput').focus();
+    </script>
+
+</body>
+</html>

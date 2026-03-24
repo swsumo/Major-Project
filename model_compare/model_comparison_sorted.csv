@@ -1,0 +1,7 @@
+Model,Type,MAE (kg),RMSE (kg),R²,Privacy,Clients,Personalization,Status
+Centralized (No FL),Baseline,0.3888270618292562,0.5207904239196384,0.9988980644686826,❌ None,N/A,No,KEEP
+pFL (3 clients) ⭐,pFL,0.564316233187945,0.7910923981119742,0.9974573614375007,✓ No data sharing,3,Yes,KEEP (BEST MODEL)
+FL Global (3 clients),Federated,1.7300297677020875,2.514775989270343,0.9743061717298165,✓ No data sharing,3,No,KEEP (for comparison)
+pFL (10 clients),pFL,2.6139989682539726,3.2344051051507,0.957497053880844,✓ No data sharing,10,Yes,REMOVE (3-client better)
+DP + pFL (ε=1.0),DP + pFL,3.249192916758969,4.065524114480554,0.9328473292692159,✓✓ Differential Privacy,10,Yes,KEEP (for DP demo)
+Basic FL (10 clients),Federated,8.694211904761906,10.73686428873728,0.5316342442441193,✓ No data sharing,10,No,REMOVE (poor performance)
