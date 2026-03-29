@@ -10,7 +10,7 @@ import pandas as pd
 load_dotenv()
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from backend.database import db, init_db, User, UserPlan, ChatMessage, MealLog, ProgressLog
+from backend.database import db, init_db, User, UserPlan, ChatMessage, MealLog, ProgressLog, ExerciseLog
 from agent.fitness_agent import FitnessAgent
 from agent.utils import EnsembleWeightPredictor, EnsembleAdherencePredictor, EnsembleMacroRecommender
 
@@ -18,7 +18,7 @@ from agent.utils import EnsembleWeightPredictor, EnsembleAdherencePredictor, Ens
 from google import genai
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-print("✅ Gemini AI loaded")
+print(" Gemini AI loaded")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
@@ -43,17 +43,70 @@ def create_response(success=True, message=None, data=None, status_code=200):
     response = {'success': success, 'message': message, 'data': data}
     return jsonify(response), status_code
 
-
-def build_gemini_system_prompt(user, plan):
-    """Build a context-aware system prompt using user's actual plan."""
-    profile = user.get_profile_dict()
-
+# ── REPLACE your existing build_gemini_system_prompt function with this ────────
+ 
+def build_gemini_system_prompt(user, plan, user_id=None):
+    """Build context-aware system prompt using user's plan + DB data."""
+    profile      = user.get_profile_dict()
     plan_overview = plan.get('plan_overview', {}) if plan else {}
     macros        = plan_overview.get('macros', {})
     targets       = plan.get('weekly_targets', {})
-
+ 
+    # ── Fetch recent meals from DB ─────────────────────────────────────────────
+    meals_context = ""
+    if user_id:
+        try:
+            recent_meals = MealLog.query.filter_by(user_id=user_id)\
+                .order_by(MealLog.date.desc()).limit(10).all()
+            if recent_meals:
+                meals_lines = []
+                for m in recent_meals:
+                    meals_lines.append(
+                        f"  - {m.date}: {m.get_meal_name()} ({m.meal_type}) — "
+                        f"{m.calories}cal, P:{m.protein}g"
+                    )
+                meals_context = "\nRECENT MEALS (last 10 logged):\n" + "\n".join(meals_lines)
+        except:
+            pass
+ 
+    # ── Fetch recent exercises from DB ─────────────────────────────────────────
+    exercise_context = ""
+    if user_id:
+        try:
+            recent_exercises = ExerciseLog.query.filter_by(user_id=user_id)\
+                .order_by(ExerciseLog.date.desc()).limit(10).all()
+            if recent_exercises:
+                ex_lines = []
+                for ex in recent_exercises:
+                    ex_lines.append(
+                        f"  - {ex.date}: {ex.exercise_name} ({ex.body_part}) — "
+                        f"{ex.calories_burned}cal burned"
+                        + (f", {ex.weight_kg}kg" if ex.weight_kg > 0 else "")
+                    )
+                exercise_context = "\nRECENT EXERCISES (last 10 logged):\n" + "\n".join(ex_lines)
+        except:
+            pass
+ 
+    # ── Fetch progress logs from DB ────────────────────────────────────────────
+    progress_context = ""
+    if user_id:
+        try:
+            progress_logs = ProgressLog.query.filter_by(user_id=user_id)\
+                .order_by(ProgressLog.week_number.desc()).limit(4).all()
+            if progress_logs:
+                pg_lines = []
+                for p in progress_logs:
+                    pg_lines.append(
+                        f"  - Week {p.week_number}: {p.weight}kg "
+                        f"(predicted: {p.predicted_weight}kg, "
+                        f"adherence: {round(p.adherence_score*100) if p.adherence_score else 'N/A'}%)"
+                    )
+                progress_context = "\nRECENT PROGRESS (last 4 weeks):\n" + "\n".join(pg_lines)
+        except:
+            pass
+ 
     return f"""You are FitAI, a friendly and knowledgeable personal fitness coach assistant.
-
+ 
 USER PROFILE:
 - Name: {user.username}
 - Age: {profile.get('age')} | Gender: {profile.get('gender')}
@@ -61,23 +114,27 @@ USER PROFILE:
 - Goal: {profile.get('goal', 'Not set').replace('_', ' ').title()}
 - Activity Level: {profile.get('activity_level', 'moderate')}
 - Gym Days: {profile.get('gym_days')} days/week
-
+ 
 CURRENT AI-GENERATED PLAN (from Personalized Federated Learning):
 - Daily Calories: {plan_overview.get('daily_calories', 'N/A')} kcal
 - Protein: {macros.get('protein_g', 'N/A')}g | Carbs: {macros.get('carbs_g', 'N/A')}g | Fat: {macros.get('fat_g', 'N/A')}g
 - Plan Difficulty: {plan_overview.get('difficulty', 'moderate')}
 - Weekly Target: {targets.get('description', 'N/A')}
 - Water Intake: {targets.get('water_intake', 'N/A')}L/day
-
-PRIVACY NOTE: This user's plan was generated using Federated Learning — their data never left their device.
-
+{meals_context}
+{exercise_context}
+{progress_context}
+ 
 YOUR ROLE:
 - Answer fitness, nutrition, and workout questions
-- Give advice consistent with the user's current plan above
+- Use the meal and exercise history above to give personalized advice
+- If asked what the user ate on a specific date, check RECENT MEALS above
+- If asked about their workout history, check RECENT EXERCISES above
 - Suggest Indian meals when giving food recommendations
 - Be encouraging, specific, and concise
-- If asked about medical conditions, recommend consulting a doctor
 - Keep responses under 150 words unless the user asks for detail
+- Remove all markdown formatting like ** or ## from your responses
+- If asked about medical conditions, recommend consulting a doctor
 """
 
 NUTRITION_DF = None
@@ -87,9 +144,9 @@ def load_nutrition_data():
     try:
         df = pd.read_csv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'nutrition.csv'))
         NUTRITION_DF = df
-        print(f"✅ Nutrition database loaded: {len(df)} foods")
+        print(f" Nutrition database loaded: {len(df)} foods")
     except Exception as e:
-        print(f"⚠️  Nutrition data not loaded: {e}")
+        print(f" Nutrition data not loaded: {e}")
         NUTRITION_DF = None
  
 def parse_numeric(value):
@@ -322,6 +379,7 @@ def get_progress(user_id):
 
 
 # ── CHAT WITH GEMINI ───────────────────────────────────────────────────────────
+ 
 @app.route('/api/user/<int:user_id>/chat', methods=['POST'])
 def chat(user_id):
     """
@@ -332,37 +390,34 @@ def chat(user_id):
         user = get_user_by_id(user_id)
         if not user:
             return create_response(False, 'User not found', status_code=404)
-
+ 
         data         = request.json
         user_message = data.get('message', '').strip()
-
         if not user_message:
             return create_response(False, 'Message cannot be empty', status_code=400)
-
+ 
         # Save user message to DB
         user_chat = ChatMessage(user_id=user_id, role='user')
         user_chat.set_message(user_message)
         db.session.add(user_chat)
-
+ 
         # Get user's current plan for context
         current_plan = user.current_plan.get_plan() if user.current_plan else {}
-
+ 
         # Build last 10 messages as conversation history
         recent_messages = ChatMessage.query.filter_by(user_id=user_id)\
             .order_by(ChatMessage.timestamp.desc()).limit(10).all()
         recent_messages = list(reversed(recent_messages))
-
-        # Build Gemini conversation
-        system_prompt = build_gemini_system_prompt(user, current_plan)
-
-        # Format history for Gemini
-        # Build Gemini conversation with history
-        system_prompt = build_gemini_system_prompt(user, current_plan)
-
+ 
+        # Build system prompt with DB context
+        system_prompt = build_gemini_system_prompt(user, current_plan, user_id=user_id)
+ 
         # Format history as conversation turns
-        contents = [{"role": "user", "parts": [{"text": system_prompt}]},
-                    {"role": "model", "parts": [{"text": "Understood! I'm FitAI, your personal fitness coach. I have your profile and plan. How can I help?"}]}]
-
+        contents = [
+            {"role": "user",  "parts": [{"text": system_prompt}]},
+            {"role": "model", "parts": [{"text": "Understood! I'm FitAI, your personal fitness coach. I have your profile, meal history, and exercise logs. How can I help?"}]}
+        ]
+ 
         # Add last 10 messages as history
         for msg in recent_messages:
             role = "user" if msg.role == "user" else "model"
@@ -372,33 +427,37 @@ def chat(user_id):
                 content = ""
             if content:
                 contents.append({"role": role, "parts": [{"text": content}]})
-
+ 
         # Add current message
         contents.append({"role": "user", "parts": [{"text": user_message}]})
-
-        # Call Gemini with full history
+ 
+        # Call Gemini with full history + DB context
         gemini_response = gemini_client.models.generate_content(
             model='gemini-2.5-flash-lite',
             contents=contents
         )
         agent_response = gemini_response.text
-
-        # Save agent response to DB
+ 
+        # Clean markdown formatting
+        import re
+        agent_response = re.sub(r'\*\*(.*?)\*\*', r'\1', agent_response)
+        agent_response = re.sub(r'\*(.*?)\*',     r'\1', agent_response)
+        agent_response = re.sub(r'#{1,6}\s',      '',    agent_response)
+ 
+        # Save agent response
         agent_chat = ChatMessage(user_id=user_id, role='agent')
         agent_chat.set_message(agent_response)
         db.session.add(agent_chat)
         db.session.commit()
-
+ 
         return create_response(True, 'Message sent', {
             'user_message':   user_message,
             'agent_response': agent_response
         })
-
+ 
     except Exception as e:
         db.session.rollback()
         return create_response(False, f'Gemini Error: {str(e)}', status_code=500)
-
-
 @app.route('/api/user/<int:user_id>/chat/history', methods=['GET'])
 def get_chat_history(user_id):
     try:
@@ -413,6 +472,106 @@ def get_chat_history(user_id):
     except Exception as e:
         return create_response(False, f'Error: {str(e)}', status_code=500)
 
+# ── EXERCISE LOGGING ROUTES ───────────────────────────────────────────────────
+@app.route('/api/user/<int:user_id>/exercise', methods=['POST'])
+def log_exercise(user_id):
+    """
+    Log an exercise
+    Body: {exercise_name, body_part, weight_kg, sets_reps, workout_duration, calories_burned, date}
+    """
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return create_response(False, 'User not found', status_code=404)
+
+        data = request.json
+        exercise = ExerciseLog(
+            user_id          = user_id,
+            date             = datetime.strptime(data['date'], '%Y-%m-%d').date() if 'date' in data else date.today(),
+            exercise_name    = data.get('exercise_name', 'Unknown'),
+            body_part        = data.get('body_part', 'Full Body'),
+            weight_kg        = data.get('weight_kg', 0),
+            sets_reps        = data.get('sets_reps', ''),
+            workout_duration = data.get('workout_duration', 0),
+            calories_burned  = data.get('calories_burned', 0)
+        )
+        db.session.add(exercise)
+        db.session.commit()
+        return create_response(True, 'Exercise logged successfully', exercise.to_dict())
+
+    except Exception as e:
+        db.session.rollback()
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+@app.route('/api/user/<int:user_id>/exercise', methods=['GET'])
+def get_exercises(user_id):
+    """Get exercise logs — optional ?date=YYYY-MM-DD filter"""
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return create_response(False, 'User not found', status_code=404)
+
+        date_str = request.args.get('date')
+        if date_str:
+            target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            logs = ExerciseLog.query.filter_by(user_id=user_id, date=target_date).all()
+        else:
+            logs = ExerciseLog.query.filter_by(user_id=user_id)\
+                .order_by(ExerciseLog.date.desc()).limit(50).all()
+
+        # Compute totals
+        total_calories = sum(l.calories_burned for l in logs)
+        total_duration = sum(l.workout_duration for l in logs)
+        body_parts     = list(set(l.body_part for l in logs if l.body_part))
+
+        return create_response(True, 'Exercises retrieved', {
+            'exercises':      [l.to_dict() for l in logs],
+            'total_calories': total_calories,
+            'total_duration': total_duration,
+            'body_parts':     body_parts
+        })
+
+    except Exception as e:
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+@app.route('/api/user/<int:user_id>/exercise/summary', methods=['GET'])
+def get_exercise_summary(user_id):
+    """Get weekly exercise summary — body parts trained this week"""
+    try:
+        from datetime import timedelta
+        user = get_user_by_id(user_id)
+        if not user:
+            return create_response(False, 'User not found', status_code=404)
+
+        # Last 7 days
+        week_ago = date.today() - timedelta(days=7)
+        logs = ExerciseLog.query.filter(
+            ExerciseLog.user_id == user_id,
+            ExerciseLog.date >= week_ago
+        ).all()
+
+        # Body part frequency
+        body_part_counts = {}
+        for log in logs:
+            bp = log.body_part or 'Full Body'
+            body_part_counts[bp] = body_part_counts.get(bp, 0) + 1
+
+        total_calories = sum(l.calories_burned for l in logs)
+        total_duration = sum(l.workout_duration for l in logs)
+        total_sessions = len(set(l.date for l in logs))
+
+        return create_response(True, 'Weekly summary retrieved', {
+            'body_part_counts': body_part_counts,
+            'total_calories':   total_calories,
+            'total_duration':   total_duration,
+            'total_sessions':   total_sessions,
+            'exercises':        [l.to_dict() for l in logs]
+        })
+
+    except Exception as e:
+        return create_response(False, f'Error: {str(e)}', status_code=500)
 
 # ── HEALTH CHECK ───────────────────────────────────────────────────────────────
 @app.route('/api/health', methods=['GET'])
@@ -459,10 +618,9 @@ def search_nutrition():
         return create_response(True, f'Found {len(foods)} results', foods)
  
     except Exception as e:
-        return create_response(False, f'Error: {str(e)}', status_code=500)
- 
+        return create_response(False, f'Error: {str(e)}', status_code=500) 
 if __name__ == '__main__':
-    print("🚀 STARTING FLASK SERVER")
-    print("   http://localhost:5000")
-    print("   Health: http://localhost:5000/api/health")
+    print(" STARTING FLASK SERVER")
+    print(" http://localhost:5000")
+    print(" Health: http://localhost:5000/api/health")
     app.run(debug=True, host='0.0.0.0', port=5000)

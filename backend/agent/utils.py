@@ -31,6 +31,21 @@ class EnsembleAdherencePredictor:
         return np.clip(avg_pred, 0.0, 1.0)
 
 
+class AdherenceEnsemble:
+    """Binary FL adherence classifier (Low/High) — Flower trained."""
+    def __init__(self, models, weights):
+        self.models  = models
+        self.weights = weights
+
+    def predict(self, X):
+        """Returns probability of high adherence (0-1) for agent."""
+        probs = np.array([m.predict_proba(X)[:, 1] for m in self.models])
+        return np.average(probs, axis=0, weights=self.weights)
+
+    def predict_class(self, X):
+        return (self.predict(X) >= 0.5).astype(int)
+
+
 class EnsembleMacroRecommender:
     """Ensemble of client models (simulates FL aggregation)"""
     def __init__(self, models):
@@ -74,7 +89,7 @@ def load_fl_model(model_path: str):
     """
     import __main__
     __main__.EnsembleWeightPredictor   = EnsembleWeightPredictor
-    __main__.EnsembleAdherencePredictor = EnsembleAdherencePredictor
+    __main__.AdherenceEnsemble = AdherenceEnsemble
     __main__.EnsembleMacroRecommender  = EnsembleMacroRecommender
 
     with open(model_path, 'rb') as f:

@@ -43,7 +43,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-8">
-                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">🤖 FitAI</h1>
+                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">FitAI</h1>
                     <div class="hidden md:flex gap-6">
                         <a href="dashboard.html" class="text-gray-700 hover:text-purple-600">Dashboard</a>
                         <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
@@ -53,7 +53,7 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <a href="index.html" class="text-gray-600 hover:text-purple-600">← Back to Home</a>
+                    <a href="index.html" class="text-gray-600 hover:text-purple-600">Back to Home</a>
                 </div>
             </div>
         </div>
@@ -63,7 +63,7 @@
         
         <!-- Header -->
         <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">🔐 How Federated Learning Works</h1>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">How Federated Learning Works</h1>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto">
                 Understanding the privacy-preserving AI technology behind FitAI
             </p>
@@ -71,7 +71,7 @@
 
         <!-- Visual Explanation -->
         <div class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100">
-            <h2 class="text-2xl font-bold mb-6 text-gray-900">🧠 FL Architecture</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-900">FL Architecture</h2>
             
             <!-- SVG Diagram -->
             <div class="bg-gray-50 rounded-lg p-8 mb-6">
@@ -91,21 +91,21 @@
                     <g class="client-node">
                         <rect x="100" y="200" width="100" height="60" rx="5" fill="#f59e0b" />
                         <text x="150" y="235" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Client 1</text>
-                        <text x="150" y="250" text-anchor="middle" fill="white" font-size="10">(10 users)</text>
+                        <text x="150" y="250" text-anchor="middle" fill="white" font-size="10">(30 users)</text>
                     </g>
                     
                     <!-- Client 2 -->
                     <g class="client-node">
                         <rect x="350" y="200" width="100" height="60" rx="5" fill="#f59e0b" />
                         <text x="400" y="235" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Client 2</text>
-                        <text x="400" y="250" text-anchor="middle" fill="white" font-size="10">(10 users)</text>
+                        <text x="400" y="250" text-anchor="middle" fill="white" font-size="10">(30 users)</text>
                     </g>
                     
                     <!-- Client 3 -->
                     <g class="client-node">
                         <rect x="600" y="200" width="100" height="60" rx="5" fill="#f59e0b" />
                         <text x="650" y="235" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Client 3</text>
-                        <text x="650" y="250" text-anchor="middle" fill="white" font-size="10">(10 users)</text>
+                        <text x="650" y="250" text-anchor="middle" fill="white" font-size="10">(30 users)</text>
                     </g>
                     
                     <!-- Arrows up (sending model updates) -->
@@ -116,19 +116,19 @@
                     <!-- Local Data Icons -->
                     <g>
                         <circle cx="150" cy="320" r="30" fill="#e5e7eb" />
-                        <text x="150" y="330" text-anchor="middle" font-size="24">🔒</text>
+                        <text x="150" y="330" text-anchor="middle" font-size="24">&#128274;</text>
                         <text x="150" y="365" text-anchor="middle" font-size="10" fill="#6b7280">Private Data</text>
                     </g>
                     
                     <g>
                         <circle cx="400" cy="320" r="30" fill="#e5e7eb" />
-                        <text x="400" y="330" text-anchor="middle" font-size="24">🔒</text>
+                        <text x="400" y="330" text-anchor="middle" font-size="24">&#128274;</text>
                         <text x="400" y="365" text-anchor="middle" font-size="10" fill="#6b7280">Private Data</text>
                     </g>
                     
                     <g>
                         <circle cx="650" cy="320" r="30" fill="#e5e7eb" />
-                        <text x="650" y="330" text-anchor="middle" font-size="24">🔒</text>
+                        <text x="650" y="330" text-anchor="middle" font-size="24">&#128274;</text>
                         <text x="650" y="365" text-anchor="middle" font-size="10" fill="#6b7280">Private Data</text>
                     </g>
                     
@@ -145,19 +145,16 @@
 
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div class="text-3xl mb-2">📥</div>
                     <h4 class="font-bold text-green-900 mb-2">Step 1: Receive</h4>
                     <p class="text-sm text-green-800">Each client receives the global model from the server</p>
                 </div>
                 
                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <div class="text-3xl mb-2">🎯</div>
                     <h4 class="font-bold text-yellow-900 mb-2">Step 2: Train Locally</h4>
                     <p class="text-sm text-yellow-800">Clients train on their private data. Data never leaves the device!</p>
                 </div>
                 
                 <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <div class="text-3xl mb-2">📤</div>
                     <h4 class="font-bold text-red-900 mb-2">Step 3: Aggregate</h4>
                     <p class="text-sm text-red-800">Only model updates are sent back. Server averages them (FedAvg)</p>
                 </div>
@@ -169,11 +166,10 @@
             
             <!-- Traditional ML -->
             <div class="bg-white rounded-xl shadow-lg p-6 border-2 border-red-200">
-                <h3 class="text-xl font-bold mb-4 text-red-900">❌ Traditional ML (Centralized)</h3>
+                <h3 class="text-xl font-bold mb-4 text-red-900">Traditional ML (Centralized)</h3>
                 
                 <div class="space-y-4">
                     <div class="flex items-start gap-3">
-                        <div class="text-2xl">📤</div>
                         <div>
                             <h5 class="font-bold text-gray-900">Upload Raw Data</h5>
                             <p class="text-sm text-gray-600">Your weight, health metrics, meal logs uploaded to server</p>
@@ -181,7 +177,6 @@
                     </div>
                     
                     <div class="flex items-start gap-3">
-                        <div class="text-2xl">🗄️</div>
                         <div>
                             <h5 class="font-bold text-gray-900">Centralized Storage</h5>
                             <p class="text-sm text-gray-600">All user data stored in one place (privacy risk!)</p>
@@ -189,28 +184,20 @@
                     </div>
                     
                     <div class="flex items-start gap-3">
-                        <div class="text-2xl">⚠️</div>
                         <div>
                             <h5 class="font-bold text-gray-900">Privacy Concerns</h5>
                             <p class="text-sm text-gray-600">Data breaches, unauthorized access, third-party sharing</p>
                         </div>
                     </div>
                 </div>
-
-                <div class="mt-6 bg-red-50 rounded-lg p-4">
-                    <p class="text-sm text-red-800 font-medium">
-                        📊 Data Uploaded: <span class="text-xl font-bold">500 MB</span>
-                    </p>
-                </div>
             </div>
 
             <!-- Federated Learning -->
             <div class="bg-white rounded-xl shadow-lg p-6 border-2 border-green-200">
-                <h3 class="text-xl font-bold mb-4 text-green-900">✅ Federated Learning (FitAI)</h3>
+                <h3 class="text-xl font-bold mb-4 text-green-900">Federated Learning (FitAI)</h3>
                 
                 <div class="space-y-4">
                     <div class="flex items-start gap-3">
-                        <div class="text-2xl">🔒</div>
                         <div>
                             <h5 class="font-bold text-gray-900">Data Stays Local</h5>
                             <p class="text-sm text-gray-600">Your data NEVER leaves your device. Completely private!</p>
@@ -218,7 +205,6 @@
                     </div>
                     
                     <div class="flex items-start gap-3">
-                        <div class="text-2xl">🧠</div>
                         <div>
                             <h5 class="font-bold text-gray-900">Learn Patterns Only</h5>
                             <p class="text-sm text-gray-600">AI learns from patterns across users, not individual data</p>
@@ -226,29 +212,22 @@
                     </div>
                     
                     <div class="flex items-start gap-3">
-                        <div class="text-2xl">🛡️</div>
                         <div>
                             <h5 class="font-bold text-gray-900">Maximum Privacy</h5>
                             <p class="text-sm text-gray-600">No data breaches possible. Your health info is yours!</p>
                         </div>
                     </div>
                 </div>
-
-                <div class="mt-6 bg-green-50 rounded-lg p-4">
-                    <p class="text-sm text-green-800 font-medium">
-                        📊 Data Uploaded: <span class="text-xl font-bold">2 MB</span> (model weights only)
-                    </p>
-                </div>
             </div>
         </div>
 
         <!-- FL Training Stats -->
         <div class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100">
-            <h2 class="text-2xl font-bold mb-6 text-gray-900">  FitAI FL Training Statistics</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-900">FitAI FL Training Statistics</h2>
             
             <div class="grid md:grid-cols-4 gap-6 mb-8">
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-purple-600 mb-2">30</div>
+                    <div class="text-4xl font-bold text-purple-600 mb-2">90</div>
                     <p class="text-gray-600">Simulated Users</p>
                 </div>
                 
@@ -258,13 +237,64 @@
                 </div>
                 
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-purple-600 mb-2">10</div>
+                    <div class="text-4xl font-bold text-purple-600 mb-2">30</div>
                     <p class="text-gray-600">Training Rounds</p>
                 </div>
                 
                 <div class="text-center">
                     <div class="text-4xl font-bold text-purple-600 mb-2">86%</div>
                     <p class="text-gray-600">Model Accuracy</p>
+                </div>
+            </div>
+
+            <!-- FL Framework Info -->
+            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-purple-50 rounded-lg p-4 border border-purple-100">
+                    <p class="text-sm font-semibold text-purple-900">Framework</p>
+                    <p class="text-purple-800">Flower (flwr) v1.25 — real gRPC communication</p>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 border border-purple-100">
+                    <p class="text-sm font-semibold text-purple-900">FL Rounds per Model</p>
+                    <p class="text-purple-800">5 rounds per model</p>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 border border-purple-100">
+                    <p class="text-sm font-semibold text-purple-900">Models Trained</p>
+                    <p class="text-purple-800">3 models: Weight, Adherence, Macro</p>
+                </div>
+            </div>
+
+            <!-- Dataset Numbers -->
+            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <p class="text-sm font-semibold text-gray-700">Samples per Client</p>
+                    <p class="text-2xl font-bold text-gray-900">450</p>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <p class="text-sm font-semibold text-gray-700">Total Samples</p>
+                    <p class="text-2xl font-bold text-gray-900">1,350</p>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <p class="text-sm font-semibold text-gray-700">Users per Client</p>
+                    <p class="text-2xl font-bold text-gray-900">30</p>
+                </div>
+            </div>
+
+            <!-- Non-IID Stats -->
+            <div class="bg-blue-50 rounded-lg p-6 mb-8 border border-blue-100">
+                <h3 class="font-bold text-blue-900 mb-4">Non-IID Data Heterogeneity</h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <p class="text-sm font-semibold text-blue-800">Gym Days CV</p>
+                        <p class="text-xl font-bold text-blue-900">21.26%</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-blue-800">Average Heterogeneity</p>
+                        <p class="text-xl font-bold text-blue-900">9.96%</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-blue-800">Total Users in Analysis</p>
+                        <p class="text-xl font-bold text-blue-900">90</p>
+                    </div>
                 </div>
             </div>
 
@@ -279,32 +309,49 @@
         <div class="grid md:grid-cols-3 gap-6 mb-8">
             
             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <div class="text-3xl mb-3"></div>
                 <h3 class="text-xl font-bold mb-3 text-gray-900">Model 1: Weight Prediction</h3>
                 <p class="text-gray-600 mb-4">Predicts your weight change based on calories, exercise, and metabolism</p>
                 <div class="bg-purple-50 rounded-lg p-3">
-                    <p class="text-sm text-purple-900"><strong>Accuracy:</strong> 87.2%</p>
-                    <p class="text-sm text-purple-900"><strong>MAE:</strong> 0.45 kg</p>
+                    <p class="text-sm text-purple-900"><strong>MAE:</strong> 0.339 kg</p>
+                    <p class="text-sm text-purple-900"><strong>R²:</strong> 0.9986</p>
+                    <p class="text-sm text-purple-900"><strong>Global FL MAE:</strong> 0.832 kg</p>
                 </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <div class="text-3xl mb-3"></div>
                 <h3 class="text-xl font-bold mb-3 text-gray-900">Model 2: Adherence Prediction</h3>
-                <p class="text-gray-600 mb-4">Predicts how likely you are to stick to your plan based on your profile</p>
+                <p class="text-gray-600 mb-4">Predicts how likely you are to stick to your plan (binary: Low / High)</p>
                 <div class="bg-purple-50 rounded-lg p-3">
-                    <p class="text-sm text-purple-900"><strong>Accuracy:</strong> 85.8%</p>
-                    <p class="text-sm text-purple-900"><strong>MAE:</strong> 0.092</p>
+                    <p class="text-sm text-purple-900"><strong>Accuracy:</strong> 86.7%</p>
+                    <p class="text-sm text-purple-900"><strong>Type:</strong> Binary classification</p>
                 </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <div class="text-3xl mb-3"></div>
                 <h3 class="text-xl font-bold mb-3 text-gray-900">Model 3: Macro Recommendation</h3>
                 <p class="text-gray-600 mb-4">Recommends optimal protein/carbs/fat split for your goals</p>
                 <div class="bg-purple-50 rounded-lg p-3">
-                    <p class="text-sm text-purple-900"><strong>Accuracy:</strong> 86.5%</p>
-                    <p class="text-sm text-purple-900"><strong>MAE:</strong> 8.4g protein</p>
+                    <p class="text-sm text-purple-900"><strong>R²:</strong> 0.871</p>
+                    <p class="text-sm text-purple-900"><strong>pFL improvement over basic FL:</strong> 59.2%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy Section -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100">
+            <h2 class="text-2xl font-bold mb-6 text-gray-900">Privacy Architecture</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-gray-50 rounded-lg p-5 border border-gray-200 text-center">
+                    <h4 class="font-bold text-gray-900 mb-2">Layer 1: Federated Learning</h4>
+                    <p class="text-sm text-gray-600">Raw data never leaves the client device</p>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-5 border border-gray-200 text-center">
+                    <h4 class="font-bold text-gray-900 mb-2">Layer 2: AES-256 Encryption</h4>
+                    <p class="text-sm text-gray-600">Model updates encrypted in transit</p>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-5 border border-gray-200 text-center">
+                    <h4 class="font-bold text-gray-900 mb-2">Layer 3: Differential Privacy</h4>
+                    <p class="text-sm text-gray-600">DP tested at epsilon = 5.0</p>
                 </div>
             </div>
         </div>
@@ -315,7 +362,6 @@
             
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="flex items-start gap-3">
-                    <div class="text-2xl"></div>
                     <div>
                         <h4 class="font-bold text-purple-900 mb-1">Health Data Privacy</h4>
                         <p class="text-sm text-purple-800">Your weight, body metrics, and eating habits are sensitive. FL ensures they stay private.</p>
@@ -323,7 +369,6 @@
                 </div>
 
                 <div class="flex items-start gap-3">
-                    <div class="text-2xl"></div>
                     <div>
                         <h4 class="font-bold text-purple-900 mb-1">Collective Intelligence</h4>
                         <p class="text-sm text-purple-800">Learn from patterns of thousands without sharing data. Best of both worlds!</p>
@@ -331,7 +376,6 @@
                 </div>
 
                 <div class="flex items-start gap-3">
-                    <div class="text-2xl"></div>
                     <div>
                         <h4 class="font-bold text-purple-900 mb-1">Personalized Results</h4>
                         <p class="text-sm text-purple-800">Models learn what works for people like YOU, not generic advice.</p>
@@ -339,7 +383,6 @@
                 </div>
 
                 <div class="flex items-start gap-3">
-                    <div class="text-2xl"></div>
                     <div>
                         <h4 class="font-bold text-purple-900 mb-1">Cutting-Edge Tech</h4>
                         <p class="text-sm text-purple-800">Used by Google, Apple, and leading tech companies for privacy-preserving AI.</p>
@@ -358,10 +401,16 @@
             type: 'line',
             data: {
                 labels: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5', 
-                         'Round 6', 'Round 7', 'Round 8', 'Round 9', 'Round 10'],
+                         'Round 6', 'Round 7', 'Round 8', 'Round 9', 'Round 10',
+                         'Round 11', 'Round 12', 'Round 13', 'Round 14', 'Round 15',
+                         'Round 16', 'Round 17', 'Round 18', 'Round 19', 'Round 20',
+                         'Round 21', 'Round 22', 'Round 23', 'Round 24', 'Round 25',
+                         'Round 26', 'Round 27', 'Round 28', 'Round 29', 'Round 30'],
                 datasets: [{
                     label: 'Model Loss',
-                    data: [0.45, 0.38, 0.32, 0.28, 0.24, 0.20, 0.17, 0.14, 0.12, 0.11],
+                    data: [0.45, 0.40, 0.36, 0.32, 0.29, 0.26, 0.24, 0.22, 0.20, 0.18,
+                           0.17, 0.16, 0.15, 0.145, 0.14, 0.135, 0.13, 0.125, 0.122, 0.119,
+                           0.116, 0.114, 0.112, 0.111, 0.110, 0.109, 0.108, 0.107, 0.106, 0.105],
                     borderColor: 'rgb(102, 126, 234)',
                     backgroundColor: 'rgba(102, 126, 234, 0.1)',
                     tension: 0.4,

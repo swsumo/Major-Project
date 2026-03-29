@@ -65,18 +65,17 @@ class FitnessAgent:
     """
 
     def __init__(self, models_path='models/trained_models'):
-        print("🤖 Initializing Fitness Agent with pFL models...")
+        print(" Initializing Fitness Agent with pFL models...")
 
         # ── pFL Weight Prediction Model (BEST: 0.564 kg MAE) ──────────────────
-        pfl_path = os.path.join(models_path, '3client_pfl', 'pfl_model.pkl')
-        scaler_path = os.path.join(models_path, '3client_pfl', 'scaler.pkl')
-
+        pfl_path = os.path.join(models_path, 'pfl_model.pkl')
+        scaler_path = os.path.join(models_path, 'scaler.pkl')
         try:
             self.weight_model = load_pfl_model(pfl_path)
             with open(scaler_path, 'rb') as f:
                 self.weight_scaler = pickle.load(f)
             self.use_pfl = True
-            print("  ✅ pFL Weight Model loaded (MAE: 0.564 kg)")
+            print("  ✅ pFL Weight Model loaded (MAE: 0.339 kg)")
         except Exception as e:
             print(f"  ⚠️  pFL model failed ({e}), falling back to basic model")
             self.weight_model = load_fl_model(os.path.join(models_path, 'weight_prediction_model.pkl'))
@@ -85,7 +84,7 @@ class FitnessAgent:
 
         # ── Adherence Prediction Model (85.8% accuracy) ───────────────────────
         self.adherence_model = load_fl_model(os.path.join(models_path, 'adherence_prediction_model.pkl'))
-        print("  ✅ Adherence Model loaded (85.8% accuracy)")
+        print("  ✅ Adherence Model loaded (86.7% accuracy)")
 
         # ── Macro Recommendation Model (86.5% R²) ─────────────────────────────
         self.macro_model = load_fl_model(os.path.join(models_path, 'macro_recommendation_model.pkl'))
@@ -251,7 +250,7 @@ class FitnessAgent:
                 'reasoning':      decisions['reasoning'],
                 'fl_prediction': {
                     'model_used': 'Personalized FL (pFL)' if self.use_pfl else 'Basic FL',
-                    'model_mae': '0.741 kg' if self.use_pfl else 'N/A',
+                    'model_mae': '0.339 kg' if self.use_pfl else 'N/A',
                     'predicted_week1_weight': decisions['predicted_week1_weight'],
                     'expected_weekly_change': decisions['expected_weekly_change']
                 }

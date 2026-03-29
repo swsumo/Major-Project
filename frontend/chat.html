@@ -57,12 +57,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-8">
-                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">🤖 FitAI</h1>
+                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">FitAI</h1>
                     <div class="hidden md:flex gap-6">
                         <a href="dashboard.html" class="text-gray-700 hover:text-purple-600">Dashboard</a>
                         <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
                         <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
                         <a href="chat.html" class="text-purple-600 font-medium">Chat</a>
+                        <a href="exercise.html" class="text-gray-700 hover:text-purple-600">Exercise</a>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
@@ -90,7 +91,7 @@
                 <!-- Welcome Message -->
                 <div class="flex items-start gap-3">
                     <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                        🤖
+                        AI
                     </div>
                     <div class="message-agent max-w-md rounded-lg px-4 py-3">
                         <p class="text-sm font-medium text-purple-600 mb-1">AI Agent</p>
@@ -112,6 +113,7 @@
             <div id="typingIndicator" class="hidden px-6 pb-4">
                 <div class="flex items-start gap-3">
                     <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
+                        AI
                     </div>
                     <div class="bg-gray-100 rounded-lg px-4 py-3">
                         <div class="typing-indicator flex gap-1">
@@ -143,28 +145,31 @@
                     </button>
                     <button onclick="quickQuestion('What are good high-protein vegetarian options?')"
                         class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
-                         Vegetarian protein
+                        🌱 Vegetarian protein
                     </button>
-                    <button onclick="quickQuestion('How do I track calories in Indian food?')"
+                    <button onclick="quickQuestion('How can I stay motivated to workout regularly?')"
                         class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
-                        Indian food tracking
+                        💪 Motivation tips
                     </button>
                     <button onclick="quickQuestion('I had a cheat meal, what should I do?')"
                         class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
-                         Cheat meal
+                        🍕 Cheat meal
+                    </button>
+                    <button onclick="quickQuestion('What is the best time to workout?')"
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        ⏰ Best workout time
+                    </button>
+                    <button onclick="quickQuestion('How much water should I drink daily?')"
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        💧 Water intake
+                    </button>
+                    <button onclick="quickQuestion('Give me a quick home workout routine')"
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        🏠 Home workout
                     </button>
                 </div>
             </div>
 
-        </div>
-
-        <!-- Info Box -->
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p class="text-sm text-blue-800">
-                <strong>Note:</strong> This chat uses AI to provide general fitness guidance. 
-                For personalized meal plans and workout schedules based on FL models, check your 
-                <a href="dashboard.html" class="underline font-medium">Dashboard</a>.
-            </p>
         </div>
 
     </div>
@@ -223,7 +228,7 @@
             } else {
                 messageDiv.innerHTML = `
                     <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                    
+                        AI
                     </div>
                     <div class="message-agent max-w-md rounded-lg px-4 py-3">
                         <p class="text-sm font-medium text-purple-600 mb-1">AI Agent</p>

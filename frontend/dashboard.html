@@ -39,6 +39,7 @@
                         <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
                         <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
                         <a href="chat.html" class="text-gray-700 hover:text-purple-600">Chat</a>
+                        <a href="exercise.html" class="text-gray-700 hover:text-purple-600">Exercise</a>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
@@ -105,15 +106,13 @@
                 </div>
             </div>
 
-            <!-- Two Column Layout -->
+            <!-- Two Column Layout (Now balanced without removed sections) -->
             <div class="grid lg:grid-cols-3 gap-8">
                 
-                <!-- Left Column (2/3 width) -->
-                <div class="lg:col-span-2 space-y-8">
-                    
-                    <!-- Today's Plan -->
+                <!-- Left Column (2/3 width) - Contains only Today's Meal Plan -->
+                <div class="lg:col-span-2">
                     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                        <h2 class="text-2xl font-bold mb-4 text-gray-900"> Today's Meal Plan</h2>
+                        <h2 class="text-2xl font-bold mb-4 text-gray-900">🍽️ Today's Meal Plan</h2>
                         <div class="space-y-4" id="mealPlanContainer">
                             <!-- Meals will be injected here -->
                         </div>
@@ -121,26 +120,14 @@
                             Log meals →
                         </a>
                     </div>
-
-                    <!-- Workout Schedule -->
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                        <h2 class="text-2xl font-bold mb-4 text-gray-900"> This Week's Workout</h2>
-                        <div class="mb-4">
-                            <p class="text-gray-600 font-medium" id="workoutTemplate">-</p>
-                        </div>
-                        <div class="space-y-3" id="workoutSchedule">
-                            <!-- Workout days will be injected here -->
-                        </div>
-                    </div>
-
                 </div>
 
-                <!-- Right Column (1/3 width) -->
+                <!-- Right Column (1/3 width) - Plan Overview & Macros only -->
                 <div class="space-y-8">
                     
                     <!-- Plan Overview -->
                     <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-sm p-6 border border-purple-200">
-                        <h3 class="text-xl font-bold mb-4 text-purple-900"> Your Plan</h3>
+                        <h3 class="text-xl font-bold mb-4 text-purple-900">📋 Your Plan</h3>
                         
                         <div class="space-y-3">
                             <div>
@@ -165,14 +152,14 @@
                         </div>
 
                         <div class="mt-4 pt-4 border-t border-purple-300">
-                            <p class="text-sm text-purple-700 mb-2">AI Reasoning:</p>
+                            <p class="text-sm text-purple-700 mb-2">🤖 AI Reasoning:</p>
                             <p class="text-sm text-purple-900" id="planReasoning">-</p>
                         </div>
                     </div>
 
                     <!-- Macros Breakdown -->
                     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                        <h3 class="text-xl font-bold mb-4 text-gray-900"> Macros</h3>
+                        <h3 class="text-xl font-bold mb-4 text-gray-900">🥗 Breakdown</h3>
                         
                         <div class="space-y-4">
                             <div>
@@ -205,14 +192,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Success Tips -->
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                        <h3 class="text-xl font-bold mb-4 text-gray-900"> Success Tips</h3>
-                        <ul class="space-y-2 text-sm text-gray-700" id="successTips">
-                            <!-- Tips will be injected here -->
-                        </ul>
                     </div>
 
                 </div>
@@ -258,21 +237,21 @@
         }
 
         function displayPlan(plan) {
-            // Stats
+            // Stats Overview
             document.getElementById('statCalories').textContent = plan.plan_overview.daily_calories;
             document.getElementById('statProtein').textContent = plan.plan_overview.macros.protein_g + 'g';
             document.getElementById('statWorkouts').textContent = plan.workout_schedule.days.length;
             document.getElementById('statTarget').textContent = Math.abs(plan.weekly_targets.weight_change);
             document.getElementById('statTargetDesc').textContent = plan.weekly_targets.weight_change < 0 ? 'loss/week' : 'gain/week';
 
-            // Plan Overview
+            // Plan Overview (right column)
             document.getElementById('planGoal').textContent = plan.plan_overview.goal.replace('_', ' ');
             document.getElementById('planDifficulty').textContent = plan.plan_overview.difficulty;
             document.getElementById('planBMI').textContent = `${plan.user_profile.bmi} (${plan.user_profile.bmi_category})`;
             document.getElementById('planTDEE').textContent = `${plan.user_profile.tdee} cal/day`;
             document.getElementById('planReasoning').textContent = plan.plan_overview.reasoning;
 
-            // Macros
+            // Macros Breakdown
             const macros = plan.plan_overview.macros;
             const totalMacros = macros.protein_g + macros.carbs_g + macros.fat_g;
             
@@ -280,48 +259,29 @@
             document.getElementById('macroCarbs').textContent = macros.carbs_g + 'g';
             document.getElementById('macroFat').textContent = macros.fat_g + 'g';
             
-            document.getElementById('macroProteinBar').style.width = (macros.protein_g / totalMacros * 100) + '%';
-            document.getElementById('macroCarbsBar').style.width = (macros.carbs_g / totalMacros * 100) + '%';
-            document.getElementById('macroFatBar').style.width = (macros.fat_g / totalMacros * 100) + '%';
+            // Set progress bars for macros
+            if (totalMacros > 0) {
+                document.getElementById('macroProteinBar').style.width = (macros.protein_g / totalMacros * 100) + '%';
+                document.getElementById('macroCarbsBar').style.width = (macros.carbs_g / totalMacros * 100) + '%';
+                document.getElementById('macroFatBar').style.width = (macros.fat_g / totalMacros * 100) + '%';
+            } else {
+                document.getElementById('macroProteinBar').style.width = '0%';
+                document.getElementById('macroCarbsBar').style.width = '0%';
+                document.getElementById('macroFatBar').style.width = '0%';
+            }
 
-            // Meal Plan
+            // Today's Meal Plan (left column)
             const mealPlanHTML = plan.meal_plan.map(meal => `
-                <div class="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition">
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition duration-200">
                     <div class="flex justify-between items-start mb-2">
                         <h4 class="font-bold text-gray-900">${meal.meal}</h4>
                         <span class="text-purple-600 font-bold">${meal.calories} cal</span>
                     </div>
-                    <p class="text-sm text-gray-600 mb-2">Protein: ${meal.protein}g</p>
-                    <p class="text-sm text-gray-500">Suggestions: ${meal.suggestions.join(', ')}</p>
+                    <p class="text-sm text-gray-600 mb-2"> Protein: ${meal.protein}g</p>
+                    <p class="text-sm text-gray-500">🍽️ Suggestions: ${meal.suggestions.join(', ')}</p>
                 </div>
             `).join('');
             document.getElementById('mealPlanContainer').innerHTML = mealPlanHTML;
-
-            // Workout Schedule
-            document.getElementById('workoutTemplate').textContent = plan.workout_schedule.template_name;
-            
-            const workoutHTML = plan.workout_schedule.days.map(day => {
-                const exercises = plan.workout_schedule.routine[day];
-                return `
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <h4 class="font-bold text-gray-900 mb-2">${day}</h4>
-                        <ul class="text-sm text-gray-600 space-y-1">
-                            ${exercises.slice(0, 3).map(ex => `<li>• ${ex}</li>`).join('')}
-                            ${exercises.length > 3 ? `<li class="text-purple-600">+ ${exercises.length - 3} more...</li>` : ''}
-                        </ul>
-                    </div>
-                `;
-            }).join('');
-            document.getElementById('workoutSchedule').innerHTML = workoutHTML;
-
-            // Success Tips
-            const tipsHTML = plan.success_tips.map(tip => `
-                <li class="flex items-start">
-                    <span class="text-green-500 mr-2">✓</span>
-                    <span>${tip}</span>
-                </li>
-            `).join('');
-            document.getElementById('successTips').innerHTML = tipsHTML;
         }
 
         function logout() {

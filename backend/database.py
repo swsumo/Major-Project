@@ -277,6 +277,33 @@ class ProgressLog(db.Model):
             'predicted_weight': self.predicted_weight,
             'notes': self.get_notes()
         }
+class ExerciseLog(db.Model):
+    """Daily exercise logging"""
+    __tablename__ = 'exercise_logs'
+
+    id               = db.Column(db.Integer, primary_key=True)
+    user_id          = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    date             = db.Column(db.Date, nullable=False)
+    exercise_name    = db.Column(db.String(200), nullable=False)
+    body_part        = db.Column(db.String(50))   # Chest, Back, Legs, etc.
+    weight_kg        = db.Column(db.Float, default=0)
+    sets_reps        = db.Column(db.String(50))   # e.g. "3x10"
+    workout_duration = db.Column(db.Integer, default=0)  # minutes
+    calories_burned  = db.Column(db.Float, default=0)
+    timestamp        = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id':               self.id,
+            'date':             self.date.isoformat(),
+            'exercise_name':    self.exercise_name,
+            'body_part':        self.body_part,
+            'weight_kg':        self.weight_kg,
+            'sets_reps':        self.sets_reps,
+            'workout_duration': self.workout_duration,
+            'calories_burned':  self.calories_burned,
+            'timestamp':        self.timestamp.isoformat()
+        }
 
 # DATABASE INITIALIZATION
 def init_db(app):

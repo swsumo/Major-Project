@@ -1,5 +1,8 @@
 venv/
 __pycache__/
 *.pyc
+instance/fitness_app.db
+backend/encryption.key
 .env
-.DS_Store
+*.pkl
+results/

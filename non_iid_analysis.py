@@ -336,7 +336,7 @@ print(f"   4. This proves FL works even with Non-IID data!")
 print(f"\n💡 FOR YOUR REPORT:")
 print(f"   'Our FL implementation handles Non-IID data effectively. Despite")
 print(f"    {avg_heterogeneity:.1f}% heterogeneity across clients (weight variance: {weight_variance:.1f}),")
-print(f"    our pFL model achieves 0.564 kg MAE, demonstrating robust performance")
+print(f"    our pFL model achieves 0.339 kg MAE, demonstrating robust performance")
 print(f"    in realistic federated settings where clients have different data")
 print(f"    distributions.'")
 
