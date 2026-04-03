@@ -2,16 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Exercise Tracker - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background: #f9fafb; }
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .body-part-btn { transition: all 0.2s; cursor: pointer; }
-        .body-part-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-color: transparent; }
+        .body-part-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-color: transparent; box-shadow: 0 2px 6px rgba(102,126,234,0.2); }
+        /* Compact calendar styles */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .cal-day {
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 2px;
+            font-weight: 500;
+            font-size: 0.75rem;
+            transition: all 0.15s;
+            border: 1px solid #f1f3f5;
+            cursor: pointer;
+            min-height: 52px;
+        }
+        .cal-day.has-activity {
+            background: #f3f0ff;
+            border-color: #c7d2fe;
+            color: #5b21b6;
+        }
+        .cal-day.today-ring {
+            box-shadow: 0 0 0 2px #8b5cf6;
+            border-color: #8b5cf6;
+        }
+        .cal-day:hover {
+            background: #eef2ff;
+            transform: scale(0.96);
+        }
+        .cal-day .cal-num {
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .cal-day .cal-badge {
+            font-size: 0.6rem;
+            font-weight: 600;
+            background: rgba(102,126,234,0.15);
+            padding: 2px 4px;
+            border-radius: 20px;
+            margin-top: 2px;
+        }
+        .weekday {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+        @media (max-width: 640px) {
+            .cal-day { min-height: 44px; padding: 4px 1px; }
+            .cal-day .cal-num { font-size: 0.7rem; }
+            .cal-day .cal-badge { font-size: 0.55rem; }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -46,7 +104,7 @@
 
         <div class="grid lg:grid-cols-3 gap-8">
 
-            <!-- Left: Form + Today -->
+            <!-- Left: Form + Today's Log -->
             <div class="lg:col-span-2 space-y-6">
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -61,14 +119,16 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Exercise Name</label>
-                                <input type="text" id="exerciseName" required placeholder="e.g. Bench Press, Squats"
+                                <input type="text" id="exerciseName" required placeholder="e.g. Bench Press, Squats, Running"
                                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                             </div>
                         </div>
 
+                        <!-- Focus Area: Body Parts + Sports & Cardio -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Body Part</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Focus / Body Part</label>
                             <div class="flex flex-wrap gap-2">
+                                <!-- Original body parts -->
                                 <button type="button" onclick="selectBodyPart(this,'Chest')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Chest</button>
                                 <button type="button" onclick="selectBodyPart(this,'Back')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Back</button>
                                 <button type="button" onclick="selectBodyPart(this,'Legs')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Legs</button>
@@ -76,16 +136,21 @@
                                 <button type="button" onclick="selectBodyPart(this,'Biceps')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Biceps</button>
                                 <button type="button" onclick="selectBodyPart(this,'Triceps')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Triceps</button>
                                 <button type="button" onclick="selectBodyPart(this,'Abdomen')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Abdomen</button>
-                                <button type="button" onclick="selectBodyPart(this,'Full Body')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Full Body</button>
+                                <!-- Sports & Cardio options added -->
+                                <button type="button" onclick="selectBodyPart(this,'Running')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Running</button>
+                                <button type="button" onclick="selectBodyPart(this,'Cycling')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Cycling</button>
+                                <button type="button" onclick="selectBodyPart(this,'Swimming')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Swimming</button>
                                 <button type="button" onclick="selectBodyPart(this,'Cardio')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Cardio</button>
+                                <button type="button" onclick="selectBodyPart(this,'Sports')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Sports</button>
+                                <button type="button" onclick="selectBodyPart(this,'Full Body')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Full Body</button>
                             </div>
-                            <input type="hidden" id="bodyPart" value="Full Body">
+                            <input type="hidden" id="bodyPart" value="Chest">
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Weight Used (kg) <span class="text-gray-400 font-normal">— optional</span></label>
-                                <input type="number" id="weightKg" min="0" step="0.5" placeholder="e.g. 60"
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Weight / Duration (kg or min)</label>
+                                <input type="number" id="weightKg" min="0" step="0.5" placeholder="e.g. 60 kg or 30 min"
                                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                             </div>
                             <div>
@@ -110,7 +175,7 @@
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold text-gray-900">Today's Exercises</h2>
                         <span class="text-sm font-semibold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">
-                            <span id="todayTotalCal">0</span> cal burned
+                            <span id="todayTotalCal">0</span> cal
                         </span>
                     </div>
                     <div id="todayExercises">
@@ -119,39 +184,50 @@
                 </div>
             </div>
 
-            <!-- Right: Monthly Summary -->
+            <!-- Right: Monthly Summary + Compact Calendar -->
             <div class="space-y-6">
-
-                <!-- Monthly Calories -->
+                <!-- Monthly Calories Card -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center">
                     <h2 class="text-lg font-bold text-gray-900 mb-2">Monthly Calories Burned</h2>
                     <p id="monthlyCalories" class="text-5xl font-bold gradient-text mt-3">0</p>
                     <p class="text-gray-400 text-sm mt-2">calories burned this month</p>
                 </div>
 
-                <!-- Monthly Body Part Breakdown -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h2 class="text-lg font-bold text-gray-900 mb-1">Body Part Breakdown</h2>
-                    <p class="text-xs text-gray-400 mb-4">This month</p>
-                    <div id="monthlyBodyParts">
-                        <p class="text-gray-400 text-sm text-center py-4">No data yet</p>
+                <!-- Compact Calendar showing daily activity & calories -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-md font-bold text-gray-900">Activity Calendar</h2>
+                        <div class="flex gap-2 text-xs">
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-purple-100 border border-purple-300"></span> Active</span>
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-white border border-gray-200"></span> Rest</span>
+                        </div>
+                    </div>
+                    <div id="calendarContainer">
+                        <div class="animate-pulse text-center py-4 text-gray-400">Loading calendar...</div>
+                    </div>
+                    <!-- Selected day details panel -->
+                    <div id="selectedDayDetails" class="mt-4 pt-3 border-t border-gray-100 text-sm">
+                        <p class="text-gray-400 text-center text-xs">Tap a date to see exercises & calories</p>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL  = 'http://localhost:5000/api';
-        const userId   = localStorage.getItem('user_id');
+        const API_URL = 'http://localhost:5000/api';
+        const userId = localStorage.getItem('user_id');
         const username = localStorage.getItem('username');
-        let selectedBodyPart = 'Full Body';
+        let selectedBodyPart = 'Chest';
 
         if (!userId) window.location.href = 'login.html';
-        document.getElementById('username').textContent = username;
+        if (username) document.getElementById('username').textContent = username;
+        else document.getElementById('username').textContent = 'User';
         document.getElementById('exerciseDate').valueAsDate = new Date();
-        document.querySelector('[onclick="selectBodyPart(this,\'Full Body\')"]').classList.add('active');
+        
+        // Set default active button (Chest)
+        const defaultBtn = document.querySelector('[onclick="selectBodyPart(this,\'Chest\')"]');
+        if (defaultBtn) defaultBtn.classList.add('active');
 
         function selectBodyPart(btn, part) {
             document.querySelectorAll('.body-part-btn').forEach(b => b.classList.remove('active'));
@@ -160,6 +236,7 @@
             document.getElementById('bodyPart').value = part;
         }
 
+        // Submit exercise log
         document.getElementById('exerciseForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -168,19 +245,30 @@
             document.getElementById('errorMessage').classList.add('hidden');
             document.getElementById('successMessage').classList.add('hidden');
 
+            const exerciseName = document.getElementById('exerciseName').value.trim();
+            if (!exerciseName) {
+                showError('Exercise name is required');
+                btn.disabled = false; btn.textContent = 'Log Exercise'; return;
+            }
+            const calories = parseFloat(document.getElementById('caloriesBurned').value);
+            if (isNaN(calories) || calories <= 0) {
+                showError('Please enter valid calories burned');
+                btn.disabled = false; btn.textContent = 'Log Exercise'; return;
+            }
+
             const payload = {
-                exercise_name:   document.getElementById('exerciseName').value.trim(),
-                body_part:       selectedBodyPart,
-                weight_kg:       parseFloat(document.getElementById('weightKg').value) || 0,
-                calories_burned: parseFloat(document.getElementById('caloriesBurned').value) || 0,
-                date:            document.getElementById('exerciseDate').value
+                exercise_name: exerciseName,
+                body_part: selectedBodyPart,
+                weight_kg: parseFloat(document.getElementById('weightKg').value) || 0,
+                calories_burned: calories,
+                date: document.getElementById('exerciseDate').value
             };
 
             try {
-                const res  = await fetch(`${API_URL}/user/${userId}/exercise`, {
-                    method:  'POST',
+                const res = await fetch(`${API_URL}/user/${userId}/exercise`, {
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify(payload)
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (data.success) {
@@ -188,84 +276,255 @@
                     setTimeout(() => document.getElementById('successMessage').classList.add('hidden'), 3000);
                     document.getElementById('exerciseForm').reset();
                     document.getElementById('exerciseDate').valueAsDate = new Date();
+                    // Reset active to Chest
                     document.querySelectorAll('.body-part-btn').forEach(b => b.classList.remove('active'));
-                    document.querySelector('[onclick="selectBodyPart(this,\'Full Body\')"]').classList.add('active');
-                    selectedBodyPart = 'Full Body';
-                    loadTodayExercises();
-                    loadMonthlySummary();
+                    const chestBtn = document.querySelector('[onclick="selectBodyPart(this,\'Chest\')"]');
+                    if (chestBtn) chestBtn.classList.add('active');
+                    selectedBodyPart = 'Chest';
+                    document.getElementById('bodyPart').value = 'Chest';
+                    await loadTodayExercises();
+                    await loadMonthlySummaryAndCalendar();
                 } else {
-                    const err = document.getElementById('errorMessage');
-                    err.textContent = data.message || 'Failed to log exercise';
-                    err.classList.remove('hidden');
+                    showError(data.message || 'Failed to log exercise');
                 }
             } catch(e) {
-                const err = document.getElementById('errorMessage');
-                err.textContent = 'Network error. Is the server running?';
-                err.classList.remove('hidden');
+                showError('Network error. Is the server running?');
+                console.error(e);
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Log Exercise';
             }
         });
 
+        function showError(msg) {
+            const errDiv = document.getElementById('errorMessage');
+            errDiv.textContent = msg;
+            errDiv.classList.remove('hidden');
+            setTimeout(() => errDiv.classList.add('hidden'), 4000);
+        }
+
+        // Load today's exercises (display with focus area)
         async function loadTodayExercises() {
             const today = new Date().toISOString().split('T')[0];
             try {
-                const res  = await fetch(`${API_URL}/user/${userId}/exercise?date=${today}`);
+                const res = await fetch(`${API_URL}/user/${userId}/exercise?date=${today}`);
                 const data = await res.json();
                 if (!data.success) return;
-                const exercises = data.data.exercises;
-                document.getElementById('todayTotalCal').textContent = Math.round(data.data.total_calories);
+                const exercises = data.data.exercises || [];
+                document.getElementById('todayTotalCal').textContent = Math.round(data.data.total_calories || 0);
                 const container = document.getElementById('todayExercises');
-                if (!exercises || exercises.length === 0) {
+                if (exercises.length === 0) {
                     container.innerHTML = '<p class="text-gray-400 text-center py-8">No exercises logged today</p>';
                     return;
                 }
                 container.innerHTML = exercises.map(ex => `
                     <div class="flex justify-between items-center py-3 border-b border-gray-50 last:border-0">
                         <div>
-                            <p class="font-semibold text-gray-900 text-sm">${ex.exercise_name}</p>
+                            <p class="font-semibold text-gray-900 text-sm">${escapeHtml(ex.exercise_name)}</p>
                             <div class="flex gap-2 mt-1">
-                                <span class="text-xs text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">${ex.body_part}</span>
-                                ${ex.weight_kg > 0 ? `<span class="text-xs text-gray-400">${ex.weight_kg} kg</span>` : ''}
+                                <span class="text-xs text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">${escapeHtml(ex.body_part)}</span>
+                                ${ex.weight_kg > 0 ? `<span class="text-xs text-gray-400">${ex.weight_kg} ${ex.body_part === 'Running' || ex.body_part === 'Cycling' || ex.body_part === 'Cardio' ? 'min' : 'kg'}</span>` : ''}
                             </div>
                         </div>
-                        <p class="font-bold text-purple-600 text-sm">${ex.calories_burned} cal</p>
+                        <p class="font-bold text-purple-600 text-sm">${Math.round(ex.calories_burned)} cal</p>
                     </div>
                 `).join('');
             } catch(e) { console.error(e); }
         }
 
-        async function loadMonthlySummary() {
+        // Fetch monthly exercises and build calendar + total calories
+        async function loadMonthlySummaryAndCalendar() {
             try {
-                const res  = await fetch(`${API_URL}/user/${userId}/exercise/summary`);
+                const res = await fetch(`${API_URL}/user/${userId}/exercise/summary`);
                 const data = await res.json();
                 if (!data.success) return;
-                document.getElementById('monthlyCalories').textContent =
-                    Math.round(data.data.total_calories).toLocaleString();
-                const counts    = data.data.body_part_counts || {};
-                const container = document.getElementById('monthlyBodyParts');
-                if (Object.keys(counts).length === 0) {
-                    container.innerHTML = '<p class="text-gray-400 text-sm text-center py-4">No data yet</p>';
-                    return;
-                }
-                const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-                container.innerHTML = sorted.map(([part, count]) => `
-                    <div class="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
-                        <span class="text-sm font-medium text-gray-700">${part}</span>
-                        <div class="text-right">
-                            <p class="text-sm font-bold text-purple-600">${count} day${count > 1 ? 's' : ''}</p>
-                            <p class="text-xs text-gray-400">${data.data.exercises.filter(e => e.body_part === part).length} exercise${data.data.exercises.filter(e => e.body_part === part).length > 1 ? 's' : ''}</p>
-                        </div>
-                    </div>
-                `).join('');
+                const allExercises = data.data.exercises || [];
+                const totalMonthly = data.data.total_calories || 0;
+                document.getElementById('monthlyCalories').textContent = Math.round(totalMonthly).toLocaleString();
+                
+                // Group by date
+                const dateMap = new Map(); // key: YYYY-MM-DD, value: { totalCal, exercisesList }
+                allExercises.forEach(ex => {
+                    const date = ex.date.split('T')[0];
+                    if (!dateMap.has(date)) {
+                        dateMap.set(date, { totalCal: 0, exercisesList: [] });
+                    }
+                    const entry = dateMap.get(date);
+                    entry.totalCal += ex.calories_burned;
+                    entry.exercisesList.push({
+                        name: ex.exercise_name,
+                        focus: ex.body_part,
+                        calories: ex.calories_burned,
+                        metric: ex.weight_kg
+                    });
+                });
+                renderCompactCalendar(dateMap);
             } catch(e) { console.error(e); }
         }
 
-        function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+        let currentCalendarDate = new Date();
 
-        loadTodayExercises();
-        loadMonthlySummary();
+        function renderCompactCalendar(activityMap) {
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            const firstDayOfMonth = new Date(year, month, 1);
+            const startWeekday = firstDayOfMonth.getDay(); // 0 = Sunday
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const todayYMD = new Date().toISOString().split('T')[0];
+            
+            let html = `<div class="flex justify-between items-center mb-3">
+                <button type="button" id="prevMonthCalBtn" class="bg-gray-100 hover:bg-gray-200 rounded-full p-1 w-7 h-7 flex items-center justify-center text-gray-600 text-sm">←</button>
+                <span class="font-semibold text-gray-800 text-sm">${firstDayOfMonth.toLocaleString('default', { month: 'short' })} ${year}</span>
+                <button type="button" id="nextMonthCalBtn" class="bg-gray-100 hover:bg-gray-200 rounded-full p-1 w-7 h-7 flex items-center justify-center text-gray-600 text-sm">→</button>
+            </div>`;
+            html += `<div class="calendar-grid">`;
+            const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            weekdays.forEach(day => {
+                html += `<div class="weekday">${day}</div>`;
+            });
+            // leading empty cells (adjust so Monday first? using Sunday as start)
+            let emptyCells = startWeekday;
+            for (let i = 0; i < emptyCells; i++) {
+                html += `<div class="cal-day bg-gray-50/30 opacity-30" style="background:#fafafc;"></div>`;
+            }
+            // actual days
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const hasActivity = activityMap.has(dateStr);
+                const dayData = activityMap.get(dateStr);
+                const calTotal = dayData ? Math.round(dayData.totalCal) : 0;
+                const isToday = (dateStr === todayYMD);
+                let additionalClass = '';
+                if (hasActivity) additionalClass = 'has-activity';
+                if (isToday) additionalClass += ' today-ring';
+                
+                html += `<div class="cal-day ${additionalClass}" data-date="${dateStr}" data-cal="${calTotal}" data-activities='${JSON.stringify(dayData ? dayData.exercisesList : [])}'>
+                    <div class="cal-num">${d}</div>
+                    ${calTotal > 0 ? `<div class="cal-badge">${calTotal}</div>` : ''}
+                </div>`;
+            }
+            html += `</div>`;
+            document.getElementById('calendarContainer').innerHTML = html;
+            
+            // attach click handlers
+            document.querySelectorAll('.cal-day[data-date]').forEach(dayEl => {
+                dayEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const date = dayEl.getAttribute('data-date');
+                    const totalCal = dayEl.getAttribute('data-cal');
+                    const actsJson = dayEl.getAttribute('data-activities');
+                    let acts = [];
+                    try { acts = JSON.parse(actsJson); } catch(e) { acts = []; }
+                    showDayDetails(date, totalCal, acts);
+                });
+            });
+            
+            // navigation
+            const prevBtn = document.getElementById('prevMonthCalBtn');
+            const nextBtn = document.getElementById('nextMonthCalBtn');
+            if (prevBtn) {
+                const newPrev = prevBtn.cloneNode(true);
+                prevBtn.parentNode.replaceChild(newPrev, prevBtn);
+                newPrev.addEventListener('click', () => {
+                    currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                    refreshCalendarData();
+                });
+            }
+            if (nextBtn) {
+                const newNext = nextBtn.cloneNode(true);
+                nextBtn.parentNode.replaceChild(newNext, nextBtn);
+                newNext.addEventListener('click', () => {
+                    currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                    refreshCalendarData();
+                });
+            }
+        }
+        
+        async function refreshCalendarData() {
+            const res = await fetch(`${API_URL}/user/${userId}/exercise/summary`);
+            const data = await res.json();
+            if (data.success) {
+                const exercises = data.data.exercises || [];
+                const newMap = new Map();
+                exercises.forEach(ex => {
+                    const date = ex.date.split('T')[0];
+                    if (!newMap.has(date)) newMap.set(date, { totalCal: 0, exercisesList: [] });
+                    const entry = newMap.get(date);
+                    entry.totalCal += ex.calories_burned;
+                    entry.exercisesList.push({
+                        name: ex.exercise_name,
+                        focus: ex.body_part,
+                        calories: ex.calories_burned,
+                        metric: ex.weight_kg
+                    });
+                });
+                renderCompactCalendar(newMap);
+            } else {
+                renderCompactCalendar(new Map());
+            }
+        }
+        
+        function showDayDetails(date, totalCal, activities) {
+            const panel = document.getElementById('selectedDayDetails');
+            if (!activities || activities.length === 0) {
+                panel.innerHTML = `<div class="bg-gray-50 rounded-lg p-2 text-center">
+                    <p class="font-semibold text-gray-700 text-xs">${formatDateDisplay(date)}</p>
+                    <p class="text-purple-600 text-sm mt-1 font-medium">0 calories</p>
+                    <p class="text-gray-400 text-xs mt-1">No activity logged</p>
+                </div>`;
+                return;
+            }
+            let actsHtml = activities.map(act => `
+                <div class="flex justify-between items-center py-1.5 border-b border-gray-100 last:border-0">
+                    <div>
+                        <span class="font-medium text-gray-800 text-xs">${escapeHtml(act.name)}</span>
+                        <div class="flex gap-2 text-xs text-gray-500">
+                            <span>${escapeHtml(act.focus)}</span>
+                            ${act.metric ? `<span>${act.metric} ${act.focus === 'Running' || act.focus === 'Cycling' ? 'min' : 'kg'}</span>` : ''}
+                        </div>
+                    </div>
+                    <span class="text-purple-600 font-semibold text-xs">${Math.round(act.calories)} cal</span>
+                </div>
+            `).join('');
+            panel.innerHTML = `
+                <div class="bg-purple-50/30 rounded-lg p-2">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800 text-sm">${formatDateDisplay(date)}</h3>
+                        <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold">${Math.round(totalCal)} cal</span>
+                    </div>
+                    <div class="mt-2 space-y-1 max-h-32 overflow-y-auto">
+                        ${actsHtml}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function formatDateDisplay(ymd) {
+            const [y,m,d] = ymd.split('-');
+            const dateObj = new Date(Date.UTC(y, m-1, d));
+            return dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+        
+        async function init() {
+            await loadTodayExercises();
+            await loadMonthlySummaryAndCalendar();
+        }
+        init();
     </script>
 </body>
 </html>

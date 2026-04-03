@@ -7,19 +7,51 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
         }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .cal-day {
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 2px;
+            font-weight: 500;
+            font-size: 0.7rem;
+            transition: all 0.15s;
+            border: 1px solid #f1f3f5;
+            cursor: pointer;
+            min-height: 52px;
+        }
+        .cal-day.has-meal {
+            background: #f3f0ff;
+            border-color: #c7d2fe;
+        }
+        .cal-day.today-ring {
+            box-shadow: 0 0 0 2px #8b5cf6;
+            border-color: #8b5cf6;
+        }
+        .cal-day:hover {
+            background: #eef2ff;
+            transform: scale(0.96);
+        }
+        .cal-day .cal-num { font-size: 0.8rem; font-weight: 700; }
+        .cal-day .cal-badge { font-size: 0.6rem; font-weight: 600; background: rgba(102,126,234,0.15); padding: 2px 4px; border-radius: 20px; margin-top: 2px; }
+        .weekday { font-size: 0.65rem; font-weight: 600; text-align: center; color: #6b7280; margin-bottom: 4px; }
+        @media (max-width: 640px) {
+            .cal-day { min-height: 44px; padding: 4px 1px; }
+            .cal-day .cal-num { font-size: 0.7rem; }
         }
     </style>
 </head>
 <body class="bg-gray-50">
 
-    <!-- Navigation -->
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
@@ -43,13 +75,11 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- Header -->
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Meal Tracking</h1>
             <p class="text-gray-600">Log what you eat and track your daily nutrition</p>
         </div>
 
-        <!-- Two Column Layout -->
         <div class="grid lg:grid-cols-3 gap-8">
             
             <!-- Left: Log Meal Form -->
@@ -62,8 +92,7 @@
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Meal Type</label>
-                                <select id="mealType" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                <select id="mealType" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
                                     <option value="">Select meal type</option>
                                     <option value="breakfast">Breakfast</option>
                                     <option value="lunch">Lunch</option>
@@ -71,53 +100,33 @@
                                     <option value="snack">Snack</option>
                                 </select>
                             </div>
-
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                                <input type="date" id="mealDate" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                <input type="date" id="mealDate" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
                             </div>
                         </div>
 
-                        <!-- Indian Meals Quick Select -->
-                        <!-- REPLACE the entire "Indian Meals Quick Select" div with this -->
-<!-- Find: <div> <label class="block text-sm font-medium text-gray-700 mb-2">Quick Select (Indian Meals)</label> -->
-<!-- Replace with this entire block: -->
-
-                        <!-- Food Search (nutrition.csv) -->
+                        <!-- Food Search -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                🔍 Search Food Database (8,000+ foods)
-                            </label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Search Food Database</label>
                             <div class="relative">
-                                <input type="text" id="foodSearch"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                                    placeholder="Type to search e.g. chicken, rice, egg..."
-                                    autocomplete="off">
-                                <div id="searchSpinner" class="hidden absolute right-3 top-3">
-                                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600"></div>
-                                </div>
+                                <input type="text" id="foodSearch" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="Type to search e.g. chicken, rice, egg..." autocomplete="off">
+                                <div id="searchSpinner" class="hidden absolute right-3 top-3"><div class="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600"></div></div>
                             </div>
-                            <!-- Search Results Dropdown -->
-                            <div id="searchResults" class="hidden mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10 relative">
-                            </div>
-                            <!-- Selected Food Badge -->
+                            <div id="searchResults" class="hidden mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10 relative"></div>
                             <div id="selectedFood" class="hidden mt-2 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2">
                                 <div class="flex justify-between items-center">
                                     <span id="selectedFoodName" class="text-purple-700 font-medium text-sm"></span>
-                                    <button type="button" onclick="clearSelectedFood()" class="text-purple-400 hover:text-purple-600 text-xs">✕ Clear</button>
+                                    <button type="button" onclick="clearSelectedFood()" class="text-purple-400 hover:text-purple-600 text-xs">Clear</button>
                                 </div>
                                 <p id="selectedFoodInfo" class="text-purple-600 text-xs mt-1"></p>
                             </div>
                         </div>
 
-                        <!-- Indian Meals Quick Select (kept as fallback) -->
+                        <!-- Indian Meals Quick Select (fixed to auto-fill name) -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Quick Select (Indian Meals)
-                            </label>
-                            <select id="quickMeal" onchange="selectQuickMeal()"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quick Select (Indian Meals)</label>
+                            <select id="quickMeal" onchange="selectQuickMeal()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
                                 <option value="">Choose a common Indian dish...</option>
                                 <optgroup label="Rice Dishes">
                                     <option value="daal_bhat_light">Daal Bhat - Light (300 cal, 12g protein)</option>
@@ -147,100 +156,48 @@
                         </div>
 
                         <p class="text-center text-gray-500 text-sm">OR enter manually:</p>
- 
 
                         <!-- Manual Entry -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Meal Name</label>
-                            <input type="text" id="mealName" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                                placeholder="e.g., Chicken Tikka Masala">
+                            <input type="text" id="mealName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="e.g., Chicken Tikka Masala">
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Calories</label>
-                                <input type="number" id="calories" required min="0"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                                    placeholder="e.g., 450">
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Protein (g)</label>
-                                <input type="number" id="protein" required min="0"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                                    placeholder="e.g., 25">
-                            </div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Calories</label><input type="number" id="calories" required min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="e.g., 450"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Protein (g)</label><input type="number" id="protein" required min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="e.g., 25"></div>
                         </div>
-
                         <div class="grid md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Carbs (g)</label>
-                                <input type="number" id="carbs" required min="0"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                                    placeholder="e.g., 55">
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Fat (g)</label>
-                                <input type="number" id="fat" required min="0"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                                    placeholder="e.g., 12">
-                            </div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Carbs (g)</label><input type="number" id="carbs" required min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="e.g., 55"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Fat (g)</label><input type="number" id="fat" required min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="e.g., 12"></div>
                         </div>
 
-                        <div id="successMessage" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
-                            <p>Meal logged successfully!</p>
-                        </div>
+                        <div id="successMessage" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">Meal logged successfully!</div>
+                        <div id="errorMessage" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"></div>
 
-                        <button type="submit" id="submitBtn"
-                            class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition">
-                            Log Meal
-                        </button>
+                        <button type="submit" id="submitBtn" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition">Log Meal</button>
                     </form>
                 </div>
 
                 <!-- Today's Logged Meals -->
                 <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                     <h2 class="text-2xl font-bold mb-4 text-gray-900">Today's Meals</h2>
-                    <div id="todayMeals" class="space-y-3">
-                        <p class="text-gray-500 text-center py-8">No meals logged yet today</p>
-                    </div>
+                    <div id="todayMeals" class="space-y-3"><p class="text-gray-500 text-center py-8">No meals logged yet today</p></div>
                 </div>
             </div>
 
-            <!-- Right: Today's Summary -->
+            <!-- Right: Today's Summary + Calendar -->
             <div class="space-y-6">
-                
                 <!-- Daily Summary -->
                 <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-sm p-6 border border-purple-200">
                     <h3 class="text-xl font-bold mb-4 text-purple-900">Today's Total</h3>
-                    
                     <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-purple-700">Calories</span>
-                            <span class="text-2xl font-bold text-purple-900">
-                                <span id="totalCalories">0</span> / <span id="targetCalories">-</span>
-                            </span>
-                        </div>
-                        
-                        <div class="w-full bg-purple-200 rounded-full h-3">
-                            <div class="bg-purple-600 h-3 rounded-full transition-all" id="calorieBar" style="width: 0%"></div>
-                        </div>
-
+                        <div class="flex justify-between items-center"><span class="text-purple-700">Calories</span><span class="text-2xl font-bold text-purple-900"><span id="totalCalories">0</span> / <span id="targetCalories">-</span></span></div>
+                        <div class="w-full bg-purple-200 rounded-full h-3"><div class="bg-purple-600 h-3 rounded-full transition-all" id="calorieBar" style="width: 0%"></div></div>
                         <div class="grid grid-cols-3 gap-2 mt-4 text-center">
-                            <div class="bg-white rounded-lg p-3">
-                                <p class="text-xs text-gray-600">Protein</p>
-                                <p class="text-lg font-bold text-gray-900"><span id="totalProtein">0</span>g</p>
-                            </div>
-                            <div class="bg-white rounded-lg p-3">
-                                <p class="text-xs text-gray-600">Carbs</p>
-                                <p class="text-lg font-bold text-gray-900"><span id="totalCarbs">0</span>g</p>
-                            </div>
-                            <div class="bg-white rounded-lg p-3">
-                                <p class="text-xs text-gray-600">Fat</p>
-                                <p class="text-lg font-bold text-gray-900"><span id="totalFat">0</span>g</p>
-                            </div>
+                            <div class="bg-white rounded-lg p-3"><p class="text-xs text-gray-600">Protein</p><p class="text-lg font-bold text-gray-900"><span id="totalProtein">0</span>g</p></div>
+                            <div class="bg-white rounded-lg p-3"><p class="text-xs text-gray-600">Carbs</p><p class="text-lg font-bold text-gray-900"><span id="totalCarbs">0</span>g</p></div>
+                            <div class="bg-white rounded-lg p-3"><p class="text-xs text-gray-600">Fat</p><p class="text-lg font-bold text-gray-900"><span id="totalFat">0</span>g</p></div>
                         </div>
                     </div>
                 </div>
@@ -249,25 +206,22 @@
                 <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                     <h3 class="text-xl font-bold mb-4 text-gray-900">Your Targets</h3>
                     <div class="space-y-3 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Daily Calories:</span>
-                            <span class="font-bold" id="targetCal2">-</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Protein:</span>
-                            <span class="font-bold" id="targetProtein">-</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Carbs:</span>
-                            <span class="font-bold" id="targetCarbs">-</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Fat:</span>
-                            <span class="font-bold" id="targetFat">-</span>
-                        </div>
+                        <div class="flex justify-between"><span class="text-gray-600">Daily Calories:</span><span class="font-bold" id="targetCal2">-</span></div>
+                        <div class="flex justify-between"><span class="text-gray-600">Protein:</span><span class="font-bold" id="targetProtein">-</span></div>
+                        <div class="flex justify-between"><span class="text-gray-600">Carbs:</span><span class="font-bold" id="targetCarbs">-</span></div>
+                        <div class="flex justify-between"><span class="text-gray-600">Fat:</span><span class="font-bold" id="targetFat">-</span></div>
                     </div>
                 </div>
 
+                <!-- Compact Nutrition Calendar (shows daily calorie & protein, with meal breakdown on click) -->
+                <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-md font-bold text-gray-900">Nutrition Calendar</h3>
+                        <div class="flex gap-2 text-xs"><span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-purple-100 border border-purple-300"></span> Logged</span></div>
+                    </div>
+                    <div id="calendarContainer"><div class="animate-pulse text-center py-4 text-gray-400">Loading calendar...</div></div>
+                    <div id="selectedDayDetails" class="mt-4 pt-3 border-t border-gray-100 text-sm"><p class="text-gray-400 text-center text-xs">Tap a date to see meal breakdown</p></div>
+                </div>
             </div>
         </div>
     </div>
@@ -276,118 +230,99 @@
         const API_URL = 'http://localhost:5000/api';
         let userId = localStorage.getItem('user_id');
         let username = localStorage.getItem('username');
-
-        if (!userId) {
-            window.location.href = 'login.html';
-        }
-
-        document.getElementById('username').textContent = username;
-
-        // Set today's date
+        if (!userId) window.location.href = 'login.html';
+        document.getElementById('username').textContent = username || 'User';
         document.getElementById('mealDate').valueAsDate = new Date();
 
-        // Indian meals database (matching backend)
-        // ── NUTRITION SEARCH ──────────────────────────────────────────────────
-        let searchTimeout = null;
+        // Indian meals database with proper names (fixed: now meal_name is included)
+        const INDIAN_MEALS = {
+            daal_bhat_light: { name: "Daal Bhat - Light", calories: 300, protein: 12, carbs: 48, fat: 6 },
+            daal_bhat_regular: { name: "Daal Bhat - Regular", calories: 450, protein: 18, carbs: 68, fat: 10 },
+            daal_bhat_heavy: { name: "Daal Bhat - Heavy", calories: 600, protein: 24, carbs: 88, fat: 14 },
+            rajma_chawal: { name: "Rajma Chawal", calories: 480, protein: 16, carbs: 72, fat: 12 },
+            biryani: { name: "Chicken Biryani", calories: 550, protein: 25, carbs: 70, fat: 18 },
+            roti_dal: { name: "2 Roti with Dal", calories: 380, protein: 14, carbs: 55, fat: 10 },
+            paratha_curd: { name: "Paratha with Curd", calories: 420, protein: 12, carbs: 52, fat: 16 },
+            idli_sambar: { name: "Idli (2pc) with Sambar", calories: 250, protein: 8, carbs: 42, fat: 5 },
+            dosa: { name: "Plain Dosa with Chutney", calories: 320, protein: 9, carbs: 48, fat: 10 },
+            upma: { name: "Upma", calories: 280, protein: 7, carbs: 45, fat: 8 },
+            samosa: { name: "Samosa (2pc)", calories: 380, protein: 6, carbs: 42, fat: 20 },
+            poha: { name: "Poha", calories: 260, protein: 5, carbs: 45, fat: 7 },
+            butter_chicken: { name: "Butter Chicken with Naan", calories: 620, protein: 32, carbs: 55, fat: 28 },
+            chicken_rice: { name: "Grilled Chicken with Rice", calories: 480, protein: 38, carbs: 45, fat: 14 }
+        };
 
+        // Helper: round numbers to integers
+        function roundNutrition(value) { return Math.round(parseFloat(value) || 0); }
+
+        function selectQuickMeal() {
+            const selected = document.getElementById('quickMeal').value;
+            if (selected && INDIAN_MEALS[selected]) {
+                const meal = INDIAN_MEALS[selected];
+                // Auto-fill meal name and nutrition values (rounded)
+                document.getElementById('mealName').value = meal.name;
+                document.getElementById('calories').value = roundNutrition(meal.calories);
+                document.getElementById('protein').value = roundNutrition(meal.protein);
+                document.getElementById('carbs').value = roundNutrition(meal.carbs);
+                document.getElementById('fat').value = roundNutrition(meal.fat);
+                // Clear any selected food badge
+                document.getElementById('selectedFood').classList.add('hidden');
+                // Clear search field
+                document.getElementById('foodSearch').value = '';
+            }
+        }
+
+        // Food search logic (same as before, but rounds values)
+        let searchTimeout = null;
         document.getElementById('foodSearch').addEventListener('input', function() {
             const query = this.value.trim();
             clearTimeout(searchTimeout);
-
-            if (query.length < 2) {
-                document.getElementById('searchResults').classList.add('hidden');
-                return;
-            }
-
-            // Debounce — wait 400ms after user stops typing
+            if (query.length < 2) { document.getElementById('searchResults').classList.add('hidden'); return; }
             searchTimeout = setTimeout(() => searchFood(query), 400);
         });
-
-        // Close search results when clicking outside
         document.addEventListener('click', function(e) {
             if (!e.target.closest('#foodSearch') && !e.target.closest('#searchResults')) {
                 document.getElementById('searchResults').classList.add('hidden');
             }
         });
-
         async function searchFood(query) {
             document.getElementById('searchSpinner').classList.remove('hidden');
             document.getElementById('searchResults').classList.add('hidden');
-
             try {
                 const response = await fetch(`${API_URL}/nutrition/search?q=${encodeURIComponent(query)}&limit=8`);
                 const data = await response.json();
-
                 document.getElementById('searchSpinner').classList.add('hidden');
-
-                if (data.success && data.data.length > 0) {
-                    renderSearchResults(data.data);
-                } else {
-                    renderNoResults(query);
-                }
-            } catch (error) {
-                document.getElementById('searchSpinner').classList.add('hidden');
-                console.error('Search error:', error);
-            }
+                if (data.success && data.data.length > 0) renderSearchResults(data.data);
+                else renderNoResults(query);
+            } catch (error) { document.getElementById('searchSpinner').classList.add('hidden'); console.error(error); }
         }
-
         function renderSearchResults(foods) {
             const container = document.getElementById('searchResults');
             container.innerHTML = foods.map(food => `
-                <div class="px-4 py-3 hover:bg-purple-50 cursor-pointer border-b border-gray-100 last:border-0"
-                     onclick="selectFood(${JSON.stringify(food).replace(/"/g, '&quot;')})">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="font-medium text-gray-900 text-sm">${food.name}</p>
-                            <p class="text-xs text-gray-500">Per ${food.serving}</p>
-                        </div>
-                        <div class="text-right ml-4">
-                            <p class="text-purple-600 font-bold text-sm">${Math.round(food.calories)} cal</p>
-                            <p class="text-xs text-gray-500">P: ${food.protein.toFixed(1)}g</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3 mt-1">
-                        <span class="text-xs text-gray-400">Carbs: ${food.carbs.toFixed(1)}g</span>
-                        <span class="text-xs text-gray-400">Fat: ${food.fat.toFixed(1)}g</span>
-                        <span class="text-xs text-gray-400">Fiber: ${food.fiber.toFixed(1)}g</span>
-                    </div>
-                </div>
-            `).join('');
+                <div class="px-4 py-3 hover:bg-purple-50 cursor-pointer border-b border-gray-100 last:border-0" onclick='selectFood(${JSON.stringify(food).replace(/'/g, "&#39;")})'>
+                    <div class="flex justify-between items-start"><div><p class="font-medium text-gray-900 text-sm">${food.name}</p><p class="text-xs text-gray-500">Per ${food.serving}</p></div>
+                    <div class="text-right ml-4"><p class="text-purple-600 font-bold text-sm">${Math.round(food.calories)} cal</p><p class="text-xs text-gray-500">P: ${food.protein.toFixed(1)}g</p></div></div>
+                    <div class="flex gap-3 mt-1"><span class="text-xs text-gray-400">Carbs: ${food.carbs.toFixed(1)}g</span><span class="text-xs text-gray-400">Fat: ${food.fat.toFixed(1)}g</span><span class="text-xs text-gray-400">Fiber: ${food.fiber.toFixed(1)}g</span></div>
+                </div>`).join('');
             container.classList.remove('hidden');
         }
-
         function renderNoResults(query) {
-            const container = document.getElementById('searchResults');
-            container.innerHTML = `
-                <div class="px-4 py-3 text-gray-500 text-sm text-center">
-                    No results for "${query}". Try Indian Meals dropdown or enter manually.
-                </div>
-            `;
-            container.classList.remove('hidden');
+            document.getElementById('searchResults').innerHTML = `<div class="px-4 py-3 text-gray-500 text-sm text-center">No results for "${query}". Try Indian Meals or enter manually.</div>`;
+            document.getElementById('searchResults').classList.remove('hidden');
         }
-
         function selectFood(food) {
-            // Fill form fields with selected food data
             document.getElementById('mealName').value = food.name;
-            document.getElementById('calories').value = Math.round(food.calories);
-            document.getElementById('protein').value = food.protein.toFixed(1);
-            document.getElementById('carbs').value = food.carbs.toFixed(1);
-            document.getElementById('fat').value = food.fat.toFixed(1);
-
-            // Show selected food badge
+            document.getElementById('calories').value = roundNutrition(food.calories);
+            document.getElementById('protein').value = roundNutrition(food.protein);
+            document.getElementById('carbs').value = roundNutrition(food.carbs);
+            document.getElementById('fat').value = roundNutrition(food.fat);
             document.getElementById('selectedFoodName').textContent = food.name;
-            document.getElementById('selectedFoodInfo').textContent =
-                `${Math.round(food.calories)} cal | P: ${food.protein.toFixed(1)}g | C: ${food.carbs.toFixed(1)}g | F: ${food.fat.toFixed(1)}g | Per ${food.serving}`;
+            document.getElementById('selectedFoodInfo').innerHTML = `${Math.round(food.calories)} cal | P: ${food.protein.toFixed(1)}g | C: ${food.carbs.toFixed(1)}g | F: ${food.fat.toFixed(1)}g | Per ${food.serving}`;
             document.getElementById('selectedFood').classList.remove('hidden');
-
-            // Clear search
             document.getElementById('foodSearch').value = '';
             document.getElementById('searchResults').classList.add('hidden');
-
-            // Reset quick meal dropdown
             document.getElementById('quickMeal').value = '';
         }
-
         function clearSelectedFood() {
             document.getElementById('selectedFood').classList.add('hidden');
             document.getElementById('mealName').value = '';
@@ -396,25 +331,12 @@
             document.getElementById('carbs').value = '';
             document.getElementById('fat').value = '';
         }
-        // ── END NUTRITION SEARCH ──────────────────────────────────────────────
-        function selectQuickMeal() {
-            const selected = document.getElementById('quickMeal').value;
-            if (selected && INDIAN_MEALS[selected]) {
-                const meal = INDIAN_MEALS[selected];
-                document.getElementById('mealName').value = meal.name;
-                document.getElementById('calories').value = meal.calories;
-                document.getElementById('protein').value = meal.protein;
-                document.getElementById('carbs').value = meal.carbs;
-                document.getElementById('fat').value = meal.fat;
-            }
-        }
 
         // Load user's plan for targets
         async function loadTargets() {
             try {
                 const response = await fetch(`${API_URL}/user/${userId}/plan`);
                 const data = await response.json();
-                
                 if (data.success) {
                     const macros = data.data.plan_overview.macros;
                     document.getElementById('targetCalories').textContent = macros.calories;
@@ -423,124 +345,210 @@
                     document.getElementById('targetCarbs').textContent = macros.carbs_g + 'g';
                     document.getElementById('targetFat').textContent = macros.fat_g + 'g';
                 }
-            } catch (error) {
-                console.error('Error loading targets:', error);
-            }
+            } catch (error) { console.error(error); }
         }
 
-        // Load today's meals
+        // Load today's meals and totals
         async function loadTodayMeals() {
             try {
                 const today = new Date().toISOString().split('T')[0];
                 const response = await fetch(`${API_URL}/user/${userId}/meals?date=${today}`);
                 const data = await response.json();
-                
                 if (data.success && data.data.length > 0) {
                     displayMeals(data.data);
                     calculateTotals(data.data);
+                } else {
+                    document.getElementById('todayMeals').innerHTML = '<p class="text-gray-500 text-center py-8">No meals logged yet today</p>';
+                    calculateTotals([]);
                 }
-            } catch (error) {
-                console.error('Error loading meals:', error);
-            }
+            } catch (error) { console.error(error); }
         }
 
         function displayMeals(meals) {
             const container = document.getElementById('todayMeals');
-            
-            if (meals.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-center py-8">No meals logged yet today</p>';
-                return;
-            }
-
-            const html = meals.map(meal => `
+            if (meals.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center py-8">No meals logged yet today</p>'; return; }
+            container.innerHTML = meals.map(meal => `
                 <div class="border border-gray-200 rounded-lg p-4">
                     <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <span class="text-xs font-medium text-purple-600 uppercase">${meal.meal_type}</span>
-                            <h4 class="font-bold text-gray-900">${meal.meal_name}</h4>
-                        </div>
-                        <span class="text-purple-600 font-bold">${meal.calories} cal</span>
+                        <div><span class="text-xs font-medium text-purple-600 uppercase">${meal.meal_type}</span><h4 class="font-bold text-gray-900">${meal.meal_name}</h4></div>
+                        <span class="text-purple-600 font-bold">${Math.round(meal.calories)} cal</span>
                     </div>
-                    <div class="text-sm text-gray-600">
-                        P: ${meal.protein}g | C: ${meal.carbs}g | F: ${meal.fat}g
-                    </div>
-                </div>
-            `).join('');
-            
-            container.innerHTML = html;
+                    <div class="text-sm text-gray-600">P: ${Math.round(meal.protein)}g | C: ${Math.round(meal.carbs)}g | F: ${Math.round(meal.fat)}g</div>
+                </div>`).join('');
         }
 
         function calculateTotals(meals) {
             const totals = meals.reduce((acc, meal) => ({
-                calories: acc.calories + meal.calories,
-                protein: acc.protein + meal.protein,
-                carbs: acc.carbs + meal.carbs,
-                fat: acc.fat + meal.fat
-            }), {calories: 0, protein: 0, carbs: 0, fat: 0});
-
+                calories: acc.calories + (meal.calories || 0),
+                protein: acc.protein + (meal.protein || 0),
+                carbs: acc.carbs + (meal.carbs || 0),
+                fat: acc.fat + (meal.fat || 0)
+            }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
             document.getElementById('totalCalories').textContent = Math.round(totals.calories);
             document.getElementById('totalProtein').textContent = Math.round(totals.protein);
             document.getElementById('totalCarbs').textContent = Math.round(totals.carbs);
             document.getElementById('totalFat').textContent = Math.round(totals.fat);
-
-            // Update calorie bar
             const target = parseInt(document.getElementById('targetCalories').textContent) || 2000;
             const percentage = Math.min((totals.calories / target) * 100, 100);
             document.getElementById('calorieBar').style.width = percentage + '%';
         }
 
-        // Submit meal
+        // Submit meal with rounded values
         document.getElementById('mealForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Logging...';
+            document.getElementById('errorMessage').classList.add('hidden');
+            document.getElementById('successMessage').classList.add('hidden');
 
+            const mealName = document.getElementById('mealName').value.trim();
+            if (!mealName) {
+                document.getElementById('errorMessage').textContent = 'Please enter a meal name';
+                document.getElementById('errorMessage').classList.remove('hidden');
+                btn.disabled = false; btn.textContent = 'Log Meal'; return;
+            }
             const mealData = {
                 meal_type: document.getElementById('mealType').value,
-                meal_name: document.getElementById('mealName').value,
-                calories: parseFloat(document.getElementById('calories').value),
-                protein: parseFloat(document.getElementById('protein').value),
-                carbs: parseFloat(document.getElementById('carbs').value),
-                fat: parseFloat(document.getElementById('fat').value),
+                meal_name: mealName,
+                calories: roundNutrition(document.getElementById('calories').value),
+                protein: roundNutrition(document.getElementById('protein').value),
+                carbs: roundNutrition(document.getElementById('carbs').value),
+                fat: roundNutrition(document.getElementById('fat').value),
                 date: document.getElementById('mealDate').value
             };
-
+            if (!mealData.meal_type) {
+                document.getElementById('errorMessage').textContent = 'Please select meal type';
+                document.getElementById('errorMessage').classList.remove('hidden');
+                btn.disabled = false; btn.textContent = 'Log Meal'; return;
+            }
             try {
                 const response = await fetch(`${API_URL}/user/${userId}/meals`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(mealData)
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mealData)
                 });
-
                 const data = await response.json();
-
                 if (data.success) {
                     document.getElementById('successMessage').classList.remove('hidden');
-                    setTimeout(() => {
-                        document.getElementById('successMessage').classList.add('hidden');
-                    }, 3000);
-
-                    // Reset form
+                    setTimeout(() => document.getElementById('successMessage').classList.add('hidden'), 3000);
                     document.getElementById('mealForm').reset();
                     document.getElementById('mealDate').valueAsDate = new Date();
                     document.getElementById('quickMeal').value = '';
-
-                    // Reload meals
-                    loadTodayMeals();
+                    clearSelectedFood();
+                    await loadTodayMeals();
+                    await loadMonthlyCalendarData(); // refresh calendar
+                } else {
+                    document.getElementById('errorMessage').textContent = data.message || 'Failed to log meal';
+                    document.getElementById('errorMessage').classList.remove('hidden');
                 }
             } catch (error) {
-                console.error('Error logging meal:', error);
-                alert('Error logging meal');
+                document.getElementById('errorMessage').textContent = 'Network error';
+                document.getElementById('errorMessage').classList.remove('hidden');
+            } finally {
+                btn.disabled = false; btn.textContent = 'Log Meal';
             }
         });
 
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'index.html';
+        // ---------- CALENDAR (shows daily calories & protein, meal breakdown on click) ----------
+        let currentCalendarDate = new Date();
+        let allMealsByDate = new Map(); // stores { totalCal, totalProtein, meals: [{meal_name, meal_type, calories, protein, carbs, fat}] }
+
+        async function loadMonthlyCalendarData() {
+            try {
+                // Fetch all meals for the current month (we'll fetch summary? but better fetch from /meals?month)
+                const year = currentCalendarDate.getFullYear();
+                const month = currentCalendarDate.getMonth() + 1;
+                const response = await fetch(`${API_URL}/user/${userId}/meals?month=${year}-${String(month).padStart(2,'0')}`);
+                const data = await response.json();
+                if (data.success && data.data) {
+                    const meals = data.data;
+                    const map = new Map();
+                    meals.forEach(meal => {
+                        const date = meal.date.split('T')[0];
+                        if (!map.has(date)) map.set(date, { totalCal: 0, totalProtein: 0, meals: [] });
+                        const entry = map.get(date);
+                        entry.totalCal += Math.round(meal.calories);
+                        entry.totalProtein += Math.round(meal.protein);
+                        entry.meals.push({
+                            name: meal.meal_name,
+                            type: meal.meal_type,
+                            calories: Math.round(meal.calories),
+                            protein: Math.round(meal.protein),
+                            carbs: Math.round(meal.carbs),
+                            fat: Math.round(meal.fat)
+                        });
+                    });
+                    allMealsByDate = map;
+                } else {
+                    allMealsByDate = new Map();
+                }
+                renderCalendar();
+            } catch (e) { console.error(e); allMealsByDate = new Map(); renderCalendar(); }
         }
 
-        // Load on page load
+        function renderCalendar() {
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const startWeekday = firstDay.getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const todayYMD = new Date().toISOString().split('T')[0];
+            let html = `<div class="flex justify-between items-center mb-3"><button type="button" id="prevMonthCalBtn" class="bg-gray-100 hover:bg-gray-200 rounded-full p-1 w-7 h-7 flex items-center justify-center text-gray-600 text-sm">←</button>
+                <span class="font-semibold text-gray-800 text-sm">${firstDay.toLocaleString('default', { month: 'short' })} ${year}</span>
+                <button type="button" id="nextMonthCalBtn" class="bg-gray-100 hover:bg-gray-200 rounded-full p-1 w-7 h-7 flex items-center justify-center text-gray-600 text-sm">→</button></div>`;
+            html += `<div class="calendar-grid">`;
+            const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            weekdays.forEach(day => html += `<div class="weekday">${day}</div>`);
+            for (let i = 0; i < startWeekday; i++) html += `<div class="cal-day bg-gray-50/30 opacity-30"></div>`;
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const hasData = allMealsByDate.has(dateStr);
+                const dayData = allMealsByDate.get(dateStr);
+                const calTotal = dayData ? dayData.totalCal : 0;
+                const proteinTotal = dayData ? dayData.totalProtein : 0;
+                const isToday = dateStr === todayYMD;
+                let addClass = hasData ? 'has-meal' : '';
+                if (isToday) addClass += ' today-ring';
+                html += `<div class="cal-day ${addClass}" data-date="${dateStr}" data-cal="${calTotal}" data-protein="${proteinTotal}" data-meals='${JSON.stringify(dayData ? dayData.meals : [])}'>
+                    <div class="cal-num">${d}</div>
+                    ${calTotal > 0 ? `<div class="cal-badge">${calTotal}</div>` : ''}
+                    ${proteinTotal > 0 ? `<div class="text-[9px] text-purple-500 mt-0.5">${proteinTotal}p</div>` : ''}
+                </div>`;
+            }
+            html += `</div>`;
+            document.getElementById('calendarContainer').innerHTML = html;
+            document.querySelectorAll('.cal-day[data-date]').forEach(el => {
+                el.addEventListener('click', () => {
+                    const date = el.getAttribute('data-date');
+                    const cal = el.getAttribute('data-cal');
+                    const protein = el.getAttribute('data-protein');
+                    const mealsJson = el.getAttribute('data-meals');
+                    let meals = [];
+                    try { meals = JSON.parse(mealsJson); } catch(e) { meals = []; }
+                    showMealDetails(date, cal, protein, meals);
+                });
+            });
+            document.getElementById('prevMonthCalBtn')?.addEventListener('click', () => { currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1); loadMonthlyCalendarData(); });
+            document.getElementById('nextMonthCalBtn')?.addEventListener('click', () => { currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1); loadMonthlyCalendarData(); });
+        }
+
+        function showMealDetails(date, totalCal, totalProtein, meals) {
+            const panel = document.getElementById('selectedDayDetails');
+            if (!meals || meals.length === 0) {
+                panel.innerHTML = `<div class="bg-gray-50 rounded-lg p-2 text-center"><p class="font-semibold text-gray-700 text-xs">${formatDateDisplay(date)}</p><p class="text-purple-600 text-sm mt-1">0 calories | 0g protein</p><p class="text-gray-400 text-xs mt-1">No meals logged</p></div>`;
+                return;
+            }
+            let mealsHtml = meals.map(m => `<div class="flex justify-between items-center py-1.5 border-b border-gray-100 last:border-0"><div><span class="font-medium text-gray-800 text-xs">${m.name}</span><div class="flex gap-2 text-xs text-gray-500"><span>${m.type}</span></div></div><div class="text-right"><span class="text-purple-600 font-semibold text-xs">${m.calories} cal</span><div class="text-[10px] text-gray-400">P:${m.protein}g C:${m.carbs}g F:${m.fat}g</div></div></div>`).join('');
+            panel.innerHTML = `<div class="bg-purple-50/30 rounded-lg p-2"><div class="flex justify-between items-center"><h3 class="font-bold text-gray-800 text-sm">${formatDateDisplay(date)}</h3><div><span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold">${totalCal} cal</span><span class="ml-1 bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold">${totalProtein}p</span></div></div><div class="mt-2 space-y-1 max-h-36 overflow-y-auto">${mealsHtml}</div></div>`;
+        }
+
+        function formatDateDisplay(ymd) { const [y,m,d] = ymd.split('-'); return new Date(Date.UTC(y,m-1,d)).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+        // Initialize
         loadTargets();
         loadTodayMeals();
+        loadMonthlyCalendarData();
     </script>
-
 </body>
 </html>
