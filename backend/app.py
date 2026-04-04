@@ -142,7 +142,7 @@ NUTRITION_DF = None
 def load_nutrition_data():
     global NUTRITION_DF
     try:
-        df = pd.read_csv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'nutrition.csv'))
+        df = pd.read_csv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'food.csv'))
         NUTRITION_DF = df
         print(f" Nutrition database loaded: {len(df)} foods")
     except Exception as e:
@@ -606,13 +606,13 @@ def search_nutrition():
         foods = []
         for _, row in results.iterrows():
             foods.append({
-                'name':     row['name'],
-                'serving':  row.get('serving_size', '100g'),
-                'calories': parse_numeric(row.get('calories', 0)),
-                'protein':  parse_numeric(row.get('protein', 0)),
-                'carbs':    parse_numeric(row.get('carbohydrate', 0)),
-                'fat':      parse_numeric(row.get('fat', 0)),
-                'fiber':    parse_numeric(row.get('fiber', 0)),
+                'name':       row['name'],
+                'serving':    row.get('serving_size', '100g'),
+                'calories':   parse_numeric(row.get('calories', 0)),
+                'protein':    parse_numeric(row.get('protein', 0)),
+                'carbs':      parse_numeric(row.get('carbohydrate', 0)),
+                'fat':        parse_numeric(row.get('fat', 0)),
+                'fiber':      parse_numeric(row.get('fiber', 0)),
             })
  
         return create_response(True, f'Found {len(foods)} results', foods)
@@ -624,3 +624,4 @@ if __name__ == '__main__':
     print(" http://localhost:5000")
     print(" Health: http://localhost:5000/api/health")
     app.run(debug=True, host='0.0.0.0', port=5000)
+

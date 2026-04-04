@@ -333,12 +333,17 @@ class FitnessAgent:
     # PRIVATE HELPERS
     
     def _predict_weight(self, X_raw: np.ndarray, user_id: str = None) -> float:
-        """Use pFL model if available, else basic model."""
+        """Use pFL model with Differential Privacy noise (ε=5.0)."""
         if self.use_pfl and self.weight_scaler:
             X_scaled = self.weight_scaler.transform(X_raw)
-            return float(self.weight_model.predict(X_scaled, user_id)[0])
+            prediction = float(self.weight_model.predict(X_scaled, user_id)[0])
         else:
-            return float(self.weight_model.predict(X_raw)[0])
+            prediction = float(self.weight_model.predict(X_raw)[0])
+
+            # Apply Differential Privacy — Laplace mechanism (ε=5.0)
+        dp_noise  = np.random.laplace(0, 1.0 / 5.0)
+        prediction = round(prediction + dp_noise, 2)
+        return prediction
 
     def _prepare_adherence_input(self, user_profile: Dict) -> np.ndarray:
         tdee = user_profile['tdee']
