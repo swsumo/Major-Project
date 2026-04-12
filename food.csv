@@ -28,7 +28,7 @@ Dal Baati Churma,300 g,650,18.0g,88.0g,24.0g,10.0g,580mg
 Margherita Pizza (1 slice),100 ml,285,12.0g,34.0g,11.0g,2.0g,520mg
 Kadhi Pakora,200 g,300,10.0g,28.0g,16.0g,3.0g,580mg
 Chicken Biryani,500 g,520,28.0g,65.0g,18.0g,2.0g,890mg
- ,200 g,280,6.0g,42.0g,9.0g,3.5g,490mg
+Dabeli,200 g,280,6.0g,42.0g,9.0g,3.5g,490mg
 Cherries,200 g,50,1.0g,12.0g,0.3g,1.6g,0mg
 Chow Mein,100 ml,360,8.5g,50.0g,14.0g,3.0g,750mg
 Milk (Toned),250 g,100,6.6g,9.8g,4.4g,0g,110mg
@@ -131,7 +131,6 @@ Lobia,100 ml,240,12.0g,36.0g,6.0g,8.5g,430mg
 Butterscotch Cake (1 slice),50 ml,300,3.5g,40.0g,14.0g,0.5g,190mg
 Corn Flakes with Milk,100 g,210,7.0g,38.0g,4.0g,2.0g,180mg
 Mysore Pak (1 pc),150 g,130,2.0g,16.0g,6.5g,0.2g,15mg
-Mysore Pak (1 pc),200 ml,130,2.0g,16.0g,6.5g,0.2g,15mg
 Mutter Mushroom,200 g,200,5.0g,18.0g,11.0g,4.5g,430mg
 Soya Chaap (2 pcs),200 ml,350,28.0g,20.0g,18.0g,6.0g,490mg
 Idli (2 pieces),300 g,120,4.0g,24.0g,0.5g,2.0g,280mg
@@ -478,7 +477,7 @@ Chicken Noodles - Home Style,150 g,440,22.0g,50.0g,17.0g,2.0g,820mg
 Onion Dosa - Mild,200 ml,310,6.5g,44.0g,11.5g,2.5g,490mg
 Chole Bhature - Extra Cheese,150 g,580,15.0g,78.0g,24.0g,8.0g,890mg
 Chicken Biryani,200 ml,520,28.0g,65.0g,18.0g,2.0g,890mg
-Chocolate Chip Cookie - Spicy,50 ml,120,1.5g,16.0g,6.0g,0.5g,50mg
+Chocolate Chip Cookie ,50 ml,120,1.5g,16.0g,6.0g,0.5g,50mg
 French Beans - Mild,300 g,31,1.8g,7.0g,0.1g,3.4g,6mg
 Thatte Idli,100 ml,200,5.5g,36.0g,4.5g,2.5g,360mg
 Laddu (1 pc) - Restaurant Style,150 ml,150,3.5g,18.0g,7.5g,1.0g,20mg
@@ -496,23 +495,23 @@ Mushroom Pulao - Street Style,250 g,300,7.0g,50.0g,8.0g,3.5g,440mg
 Veg Pasta - Extra Cheese,500 g,330,9.0g,50.0g,10.0g,3.5g,460mg
 Drumstick,300 g,64,2.1g,8.5g,0.2g,3.2g,8mg
 Chicken Dim Sums - Extra Cheese,150 g,240,14.0g,28.0g,8.0g,1.5g,420mg
-Brownie (1 piece) - Spicy,150 g,220,2.5g,28.0g,11.0g,1.0g,100mg
-Bread Omlette - Spicy,200 g,290,12.0g,28.0g,15.0g,2.0g,480mg
+Brownie (1 piece),150 g,220,2.5g,28.0g,11.0g,1.0g,100mg
+Bread Omlette ,200 g,290,12.0g,28.0g,15.0g,2.0g,480mg
 Ragda Pattice - Extra Cheese,150 ml,310,8.0g,48.0g,10.0g,6.0g,540mg
 Bread Omlette,250 g,290,12.0g,28.0g,15.0g,2.0g,480mg
-Jalebi Fafda - Spicy,200 g,380,7.0g,50.0g,17.0g,2.5g,520mg
+Jalebi Fafda ,200 g,380,7.0g,50.0g,17.0g,2.5g,520mg
 Prawn Dim Sums - Home Style,100 g,230,13.0g,28.0g,8.0g,1.0g,440mg
 Tofu Butter Masala,50 ml,400,14.0g,14.0g,32.0g,3.5g,590mg
-Sabudana Vada - Spicy,100 ml,230,4.0g,38.0g,7.0g,2.5g,340mg
+Sabudana Vada ,100 ml,230,4.0g,38.0g,7.0g,2.5g,340mg
 Drumstick,500 g,64,2.1g,8.5g,0.2g,3.2g,8mg
 Tangdi Kabab (2 pcs) - Extra Cheese,200 ml,440,38.0g,5.0g,29.0g,0.5g,680mg
 Egg Curry - Street Style,250 g,290,12.0g,10.0g,22.0g,1.5g,490mg
-Dahi Vada - Spicy,200 ml,290,7.0g,38.0g,12.0g,3.0g,420mg
+Dahi Vada,200 ml,290,7.0g,38.0g,12.0g,3.0g,420mg
 Khakhra (1 pc) - Home Style,150 ml,70,2.0g,10.0g,2.5g,1.5g,80mg
 Jam (1 tbsp) - Home Style,50 ml,55,0.1g,14.0g,0g,0.2g,2mg
 Pear - Home Style,200 g,81,0.6g,21.5g,0.2g,4.6g,1mg
 Dal Baati Churma - Spicy,300 g,650,18.0g,88.0g,24.0g,10.0g,580mg
-Milk (Toned) - Spicy,100 ml,100,6.6g,9.8g,4.4g,0g,110mg
+Milk (Toned),100 ml,100,6.6g,9.8g,4.4g,0g,110mg
 Flax Seeds (Alsi) - Extra Cheese,200 ml,75,2.5g,4.0g,6.0g,4.0g,2mg
 Pav Bhaji - Home Style,250 g,380,9.0g,52.0g,16.0g,7.0g,620mg
 Honey (1 tbsp) - Restaurant Style,100 g,64,0.1g,17.3g,0g,0g,1mg
@@ -521,8 +520,7 @@ Cream Crackers (2 pcs) - Street Style,250 g,75,1.2g,10.0g,3.0g,0.5g,70mg
 Veg Biryani - Extra Cheese,500 g,450,10.0g,72.0g,13.0g,5.0g,720mg
 Galouti Kabab (4 pcs) - Mild,100 ml,420,18.0g,14.0g,32.0g,1.5g,480mg
 Rajma Masala - Extra Cheese,50 ml,260,12.0g,32.0g,9.0g,8.0g,490mg
-Kadhi Pakora - Spicy,300 g,300,10.0g,28.0g,16.0g,3.0g,580mg
-Orange - Extra Cheese,500 g,62,1.2g,15.4g,0.2g,3.1g,0mg
+Kadhi Pakora,300 g,300,10.0g,28.0g,16.0g,3.0g,580mg
 Cheddar Cheese - Street Style,50 ml,120,7.0g,0.5g,10.0g,0g,180mg
 Rye Bread (2 slices) - Street Style,200 g,150,5.5g,28.0g,2.0g,4.0g,310mg
 Chole Bhature - Street Style,150 g,580,15.0g,78.0g,24.0g,8.0g,890mg
@@ -530,7 +528,7 @@ Tofu Matar - Restaurant Style,200 g,280,15.0g,18.0g,16.0g,4.0g,480mg
 Rajma Masala - Restaurant Style,250 g,260,12.0g,32.0g,9.0g,8.0g,490mg
 Veg McNuggets (6 pcs) - Street Style,200 ml,230,8.0g,22.0g,12.0g,2.5g,440mg
 Poha Jalebi - Home Style,500 g,380,5.0g,62.0g,13.0g,2.5g,360mg
-Bhatura - Spicy,150 g,320,7.0g,42.0g,14.0g,2.0g,410mg
+Bhatura ,150 g,320,7.0g,42.0g,14.0g,2.0g,410mg
 Fafda - Home Style,100 g,220,5.0g,28.0g,10.0g,2.0g,480mg
 Capsicum (Green) - Extra Cheese,500 g,20,0.9g,4.6g,0.2g,1.7g,3mg
 Brownie (1 piece) - Extra Cheese,150 ml,220,2.5g,28.0g,11.0g,1.0g,100mg
@@ -542,7 +540,7 @@ Lobia - Restaurant Style,500 g,240,12.0g,36.0g,6.0g,8.5g,430mg
 Bataka Vada - Restaurant Style,200 g,290,6.0g,38.0g,12.0g,3.0g,480mg
 Chicken Spring Roll - Street Style,200 g,270,12.0g,28.0g,12.0g,2.0g,490mg
 Singapore Noodles,200 g,370,9.0g,54.0g,12.5g,3.0g,740mg
-Oreo (2 pcs) - Spicy,500 g,110,1.0g,16.0g,5.0g,0.5g,75mg
+Oreo (2 pcs),500 g,110,1.0g,16.0g,5.0g,0.5g,75mg
 Red Velvet Cake (1 slice) - Street Style,150 g,320,4.5g,42.0g,15.0g,1.0g,220mg
 Sweet Potato - Home Style,500 g,86,1.6g,20.1g,0.1g,3.0g,55mg
 Veg McNuggets (6 pcs),150 g,230,8.0g,22.0g,12.0g,2.5g,440mg
@@ -555,17 +553,17 @@ Gujarati Dal - Home Style,250 g,200,8.0g,28.0g,6.0g,5.0g,440mg
 Bread Omlette - Extra Cheese,200 ml,290,12.0g,28.0g,15.0g,2.0g,480mg
 Lychee - Mild,200 g,66,0.8g,16.5g,0.4g,1.3g,1mg
 Afghani Chaap - Street Style,100 ml,420,24.0g,16.0g,30.0g,3.5g,540mg
-Cranberries - Spicy,300 g,46,0.4g,12.0g,0.1g,4.6g,2mg
+Cranberries,300 g,46,0.4g,12.0g,0.1g,4.6g,2mg
 Mysore Pak (1 pc) - Restaurant Style,300 g,130,2.0g,16.0g,6.5g,0.2g,15mg
 Jackfruit - Restaurant Style,150 ml,95,1.7g,23.3g,0.6g,1.5g,2mg
 Mutton Biryani - Street Style,500 g,580,32.0g,62.0g,22.0g,1.5g,920mg
-Marie Biscuit (4 pcs) - Spicy,100 ml,90,1.5g,14.0g,3.0g,0.5g,60mg
+Marie Biscuit (4 pcs),100 ml,90,1.5g,14.0g,3.0g,0.5g,60mg
 Undhiyu - Restaurant Style,150 g,280,6.0g,32.0g,14.0g,8.0g,440mg
 Oats Porridge - Street Style,300 g,160,6.0g,28.0g,3.0g,4.0g,40mg
 Beetroot,500 g,43,1.6g,9.6g,0.2g,2.8g,78mg
 Chicken Dim Sums - Street Style,100 ml,240,14.0g,28.0g,8.0g,1.5g,420mg
-Panchmel Dal - Spicy,150 g,240,10.0g,27.0g,10.5g,5.5g,470mg
-Nutella (1 tbsp) - Spicy,200 ml,100,1.2g,11.0g,5.5g,0.5g,8mg
+Panchmel Dal ,150 g,240,10.0g,27.0g,10.5g,5.5g,470mg
+Nutella (1 tbsp) ,200 ml,100,1.2g,11.0g,5.5g,0.5g,8mg
 Cantaloupe - Restaurant Style,100 g,34,0.8g,8.2g,0.2g,0.9g,16mg
 Shami Kabab (4 pcs) - Street Style,200 ml,380,22.0g,16.0g,25.0g,2.0g,540mg
 Dabeli - Mild,500 g,280,6.0g,42.0g,9.0g,3.5g,490mg
@@ -582,8 +580,8 @@ Chicken Spring Roll - Mild,500 g,270,12.0g,28.0g,12.0g,2.0g,490mg
 Gobi Paratha,200 g,320,9.0g,46.0g,11.0g,5.0g,350mg
 Cheesecake (1 slice) - Street Style,50 ml,350,7.0g,30.0g,22.0g,0.5g,280mg
 Tofu Korma - Extra Cheese,150 ml,340,14.0g,20.0g,24.0g,3.0g,540mg
-Kanda Bhaji - Spicy,200 ml,280,4.0g,32.0g,15.0g,3.0g,460mg
-Flavored Yogurt (Strawberry) - Spicy,200 g,110,3.0g,18.0g,2.5g,0g,40mg
+Kanda Bhaji,200 ml,280,4.0g,32.0g,15.0g,3.0g,460mg
+Flavored Yogurt (Strawberry) ,200 g,110,3.0g,18.0g,2.5g,0g,40mg
 Bottle Gourd - Restaurant Style,200 ml,14,0.6g,3.4g,0.1g,0.6g,2mg
 Pistachios (Pista) - Extra Cheese,150 g,160,5.8g,8.0g,12.5g,3.0g,1mg
 Rajasthani Dal - Street Style,100 ml,250,10.5g,26.0g,11.0g,5.5g,510mg
@@ -601,16 +599,16 @@ Donut (Chocolate) - Home Style,200 g,300,5.0g,34.0g,16.0g,1.0g,240mg
 Dal Baati Churma - Home Style,300 g,650,18.0g,88.0g,24.0g,10.0g,580mg
 Plum - Mild,250 g,30,0.5g,7.5g,0.2g,0.9g,0mg
 Chole Bhature - Mild,100 ml,580,15.0g,78.0g,24.0g,8.0g,890mg
-Rasgulla (2 pcs) - Spicy,250 g,150,4.0g,28.0g,2.5g,0g,35mg
+Rasgulla (2 pcs),250 g,150,4.0g,28.0g,2.5g,0g,35mg
 Gajar Ka Halwa - Extra Cheese,100 ml,260,4.0g,38.0g,10.0g,2.5g,50mg
-Cluster Beans - Spicy,500 g,41,3.2g,7.7g,0.2g,3.5g,4mg
+Cluster Beans ,500 g,41,3.2g,7.7g,0.2g,3.5g,4mg
 Mohanthal,300 g,240,5.0g,32.0g,11.0g,1.0g,30mg
 Apricots (Dried),100 ml,70,1.0g,18.0g,0.1g,2.0g,2mg
 Cluster Beans,100 ml,41,3.2g,7.7g,0.2g,3.5g,4mg
 Mutton Rogan Josh - Home Style,250 g,520,28.0g,10.0g,42.0g,1.0g,680mg
 Tomato Rice - Spicy,200 g,270,5.0g,50.0g,5.0g,2.5g,490mg
 Vanilla Cake (1 slice),250 g,220,3.0g,32.0g,9.0g,0.5g,180mg
-Okra (Bhindi) - Spicy,250 g,33,1.9g,7.5g,0.2g,3.2g,7mg
+Okra (Bhindi),250 g,33,1.9g,7.5g,0.2g,3.2g,7mg
 Bhatura - Home Style,100 g,320,7.0g,42.0g,14.0g,2.0g,410mg
 Sabudana Vada - Mild,500 g,230,4.0g,38.0g,7.0g,2.5g,340mg
 Raj Kachori - Home Style,500 g,350,7.0g,48.0g,15.0g,4.5g,520mg
@@ -627,14 +625,14 @@ Vada (2 pieces) - Spicy,250 g,250,6.0g,28.0g,13.0g,3.0g,450mg
 Egg Noodles - Restaurant Style,100 ml,390,14.0g,52.0g,14.0g,2.0g,780mg
 Kala Chana - Extra Cheese,150 ml,250,13.0g,34.0g,7.0g,9.0g,450mg
 Gatte ki Sabzi - Home Style,100 ml,260,8.0g,20.0g,16.0g,4.0g,520mg
-Sesame Seeds (Til) - Spicy,500 g,90,2.5g,4.0g,8.0g,1.5g,2mg
+Sesame Seeds (Til),500 g,90,2.5g,4.0g,8.0g,1.5g,2mg
 Matar Pulao - Extra Cheese,100 ml,290,7.5g,52.0g,6.0g,3.5g,400mg
-Banana - Spicy,50 ml,105,1.3g,27.0g,0.4g,3.1g,1mg
+Banana,50 ml,105,1.3g,27.0g,0.4g,3.1g,1mg
 Okra (Bhindi),500 g,33,1.9g,7.5g,0.2g,3.2g,7mg
 Fish Curry - Spicy,100 ml,340,22.0g,10.0g,23.0g,1.5g,540mg
 Chicken Biryani - Extra Cheese,100 ml,520,28.0g,65.0g,18.0g,2.0g,890mg
-White Bread (2 slices) - Spicy,150 g,160,5.0g,28.0g,2.5g,1.0g,300mg
-Kachori (1 pc) - Spicy,500 g,260,5.0g,30.0g,13.0g,2.5g,340mg
+White Bread (2 slices) ,150 g,160,5.0g,28.0g,2.5g,1.0g,300mg
+Kachori (1 pc),500 g,260,5.0g,30.0g,13.0g,2.5g,340mg
 Arrabbiata Pasta - Extra Cheese,200 ml,320,8.5g,52.0g,8.5g,4.5g,510mg
 Medu Vada,200 g,270,6.5g,30.0g,14.0g,3.5g,480mg
 Pav Bhaji - Street Style,250 g,380,9.0g,52.0g,16.0g,7.0g,620mg
@@ -646,14 +644,14 @@ Brown Bread (2 slices) - Restaurant Style,200 ml,140,6.0g,24.0g,2.0g,3.0g,280mg
 Veg Extravaganza (1 slice) - Mild,50 ml,320,12.0g,38.0g,13.5g,3.0g,620mg
 Chicken Spring Roll - Street Style,250 g,270,12.0g,28.0g,12.0g,2.0g,490mg
 Banana - Home Style,150 g,105,1.3g,27.0g,0.4g,3.1g,1mg
-Veg McNuggets (6 pcs) - Spicy,500 g,230,8.0g,22.0g,12.0g,2.5g,440mg
+Veg McNuggets (6 pcs),500 g,230,8.0g,22.0g,12.0g,2.5g,440mg
 Plum - Home Style,200 ml,30,0.5g,7.5g,0.2g,0.9g,0mg
 Capsicum (Green) - Home Style,250 g,20,0.9g,4.6g,0.2g,1.7g,3mg
 Curd Rice - Street Style,300 g,220,6.0g,38.0g,4.5g,2.0g,310mg
 Greek Yogurt,500 g,100,10.0g,4.0g,5.0g,0g,35mg
 Star Fruit,50 ml,28,0.9g,6.0g,0.3g,2.5g,2mg
 Butter Chicken - Extra Cheese,150 ml,485,22.4g,12.6g,38.2g,1.8g,720mg
-Akki Roti - Spicy,200 g,220,5.0g,40.0g,4.5g,3.0g,290mg
+Akki Roti,200 g,220,5.0g,40.0g,4.5g,3.0g,290mg
 Butterscotch Cake (1 slice) - Restaurant Style,150 g,300,3.5g,40.0g,14.0g,0.5g,190mg
 Kanda Bhaji - Home Style,250 g,280,4.0g,32.0g,15.0g,3.0g,460mg
 Cauliflower - Street Style,150 g,25,1.9g,5.0g,0.3g,2.0g,30mg
@@ -668,22 +666,22 @@ Bhel Puri - Mild,100 ml,210,4.0g,40.0g,5.0g,3.5g,340mg
 Schezwan Noodles - Street Style,300 g,380,8.0g,56.0g,13.0g,3.5g,880mg
 Moong Dal Halwa - Street Style,150 ml,350,8.0g,45.0g,16.0g,3.0g,40mg
 Cheese Slice - Home Style,50 ml,70,4.5g,1.0g,5.5g,0g,180mg
-Mohanthal - Spicy,200 ml,240,5.0g,32.0g,11.0g,1.0g,30mg
+Mohanthal ,200 ml,240,5.0g,32.0g,11.0g,1.0g,30mg
 Guava - Restaurant Style,100 ml,68,2.6g,14.3g,1.0g,5.4g,2mg
-Cottage Cheese (Paneer) - Spicy,100 ml,265,18.0g,6.0g,18.0g,0g,150mg
+Cottage Cheese (Paneer),100 ml,265,18.0g,6.0g,18.0g,0g,150mg
 Mutton Biryani - Home Style,50 ml,580,32.0g,62.0g,22.0g,1.5g,920mg
-Donut (Chocolate) - Street Style,150 g,300,5.0g,34.0g,16.0g,1.0g,240mg
-Khandvi (4 pcs) - Restaurant Style,50 ml,150,5.0g,24.0g,4.0g,2.0g,380mg
+Donut (Chocolate),150 g,300,5.0g,34.0g,16.0g,1.0g,240mg
+Khandvi (4 pcs) ,50 ml,150,5.0g,24.0g,4.0g,2.0g,380mg
 Broccoli - Mild,150 ml,34,2.8g,6.6g,0.4g,2.6g,33mg
 Bread Omlette - Street Style,200 g,290,12.0g,28.0g,15.0g,2.0g,480mg
-Chicken McNuggets (6 pcs) - Street Style,200 g,270,15.0g,16.0g,16.0g,1.0g,500mg
+Chicken McNuggets (6 pcs),200 g,270,15.0g,16.0g,16.0g,1.0g,500mg
 Tofu Palak - Extra Cheese,100 ml,300,16.0g,12.0g,22.0g,4.5g,510mg
-Grapes - Extra Cheese,100 g,69,0.7g,18.0g,0.2g,0.9g,2mg
-Mutton Rogan Josh - Street Style,100 g,520,28.0g,10.0g,42.0g,1.0g,680mg
+Grapes,100 g,69,0.7g,18.0g,0.2g,0.9g,2mg
+Mutton Rogan Josh,100 g,520,28.0g,10.0g,42.0g,1.0g,680mg
 Galouti Kabab (4 pcs) - Street Style,50 ml,420,18.0g,14.0g,32.0g,1.5g,480mg
 Chicken Sausage Pizza (1 slice) - Mild,50 ml,330,15.0g,32.0g,16.0g,1.5g,720mg
-Cashews (Kaju) - Spicy,200 g,160,5.2g,9.0g,12.0g,1.0g,5mg
-Gujarati Dal - Extra Cheese,100 g,200,8.0g,28.0g,6.0g,5.0g,440mg
+Cashews (Kaju) ,200 g,160,5.2g,9.0g,12.0g,1.0g,5mg
+Gujarati Dal,100 g,200,8.0g,28.0g,6.0g,5.0g,440mg
 Blueberries - Mild,250 g,57,0.7g,14.5g,0.3g,2.4g,1mg
 Chicken Pasta - Mild,200 g,420,22.0g,48.0g,16.0g,2.5g,590mg
 Raisins (Kishmish),300 g,90,1.0g,24.0g,0.1g,1.0g,5mg
@@ -693,14 +691,14 @@ Salty Lassi - Home Style,100 g,120,4.0g,20.0g,3.0g,0g,260mg
 Capsicum (Green) - Restaurant Style,100 g,20,0.9g,4.6g,0.2g,1.7g,3mg
 Palak Dal,200 g,220,10.0g,22.0g,10.0g,5.0g,460mg
 Medu Vada - Home Style,500 g,270,6.5g,30.0g,14.0g,3.5g,480mg
-Butter Cookie (2 pcs) - Extra Cheese,100 g,95,1.0g,12.0g,5.0g,0.2g,30mg
+Butter Cookie (2 pcs) ,100 g,95,1.0g,12.0g,5.0g,0.2g,30mg
 Soan Papdi (2 pcs),150 ml,100,1.5g,12.0g,5.5g,0.2g,10mg
-Bhindi Masala - Extra Cheese,300 g,160,3.0g,14.0g,10.0g,4.5g,380mg
+Bhindi Masala ,300 g,160,3.0g,14.0g,10.0g,4.5g,380mg
 Mutton Biryani - Home Style,200 ml,580,32.0g,62.0g,22.0g,1.5g,920mg
 Khakhra (1 pc) - Restaurant Style,150 g,70,2.0g,10.0g,2.5g,1.5g,80mg
-McFlurry KitKat - Spicy,500 g,350,7.5g,49.0g,14.0g,1.0g,150mg
+McFlurry KitKat,500 g,350,7.5g,49.0g,14.0g,1.0g,150mg
 Patra,500 g,170,3.0g,28.0g,5.5g,3.0g,410mg
-Moong Dal Halwa - Spicy,150 g,350,8.0g,45.0g,16.0g,3.0g,40mg
+Moong Dal Halwa ,150 g,350,8.0g,45.0g,16.0g,3.0g,40mg
 Papaya - Home Style,300 g,59,0.7g,15.0g,0.2g,2.5g,2mg
 Capsicum (Yellow) - Restaurant Style,150 ml,27,1.0g,6.3g,0.2g,1.8g,3mg
 Multigrain Bread (2 slices) - Mild,200 g,150,6.5g,25.0g,2.5g,3.5g,270mg
@@ -718,16 +716,16 @@ Deluxe Veggie (1 slice) - Street Style,150 ml,295,10.5g,36.0g,12.0g,2.8g,590mg
 Sarson ka Saag - Extra Cheese,250 g,220,7.0g,12.0g,16.0g,5.5g,480mg
 Sesame Seeds (Til) - Extra Cheese,500 g,90,2.5g,4.0g,8.0g,1.5g,2mg
 Tofu Tikka Masala,200 ml,370,16.0g,16.0g,28.0g,3.5g,620mg
-Pineapple Cake (1 slice) - Extra Cheese,150 ml,260,3.0g,38.0g,10.0g,0.8g,170mg
+Pineapple Cake (1 slice),150 ml,260,3.0g,38.0g,10.0g,0.8g,170mg
 Sev Puri (6 pieces) - Mild,150 g,220,4.0g,34.0g,8.0g,2.5g,350mg
 Paper Dosa - Restaurant Style,100 g,350,7.0g,52.0g,12.0g,3.0g,530mg
 Lychee - Extra Cheese,100 ml,66,0.8g,16.5g,0.4g,1.3g,1mg
 Hyderabadi Biryani - Restaurant Style,300 g,620,30.0g,70.0g,24.0g,2.5g,980mg
 Sarson ka Saag - Street Style,50 ml,220,7.0g,12.0g,16.0g,5.5g,480mg
-Gatte ki Sabzi - Spicy,500 g,260,8.0g,20.0g,16.0g,4.0g,520mg
+Gatte ki Sabzi ,500 g,260,8.0g,20.0g,16.0g,4.0g,520mg
 Aloo Tikki (2 pcs) - Street Style,250 g,240,4.0g,32.0g,11.0g,3.0g,420mg
 Misal Pav - Restaurant Style,100 ml,380,14.0g,48.0g,16.0g,7.0g,720mg
-Red Velvet Cake (1 slice) - Spicy,200 g,320,4.5g,42.0g,15.0g,1.0g,220mg
+Red Velvet Cake (1 slice) ,200 g,320,4.5g,42.0g,15.0g,1.0g,220mg
 Flax Seeds (Alsi),500 g,75,2.5g,4.0g,6.0g,4.0g,2mg
 Yogurt (Plain),250 g,61,3.5g,4.7g,3.3g,0g,40mg
 Egg Sandwich - Home Style,150 g,320,14.0g,32.0g,15.0g,2.0g,540mg
@@ -741,9 +739,9 @@ Prawn Malai Curry - Restaurant Style,250 g,420,22.0g,10.0g,32.0g,0.5g,560mg
 Corn (Sweet) - Mild,500 g,86,3.3g,19.0g,1.2g,2.7g,15mg
 Chicken Tikka Masala,150 ml,460,28.0g,14.0g,32.0g,1.5g,780mg
 Jowar Roti - Mild,50 ml,200,6.0g,36.0g,3.5g,4.5g,220mg
-Potato - Spicy,500 g,77,2.0g,17.5g,0.1g,2.2g,6mg
+Potato ,500 g,77,2.0g,17.5g,0.1g,2.2g,6mg
 Mushroom - Home Style,200 ml,22,3.1g,3.3g,0.3g,1.0g,5mg
-White Sauce Pasta - Spicy,100 ml,380,10.0g,48.0g,16.0g,2.5g,450mg
+White Sauce Pasta,100 ml,380,10.0g,48.0g,16.0g,2.5g,450mg
 Andhra Chicken Curry - Restaurant Style,150 ml,390,25.0g,9.0g,28.0g,1.5g,740mg
 Aloo Tikki (2 pcs) - Home Style,150 ml,240,4.0g,32.0g,11.0g,3.0g,420mg
 Shami Kabab (4 pcs) - Extra Cheese,50 ml,380,22.0g,16.0g,25.0g,2.0g,540mg
@@ -751,15 +749,15 @@ Bataka Vada - Extra Cheese,500 g,290,6.0g,38.0g,12.0g,3.0g,480mg
 Chicken Biryani - Extra Cheese,50 ml,520,28.0g,65.0g,18.0g,2.0g,890mg
 Broccoli,250 g,34,2.8g,6.6g,0.4g,2.6g,33mg
 Capsicum (Green) - Home Style,100 g,20,0.9g,4.6g,0.2g,1.7g,3mg
-Cheese Pizza (1 slice) - Spicy,100 g,300,11.5g,35.0g,13.0g,1.8g,560mg
+Cheese Pizza (1 slice) ,100 g,300,11.5g,35.0g,13.0g,1.8g,560mg
 Butterscotch Cake (1 slice) - Street Style,200 g,300,3.5g,40.0g,14.0g,0.5g,190mg
 Chicken Noodles - Extra Cheese,150 g,440,22.0g,50.0g,17.0g,2.0g,820mg
 Schezwan Fried Rice - Spicy,200 g,440,9.0g,64.0g,15.0g,3.5g,890mg
-Mozzarella Cheese - Spicy,100 ml,85,6.0g,1.0g,6.0g,0g,140mg
+Mozzarella Cheese ,100 ml,85,6.0g,1.0g,6.0g,0g,140mg
 Brown Bread (2 slices) - Mild,150 ml,140,6.0g,24.0g,2.0g,3.0g,280mg
 Khandvi (4 pcs) - Street Style,150 ml,150,5.0g,24.0g,4.0g,2.0g,380mg
 Flax Seeds (Alsi) - Street Style,150 g,75,2.5g,4.0g,6.0g,4.0g,2mg
-White Bread (2 slices) - Spicy,150 g,160,5.0g,28.0g,2.5g,1.0g,300mg
+White Bread (2 slices) ,150 g,160,5.0g,28.0g,2.5g,1.0g,300mg
 Fish Biryani,150 g,500,28.0g,63.0g,17.0g,1.5g,860mg
 Hara Bhara Kabab (4 pcs) - Restaurant Style,300 g,220,6.0g,28.0g,10.0g,4.5g,380mg
 Prawn Curry - Street Style,100 ml,350,24.0g,9.0g,24.0g,1.0g,580mg
@@ -774,7 +772,7 @@ Paneer Tikka Pizza (1 slice) - Extra Cheese,100 g,325,13.0g,35.0g,14.5g,2.0g,610
 Mango,150 ml,90,1.4g,22.0g,0.5g,2.6g,1mg
 Gatte ki Sabzi - Home Style,300 g,260,8.0g,20.0g,16.0g,4.0g,520mg
 Mango Lassi - Mild,300 g,180,3.5g,32.0g,4.5g,0.5g,75mg
-Cranberries - Spicy,100 ml,46,0.4g,12.0g,0.1g,4.6g,2mg
+Cranberries ,100 ml,46,0.4g,12.0g,0.1g,4.6g,2mg
 Rye Bread (2 slices) - Restaurant Style,500 g,150,5.5g,28.0g,2.0g,4.0g,310mg
 Red Sauce Pasta - Spicy,200 g,310,9.0g,52.0g,8.0g,4.0g,490mg
 Dragon Fruit - Extra Cheese,150 g,60,1.2g,13.0g,0.4g,3.0g,0mg
@@ -955,7 +953,7 @@ McVeggie Wrap - Street Style,100 ml,420,11.0g,48.0g,20.0g,4.0g,720mg
 Tomato Soup - Restaurant Style,150 g,80,2.0g,14.0g,2.0g,1.5g,490mg
 Chicken McNuggets (6 pcs) - Home Style,500 g,270,15.0g,16.0g,16.0g,1.0g,500mg
 Jalebi Fafda,200 ml,380,7.0g,50.0g,17.0g,2.5g,520mg
-Grapes - Spicy,500 g,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes,500 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Moong Dal Halwa - Restaurant Style,150 g,350,8.0g,45.0g,16.0g,3.0g,40mg
 Gulab Jamun (2 pcs) - Restaurant Style,500 g,200,3.0g,32.0g,7.0g,0.5g,60mg
 Pomegranate - Extra Cheese,100 ml,83,1.7g,18.7g,1.2g,4.0g,3mg
@@ -1955,7 +1953,7 @@ Hash Brown - Street Style,250 g,150,1.5g,16.0g,9.0g,1.5g,280mg
 Gatte ki Sabzi - Home Style,50 ml,260,8.0g,20.0g,16.0g,4.0g,520mg
 Mutton Curry,200 ml,500,27.0g,9.0g,40.0g,1.0g,660mg
 Khakhra (1 pc) - Restaurant Style,100 ml,70,2.0g,10.0g,2.5g,1.5g,80mg
-Grapes - Mild,200 g,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes ,200 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Steamed Rice,100 g,260,5.0g,58.0g,0.5g,1.0g,5mg
 Gobi Manchurian (Gravy),250 g,350,5.5g,38.0g,19.0g,4.5g,720mg
 French Toast - Restaurant Style,500 g,310,9.0g,32.0g,16.0g,1.0g,350mg
@@ -2211,7 +2209,7 @@ Tofu Tikka Masala - Restaurant Style,150 g,370,16.0g,16.0g,28.0g,3.5g,620mg
 Paneer Butter Masala - Home Style,500 g,450,14.5g,14.0g,36.0g,2.5g,650mg
 Tofu Palak - Extra Cheese,200 ml,300,16.0g,12.0g,22.0g,4.5g,510mg
 Malai Kofta - Spicy,150 g,520,10.0g,38.0g,36.0g,5.0g,480mg
-Grapes - Mild,300 g,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes , 300 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Garlic Noodles - Home Style,100 g,350,7.5g,52.0g,12.0g,2.5g,760mg
 Watermelon - Mild,300 g,46,0.9g,11.5g,0.2g,0.6g,1mg
 Okra (Bhindi) - Spicy,200 ml,33,1.9g,7.5g,0.2g,3.2g,7mg
@@ -2238,12 +2236,12 @@ Lobia - Street Style,100 ml,240,12.0g,36.0g,6.0g,8.5g,430mg
 Grilled Veg Sandwich - Extra Cheese,100 g,290,9.0g,40.0g,10.0g,4.5g,460mg
 Sev Puri (6 pieces) - Home Style,150 g,220,4.0g,34.0g,8.0g,2.5g,350mg
 Sweet Corn Soup - Street Style,100 g,110,3.5g,18.0g,3.0g,1.5g,520mg
-Grapes - Mild,500 g,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes ,500 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Andhra Chicken Curry - Restaurant Style,200 ml,390,25.0g,9.0g,28.0g,1.5g,740mg
 Tamarind Rice - Restaurant Style,200 ml,280,4.5g,52.0g,5.0g,2.5g,510mg
 Chikki (Peanut Brittle) - Restaurant Style,300 g,140,4.0g,18.0g,6.0g,1.5g,15mg
 Dum Aloo - Mild,200 ml,240,4.0g,22.0g,15.0g,3.0g,460mg
-Grapes - Home Style,100 g,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes,100 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 White Sauce Pasta - Street Style,50 ml,380,10.0g,48.0g,16.0g,2.5g,450mg
 Oats Porridge,150 ml,160,6.0g,28.0g,3.0g,4.0g,40mg
 Poori (2 pieces) - Spicy,200 g,240,4.0g,32.0g,11.0g,1.5g,280mg
@@ -2439,7 +2437,7 @@ Malai Tikka (6 pcs) - Mild,250 g,460,38.0g,8.0g,30.0g,0.5g,640mg
 Mysore Pak (1 pc) - Home Style,500 g,130,2.0g,16.0g,6.5g,0.2g,15mg
 Motichoor Laddu - Mild,200 ml,145,3.0g,18.0g,7.0g,0.8g,22mg
 Ragda Pattice - Restaurant Style,250 g,310,8.0g,48.0g,10.0g,6.0g,540mg
-Grapes - Street Style,250 g,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes,250 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Cashews (Kaju),50 ml,160,5.2g,9.0g,12.0g,1.0g,5mg
 Celery - Spicy,50 ml,16,0.7g,3.0g,0.2g,1.6g,80mg
 Milk (Toned) - Restaurant Style,200 g,100,6.6g,9.8g,4.4g,0g,110mg
@@ -2884,7 +2882,7 @@ Galouti Kabab (4 pcs) - Extra Cheese,100 ml,420,18.0g,14.0g,32.0g,1.5g,480mg
 Milk Biscuit (2 pcs) - Restaurant Style,100 ml,85,1.5g,12.0g,3.5g,0.3g,45mg
 Corn Flakes with Milk - Spicy,150 ml,210,7.0g,38.0g,4.0g,2.0g,180mg
 McSpicy Chicken Burger - Street Style,100 ml,510,22.0g,46.0g,27.0g,2.0g,890mg
-Brinjal (Eggplant) - Extra Cheese,100 ml,25,1.0g,5.9g,0.2g,3.0g,2mg
+Brinjal (Eggplant) ,100 ml,25,1.0g,5.9g,0.2g,3.0g,2mg
 Persimmon,50 ml,70,0.6g,18.6g,0.2g,3.6g,1mg
 Avocado - Mild,200 g,160,2.0g,8.5g,14.7g,6.7g,7mg
 Butterscotch Cake (1 slice) - Spicy,200 g,300,3.5g,40.0g,14.0g,0.5g,190mg
@@ -2895,7 +2893,7 @@ Pineapple - Restaurant Style,150 ml,50,0.5g,13.1g,0.1g,1.4g,1mg
 Red Sauce Pasta - Restaurant Style,150 g,310,9.0g,52.0g,8.0g,4.0g,490mg
 Watermelon - Street Style,100 ml,46,0.9g,11.5g,0.2g,0.6g,1mg
 Bajra Roti - Spicy,250 g,210,6.5g,37.0g,4.0g,5.0g,230mg
-Banana - Extra Cheese,100 ml,105,1.3g,27.0g,0.4g,3.1g,1mg
+Banana ,100 ml,105,1.3g,27.0g,0.4g,3.1g,1mg
 Parle Biscuit (2 pcs) - Restaurant Style,50 ml,80,1.0g,12.0g,3.0g,0.3g,40mg
 Egg Curry - Spicy,200 g,290,12.0g,10.0g,22.0g,1.5g,490mg
 Bhatura - Street Style,200 g,320,7.0g,42.0g,14.0g,2.0g,410mg
@@ -3099,7 +3097,7 @@ Kanchipuram Idli - Spicy,100 g,210,5.0g,34.0g,6.0g,2.0g,380mg
 Kheer - Spicy,100 ml,220,6.0g,36.0g,6.0g,0.5g,60mg
 Ragi Roti - Mild,200 g,210,6.0g,38.0g,4.0g,5.0g,250mg
 Chocolate Cake (1 slice) - Street Style,150 ml,280,4.0g,38.0g,12.0g,1.0g,200mg
-Tofu Matar - Extra Cheese,250 g,280,15.0g,18.0g,16.0g,4.0g,480mg
+Tofu Matar,250 g,280,15.0g,18.0g,16.0g,4.0g,480mg
 Bhindi Masala - Street Style,500 g,160,3.0g,14.0g,10.0g,4.5g,380mg
 Veg Extravaganza (1 slice) - Street Style,50 ml,320,12.0g,38.0g,13.5g,3.0g,620mg
 Drumstick - Mild,100 g,64,2.1g,8.5g,0.2g,3.2g,8mg
@@ -3621,7 +3619,7 @@ Chicken Sausage Pizza (1 slice) - Street Style,100 g,330,15.0g,32.0g,16.0g,1.5g,
 Chia Seeds - Restaurant Style,100 ml,70,2.5g,6.0g,4.5g,5.0g,2mg
 Almonds (Badam) - Mild,100 g,173,6.0g,6.0g,15.0g,3.5g,0mg
 Vada Pav - Restaurant Style,250 g,290,6.5g,38.0g,12.5g,2.5g,520mg
-Grapes - Spicy,50 ml,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes,50 ml,69,0.7g,18.0g,0.2g,0.9g,2mg
 Aloo Paratha - Restaurant Style,200 g,350,8.0g,48.0g,14.0g,4.0g,380mg
 Egg Biryani - Restaurant Style,500 g,490,18.0g,68.0g,16.0g,2.5g,810mg
 Fried Rice (Veg) - Street Style,150 ml,380,8.0g,62.0g,11.0g,3.0g,720mg
@@ -3840,7 +3838,7 @@ Egg Bhurji - Restaurant Style,100 g,210,14.0g,4.0g,15.0g,0.5g,420mg
 Soan Papdi (2 pcs) - Home Style,500 g,100,1.5g,12.0g,5.5g,0.2g,10mg
 Veg Biryani - Restaurant Style,50 ml,450,10.0g,72.0g,13.0g,5.0g,720mg
 Yogurt (Plain) - Extra Cheese,500 g,61,3.5g,4.7g,3.3g,0g,40mg
-Grapes - Restaurant Style,200 ml,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes,200 ml,69,0.7g,18.0g,0.2g,0.9g,2mg
 Rajasthani Dal - Home Style,300 g,250,10.5g,26.0g,11.0g,5.5g,510mg
 Whole Wheat Bread (2 slices) - Spicy,200 ml,145,6.0g,26.0g,2.0g,4.0g,290mg
 Nectarine - Restaurant Style,300 g,62,1.5g,15.0g,0.5g,2.4g,0mg
@@ -4309,7 +4307,7 @@ Walnuts (Akhrot) - Restaurant Style,250 g,196,4.5g,4.0g,19.5g,2.0g,1mg
 Chocolate Cake (1 slice) - Mild,500 g,280,4.0g,38.0g,12.0g,1.0g,200mg
 Dum Aloo,250 g,240,4.0g,22.0g,15.0g,3.0g,460mg
 French Fries (Medium) - Restaurant Style,200 ml,320,4.5g,41.0g,15.5g,3.5g,190mg
-Grapes - Home Style,250 g,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes ,250 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Pav Bhaji - Home Style,100 ml,380,9.0g,52.0g,16.0g,7.0g,620mg
 Macaron (1 pc) - Home Style,50 ml,90,1.5g,12.0g,4.0g,0.2g,15mg
 Soya Chunk Biryani - Restaurant Style,100 g,480,18.0g,70.0g,15.0g,6.0g,740mg
@@ -4997,7 +4995,6 @@ Tofu (Soft) - Home Style,250 g,70,7.0g,2.0g,4.0g,0.5g,8mg
 Capsicum (Green) - Extra Cheese,50 ml,20,0.9g,4.6g,0.2g,1.7g,3mg
 Brazil Nuts - Extra Cheese,50 ml,195,4.0g,3.5g,19.5g,2.0g,1mg
 McSpicy Chicken Burger - Extra Cheese,300 g,510,22.0g,46.0g,27.0g,2.0g,890mg
-Grapes - Spicy,100 ml,69,0.7g,18.0g,0.2g,0.9g,2mg
 Mutton Korma - Mild,50 ml,540,26.0g,14.0g,43.0g,1.0g,640mg
 Navratna Korma - Street Style,250 g,380,8.0g,22.0g,30.0g,4.5g,520mg
 Kadhi Pakora - Restaurant Style,200 g,300,10.0g,28.0g,16.0g,3.0g,580mg
@@ -5592,7 +5589,7 @@ French Toast - Extra Cheese,100 ml,310,9.0g,32.0g,16.0g,1.0g,350mg
 Schezwan Fried Rice - Spicy,50 ml,440,9.0g,64.0g,15.0g,3.5g,890mg
 Oats Porridge - Extra Cheese,250 g,160,6.0g,28.0g,3.0g,4.0g,40mg
 Aloo Tikki (2 pcs) - Spicy,50 ml,240,4.0g,32.0g,11.0g,3.0g,420mg
-Grapes - Home Style,100 g,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes ,100 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Salty Lassi - Restaurant Style,150 ml,120,4.0g,20.0g,3.0g,0g,260mg
 Chicken Vindaloo - Spicy,300 g,420,24.0g,12.0g,30.0g,1.5g,820mg
 Pine Nuts - Street Style,300 g,190,4.0g,4.0g,19.0g,1.5g,1mg
@@ -5823,7 +5820,6 @@ Dum Aloo - Extra Cheese,50 ml,240,4.0g,22.0g,15.0g,3.0g,460mg
 Goan Fish Curry - Mild,200 ml,330,21.0g,11.0g,22.0g,1.5g,570mg
 Apricot,100 ml,17,0.5g,3.9g,0.1g,0.7g,0mg
 Jalebi Fafda - Mild,500 g,380,7.0g,50.0g,17.0g,2.5g,520mg
-Grapes - Home Style,500 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Chole Masala - Home Style,150 ml,280,11.0g,30.0g,12.0g,7.0g,520mg
 Chicken Noodle Soup - Extra Cheese,200 g,160,10.0g,16.0g,6.0g,1.5g,640mg
 Seekh Kabab (4 pcs) - Spicy,150 g,340,24.0g,8.0g,24.0g,2.0g,520mg
@@ -6539,7 +6535,6 @@ Almond Milk - Restaurant Style,200 ml,60,2.0g,8.0g,2.5g,1.0g,150mg
 Dal Baati Churma,250 g,650,18.0g,88.0g,24.0g,10.0g,580mg
 Muffin (Blueberry) - Mild,200 g,240,3.5g,36.0g,9.0g,1.5g,180mg
 Oatmeal Cookie - Extra Cheese,200 ml,110,2.0g,16.0g,4.5g,1.5g,65mg
-Grapes - Home Style,100 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Tamarind Rice - Extra Cheese,250 g,280,4.5g,52.0g,5.0g,2.5g,510mg
 Vanilla Cake (1 slice) - Mild,500 g,220,3.0g,32.0g,9.0g,0.5g,180mg
 Chow Mein - Restaurant Style,100 ml,360,8.5g,50.0g,14.0g,3.0g,750mg
@@ -7165,7 +7160,7 @@ Flavored Yogurt (Mango) - Home Style,250 g,115,3.0g,19.0g,2.5g,0g,40mg
 Chicken Curry - Restaurant Style,200 ml,380,26.0g,8.0g,27.0g,1.0g,620mg
 Oat Milk - Street Style,300 g,90,3.0g,14.0g,3.0g,1.5g,100mg
 Poori (2 pieces),500 g,240,4.0g,32.0g,11.0g,1.5g,280mg
-Grapes - Home Style,50 ml,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes,50 ml,69,0.7g,18.0g,0.2g,0.9g,2mg
 Farmhouse Pizza (1 slice) - Mild,250 g,300,11.0g,36.0g,12.5g,2.5g,580mg
 Watermelon,150 g,46,0.9g,11.5g,0.2g,0.6g,1mg
 Singapore Noodles - Home Style,150 ml,370,9.0g,54.0g,12.5g,3.0g,740mg
@@ -7481,7 +7476,6 @@ Pani Puri (6 pieces),100 ml,180,3.2g,32.0g,4.8g,2.0g,290mg
 White Bread (2 slices) - Extra Cheese,100 ml,160,5.0g,28.0g,2.5g,1.0g,300mg
 Milk (Buffalo) - Extra Cheese,50 ml,180,7.6g,10.0g,13.0g,0g,130mg
 Blackberries - Spicy,300 g,43,1.4g,10.0g,0.5g,5.3g,1mg
-Grapes - Home Style,500 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Cucumber Sandwich - Home Style,200 g,180,5.0g,30.0g,4.5g,3.0g,310mg
 Veg McNuggets (6 pcs) - Spicy,100 ml,230,8.0g,22.0g,12.0g,2.5g,440mg
 Gobi Manchurian (Dry) - Home Style,150 ml,380,6.0g,42.0g,21.0g,5.0g,680mg
@@ -7723,7 +7717,7 @@ Singapore Noodles - Mild,100 ml,370,9.0g,54.0g,12.5g,3.0g,740mg
 Milk (Buffalo),300 g,180,7.6g,10.0g,13.0g,0g,130mg
 Tofu Kadai,150 g,360,15.0g,16.0g,26.0g,3.5g,580mg
 Wonton Soup - Street Style,100 g,140,8.0g,18.0g,4.5g,1.5g,610mg
-Grapes - Mild,250 g,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes ,250 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Grilled Veg Sandwich - Spicy,150 g,290,9.0g,40.0g,10.0g,4.5g,460mg
 Egg Sandwich - Mild,100 g,320,14.0g,32.0g,15.0g,2.0g,540mg
 Matar Paneer - Mild,100 ml,380,12.0g,16.0g,29.0g,3.5g,540mg
@@ -8710,7 +8704,6 @@ Drumstick,150 ml,64,2.1g,8.5g,0.2g,3.2g,8mg
 McVeggie Burger - Extra Cheese,100 g,380,9.0g,46.0g,17.0g,3.0g,680mg
 Strawberries - Restaurant Style,200 g,32,0.7g,7.7g,0.3g,2.0g,1mg
 Orange - Street Style,250 g,62,1.2g,15.4g,0.2g,3.1g,0mg
-Grapes - Street Style,100 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 White Sauce Pasta - Street Style,150 g,380,10.0g,48.0g,16.0g,2.5g,450mg
 Fafda - Home Style,300 g,220,5.0g,28.0g,10.0g,2.0g,480mg
 Makki di Roti - Restaurant Style,150 g,240,6.5g,38.0g,7.0g,5.0g,260mg
@@ -8995,7 +8988,7 @@ Veg Spring Roll - Extra Cheese,150 g,210,4.5g,30.0g,8.5g,3.0g,430mg
 Ragi Roti - Extra Cheese,500 g,210,6.0g,38.0g,4.0g,5.0g,250mg
 Paneer Lababdar - Spicy,100 g,480,14.0g,15.0g,40.0g,2.0g,620mg
 Celery - Home Style,100 g,16,0.7g,3.0g,0.2g,1.6g,80mg
-Grapes - Spicy,100 ml,69,0.7g,18.0g,0.2g,0.9g,2mg
+Grapes,100 ml,69,0.7g,18.0g,0.2g,0.9g,2mg
 Pav (Ladi Pav 1 pc) - Mild,50 ml,110,3.0g,20.0g,1.5g,1.0g,160mg
 Jam (1 tbsp),150 g,55,0.1g,14.0g,0g,0.2g,2mg
 Cheese Spread (1 tbsp) - Spicy,50 ml,45,2.0g,1.5g,3.5g,0g,120mg
@@ -9620,7 +9613,6 @@ Dahi Bhalla,200 g,270,6.0g,38.0g,10.0g,3.0g,440mg
 Chicken Noodle Soup - Home Style,150 ml,160,10.0g,16.0g,6.0g,1.5g,640mg
 Haryali Tikka - Street Style,200 g,400,40.0g,10.0g,23.0g,1.0g,660mg
 Garlic Noodles - Spicy,50 ml,350,7.5g,52.0g,12.0g,2.5g,760mg
-Grapes - Extra Cheese,200 g,69,0.7g,18.0g,0.2g,0.9g,2mg
 Cupcake (Vanilla),100 ml,210,2.5g,32.0g,8.5g,0.5g,160mg
 Capsicum (Yellow) - Home Style,50 ml,27,1.0g,6.3g,0.2g,1.8g,3mg
 Gujarati Dal,50 ml,200,8.0g,28.0g,6.0g,5.0g,440mg
@@ -9653,7 +9645,7 @@ French Fries (Large) - Home Style,250 g,430,6.0g,55.0g,21.0g,4.5g,260mg
 Mayonnaise (1 tbsp) - Home Style,50 ml,94,0.1g,0.1g,10.0g,0g,90mg
 Pistachios (Pista),150 g,160,5.8g,8.0g,12.5g,3.0g,1mg
 Cheddar Cheese - Street Style,150 ml,120,7.0g,0.5g,10.0g,0g,180mg
-Apple - Spicy,50 ml,78,0.4g,20.8g,0.2g,3.6g,1mg
+Apple ,50 mg,78,0.4g,20.8g,0.2g,3.6g,1mg
 Chilli Fish - Home Style,150 g,410,26.0g,26.0g,24.0g,1.5g,790mg
 Fish Curry - Spicy,100 g,340,22.0g,10.0g,23.0g,1.5g,540mg
 Cauliflower - Mild,50 ml,25,1.9g,5.0g,0.3g,2.0g,30mg
@@ -9671,12 +9663,12 @@ Prawn Noodles - Mild,150 g,420,20.0g,50.0g,16.0g,1.5g,840mg
 Custard Apple - Home Style,150 ml,101,2.1g,23.5g,0.6g,2.4g,4mg
 Dal Fry - Home Style,200 ml,230,9.5g,26.0g,10.0g,5.5g,490mg
 Egg Sandwich - Home Style,150 ml,320,14.0g,32.0g,15.0g,2.0g,540mg
-Prunes - Spicy,50 ml,70,0.8g,18.5g,0.1g,2.0g,1mg
+Prunes,50 ml,70,0.8g,18.5g,0.1g,2.0g,1mg
 Pedha (2 pcs),250 g,130,3.0g,18.0g,5.5g,0g,35mg
 Sourdough (2 slices) - Street Style,200 ml,180,6.0g,34.0g,1.5g,1.5g,340mg
 Onion Dosa,100 ml,310,6.5g,44.0g,11.5g,2.5g,490mg
 Dum Aloo - Home Style,200 g,240,4.0g,22.0g,15.0g,3.0g,460mg
-Arrabbiata Pasta - Spicy,200 ml,320,8.5g,52.0g,8.5g,4.5g,510mg
+Arrabbiata Pasta ,200 ml,320,8.5g,52.0g,8.5g,4.5g,510mg
 Fish Biryani - Mild,150 ml,500,28.0g,63.0g,17.0g,1.5g,860mg
 Okra (Bhindi) - Home Style,150 ml,33,1.9g,7.5g,0.2g,3.2g,7mg
 Afghani Chaap - Home Style,500 g,420,24.0g,16.0g,30.0g,3.5g,540mg
@@ -9689,16 +9681,16 @@ Poori (2 pieces),500 g,240,4.0g,32.0g,11.0g,1.5g,280mg
 Khakhra (1 pc) - Street Style,200 g,70,2.0g,10.0g,2.5g,1.5g,80mg
 Yogurt (Plain) - Mild,150 g,61,3.5g,4.7g,3.3g,0g,40mg
 McSpicy Chicken Burger - Street Style,200 g,510,22.0g,46.0g,27.0g,2.0g,890mg
-Carrot - Spicy,500 g,41,0.9g,9.6g,0.2g,2.8g,69mg
+Carrot ,500 g,41,0.9g,9.6g,0.2g,2.8g,69mg
 Hide & Seek (2 pcs),150 g,105,1.5g,14.0g,5.0g,0.5g,35mg
 Peanuts (Roasted) - Spicy,500 g,170,7.5g,6.0g,14.0g,2.5g,90mg
 Fig (Fresh) - Street Style,100 ml,37,0.4g,9.6g,0.2g,1.4g,1mg
 Malai Kofta - Spicy,150 ml,520,10.0g,38.0g,36.0g,5.0g,480mg
-Dum Aloo - Home Style,150 g,240,4.0g,22.0g,15.0g,3.0g,460mg
+Dum Aloo - Home Style,150 g,240,4.0g,22.0g,15.0g,3.0g,460mg 
 Butter Chicken - Spicy,150 g,485,22.4g,12.6g,38.2g,1.8g,720mg
-Drumstick - Street Style,200 g,64,2.1g,8.5g,0.2g,3.2g,8mg
+Drumstick - Street Style,200 g,64,2.1g,8.5g,0.2g,3.2g,8mg 
 Passion Fruit - Street Style,100 g,17,0.4g,4.2g,0.1g,1.8g,5mg
-Raspberries - Spicy,200 ml,52,1.2g,12.0g,0.7g,6.5g,1mg
+Raspberries,200 ml,52,1.2g,12.0g,0.7g,6.5g,1mg
 Kala Chana - Mild,300 g,250,13.0g,34.0g,7.0g,9.0g,450mg
 Tandoori Chicken (2 pcs) - Home Style,500 g,480,48.0g,4.0g,30.0g,0g,720mg
 Gatte ki Sabzi - Mild,300 g,260,8.0g,20.0g,16.0g,4.0g,520mg
@@ -9720,16 +9712,16 @@ Tandoori Chicken (2 pcs) - Extra Cheese,150 ml,480,48.0g,4.0g,30.0g,0g,720mg
 Plum - Home Style,100 g,30,0.5g,7.5g,0.2g,0.9g,0mg
 Tomato - Spicy,500 g,18,0.9g,3.9g,0.2g,1.2g,5mg
 Pistachios (Pista),250 g,160,5.8g,8.0g,12.5g,3.0g,1mg
-Vada Pav - Home Style,100 g,290,6.5g,38.0g,12.5g,2.5g,520mg
+Vada Pav - Home Style,100 g,290,6.5g,38.0g,12.5g,2.5g,520mg 
 Chicken Biryani,50 ml,520,28.0g,65.0g,18.0g,2.0g,890mg
 Afghani Chaap - Street Style,200 g,420,24.0g,16.0g,30.0g,3.5g,540mg
-Brioche Bun - Spicy,200 g,220,6.0g,28.0g,10.0g,1.0g,230mg
+Brioche Bun,200 g,220,6.0g,28.0g,10.0g,1.0g,230mg
 Hide & Seek (2 pcs) - Spicy,200 g,105,1.5g,14.0g,5.0g,0.5g,35mg
 Afghani Chaap - Restaurant Style,150 g,420,24.0g,16.0g,30.0g,3.5g,540mg
 Fig (Fresh) - Spicy,300 g,37,0.4g,9.6g,0.2g,1.4g,1mg
 Vada Pav - Extra Cheese,150 ml,290,6.5g,38.0g,12.5g,2.5g,520mg
 Bajra Roti - Spicy,500 g,210,6.5g,37.0g,4.0g,5.0g,230mg
-Sarson ka Saag - Spicy,300 g,220,7.0g,12.0g,16.0g,5.5g,480mg
+Sarson ka Saag ,300 g,220,7.0g,12.0g,16.0g,5.5g,480mg
 Spring Rolls (2 pcs),100 ml,220,5.0g,28.0g,10.0g,2.5g,410mg
 Veg Spring Roll - Street Style,250 g,210,4.5g,30.0g,8.5g,3.0g,430mg
 McAloo Tikki Burger - Home Style,250 g,345,8.0g,48.0g,14.0g,3.5g,650mg
@@ -9748,7 +9740,7 @@ Masala Chaas - Street Style,300 g,55,2.5g,7.0g,2.0g,0.5g,220mg
 Éclair - Mild,200 g,240,4.0g,26.0g,13.0g,0.5g,170mg
 Egg Biryani - Spicy,500 g,490,18.0g,68.0g,16.0g,2.5g,810mg
 Egg Masala - Home Style,200 ml,310,13.0g,12.0g,23.0g,1.5g,520mg
-Jackfruit - Spicy,150 g,95,1.7g,23.3g,0.6g,1.5g,2mg
+Jackfruit,150 g,95,1.7g,23.3g,0.6g,1.5g,2mg
 Mysore Pak (1 pc),200 g,130,2.0g,16.0g,6.5g,0.2g,15mg
 Gulab Jamun (2 pcs),150 g,200,3.0g,32.0g,7.0g,0.5g,60mg
 Set Dosa (3 pcs),250 g,340,8.0g,54.0g,9.0g,4.0g,560mg
@@ -9799,7 +9791,7 @@ Kadai Paneer - Spicy,250 g,420,12.5g,15.0g,34.0g,3.0g,610mg
 Dabeli - Street Style,200 g,280,6.0g,42.0g,9.0g,3.5g,490mg
 Watermelon - Extra Cheese,150 ml,46,0.9g,11.5g,0.2g,0.6g,1mg
 Egg Biryani - Restaurant Style,250 g,490,18.0g,68.0g,16.0g,2.5g,810mg
-Galouti Kabab (4 pcs) - Spicy,150 ml,420,18.0g,14.0g,32.0g,1.5g,480mg
+Galouti Kabab (4 pcs) ,150 ml,420,18.0g,14.0g,32.0g,1.5g,480mg
 Khandvi (4 pcs),100 g,150,5.0g,24.0g,4.0g,2.0g,380mg
 Veg Extravaganza (1 slice),200 ml,320,12.0g,38.0g,13.5g,3.0g,620mg
 Tangdi Kabab (2 pcs) - Home Style,200 ml,440,38.0g,5.0g,29.0g,0.5g,680mg
@@ -9827,7 +9819,7 @@ Thepla (1 pc) - Restaurant Style,300 g,110,3.0g,15.0g,4.5g,2.0g,120mg
 Brioche Bun - Street Style,150 g,220,6.0g,28.0g,10.0g,1.0g,230mg
 McFlurry KitKat - Street Style,150 g,350,7.5g,49.0g,14.0g,1.0g,150mg
 French Fries (Large) - Extra Cheese,150 g,430,6.0g,55.0g,21.0g,4.5g,260mg
-Bitter Gourd - Spicy,50 ml,17,1.0g,3.7g,0.2g,2.8g,5mg
+Bitter Gourd,50 ml,17,1.0g,3.7g,0.2g,2.8g,5mg
 Gatte ki Sabzi - Street Style,200 ml,260,8.0g,20.0g,16.0g,4.0g,520mg
 Banana - Mild,150 ml,105,1.3g,27.0g,0.4g,3.1g,1mg
 Haryali Tikka - Street Style,500 g,400,40.0g,10.0g,23.0g,1.0g,660mg
@@ -9836,7 +9828,7 @@ Flavored Yogurt (Mango) - Restaurant Style,250 g,115,3.0g,19.0g,2.5g,0g,40mg
 Cranberries,150 ml,46,0.4g,12.0g,0.1g,4.6g,2mg
 Undhiyu - Home Style,500 g,280,6.0g,32.0g,14.0g,8.0g,440mg
 Milk (Skimmed) - Extra Cheese,50 ml,68,6.8g,9.8g,0.4g,0g,120mg
-Dahi Bhalla - Spicy,100 g,270,6.0g,38.0g,10.0g,3.0g,440mg
+Dahi Bhalla,100 g,270,6.0g,38.0g,10.0g,3.0g,440mg
 Salted Butter (1 tbsp) - Extra Cheese,100 g,102,0.1g,0g,11.5g,0g,90mg
 Tamarind Rice - Home Style,100 ml,280,4.5g,52.0g,5.0g,2.5g,510mg
 McAloo Tikki Burger - Mild,250 g,345,8.0g,48.0g,14.0g,3.5g,650mg
@@ -9857,7 +9849,7 @@ Payasam - Restaurant Style,100 ml,210,5.0g,38.0g,5.0g,0.5g,55mg
 Chicken Spring Roll - Street Style,500 g,270,12.0g,28.0g,12.0g,2.0g,490mg
 Paneer Lababdar - Mild,200 ml,480,14.0g,15.0g,40.0g,2.0g,620mg
 Watermelon - Extra Cheese,300 g,46,0.9g,11.5g,0.2g,0.6g,1mg
-Danish Pastry - Spicy,100 ml,280,4.5g,32.0g,15.0g,1.0g,200mg
+Danish Pastry ,100 ml,280,4.5g,32.0g,15.0g,1.0g,200mg
 Laddu (1 pc) - Extra Cheese,300 g,150,3.5g,18.0g,7.5g,1.0g,20mg
 Jackfruit - Mild,500 g,95,1.7g,23.3g,0.6g,1.5g,2mg
 Red Sauce Pasta - Home Style,100 ml,310,9.0g,52.0g,8.0g,4.0g,490mg
@@ -9870,7 +9862,7 @@ Parle Biscuit (2 pcs) - Extra Cheese,200 g,80,1.0g,12.0g,3.0g,0.3g,40mg
 Veg Korma - Extra Cheese,150 g,340,7.0g,24.0g,25.0g,4.0g,480mg
 McFlurry KitKat - Mild,100 g,350,7.5g,49.0g,14.0g,1.0g,150mg
 Fox Nuts (Makhana) - Home Style,150 ml,110,4.5g,20.0g,1.5g,4.0g,8mg
-Pear - Spicy,50 ml,81,0.6g,21.5g,0.2g,4.6g,1mg
+Pear ,50 ml,81,0.6g,21.5g,0.2g,4.6g,1mg
 Chicken Sausage Pizza (1 slice) - Mild,50 ml,330,15.0g,32.0g,16.0g,1.5g,720mg
 Donut (Glazed) - Mild,300 g,270,4.0g,31.0g,15.0g,1.0g,220mg
 Black Forest Cake (1 slice) - Home Style,100 ml,330,4.0g,44.0g,15.5g,1.0g,210mg
@@ -9899,7 +9891,7 @@ Bourbon Biscuit (2 pcs),200 ml,90,1.0g,12.0g,4.5g,0.5g,35mg
 Persimmon - Restaurant Style,250 g,70,0.6g,18.6g,0.2g,3.6g,1mg
 Butter Cookie (2 pcs) - Street Style,250 g,95,1.0g,12.0g,5.0g,0.2g,30mg
 Cabbage - Mild,150 g,25,1.3g,5.8g,0.1g,2.5g,18mg
-Singapore Noodles - Spicy,200 ml,370,9.0g,54.0g,12.5g,3.0g,740mg
+Singapore Noodles,200 ml,370,9.0g,54.0g,12.5g,3.0g,740mg
 Malai Kofta,200 ml,520,10.0g,38.0g,36.0g,5.0g,480mg
 Sev Puri (6 pieces) - Home Style,500 g,220,4.0g,34.0g,8.0g,2.5g,350mg
 Bhel Puri - Restaurant Style,500 g,210,4.0g,40.0g,5.0g,3.5g,340mg
@@ -9922,7 +9914,7 @@ Cheese Garlic Bread - Street Style,150 ml,310,11.0g,34.0g,15.0g,2.0g,520mg
 Good Day (2 pcs) - Mild,100 g,100,1.2g,13.0g,4.8g,0.4g,40mg
 Curd Rice - Mild,150 g,220,6.0g,38.0g,4.5g,2.0g,310mg
 Apricots (Dried) - Street Style,100 ml,70,1.0g,18.0g,0.1g,2.0g,2mg
-McChicken Wrap - Spicy,300 g,480,18.0g,46.0g,25.0g,2.5g,790mg
+McChicken Wrap,300 g,480,18.0g,46.0g,25.0g,2.5g,790mg
 Dahi Vada - Mild,50 ml,290,7.0g,38.0g,12.0g,3.0g,420mg
 Fish Moilee - Extra Cheese,200 g,360,20.0g,12.0g,25.0g,1.0g,510mg
 Good Day (2 pcs),150 g,100,1.2g,13.0g,4.8g,0.4g,40mg
@@ -9935,7 +9927,7 @@ McChicken Burger - Spicy,300 g,450,16.0g,44.0g,22.0g,2.0g,780mg
 Peach - Extra Cheese,200 g,51,1.2g,12.4g,0.3g,2.0g,0mg
 Kala Chana - Spicy,500 g,250,13.0g,34.0g,7.0g,9.0g,450mg
 Fox Nuts (Makhana),200 ml,110,4.5g,20.0g,1.5g,4.0g,8mg
-Walnuts (Akhrot) - Spicy,200 ml,196,4.5g,4.0g,19.5g,2.0g,1mg
+Walnuts (Akhrot),200 ml,196,4.5g,4.0g,19.5g,2.0g,1mg
 Palak Dal,150 ml,220,10.0g,22.0g,10.0g,5.0g,460mg
 Andhra Chicken Curry - Restaurant Style,200 ml,390,25.0g,9.0g,28.0g,1.5g,740mg
 Pistachios (Pista),500 g,160,5.8g,8.0g,12.5g,3.0g,1mg
@@ -9973,9 +9965,9 @@ Aglio Olio Pasta - Street Style,150 g,340,8.0g,50.0g,11.0g,3.0g,380mg
 Kachori (1 pc) - Street Style,100 ml,260,5.0g,30.0g,13.0g,2.5g,340mg
 McFlurry KitKat,500 g,350,7.5g,49.0g,14.0g,1.0g,150mg
 Maharaja Mac Veg - Street Style,500 g,520,16.0g,54.0g,27.0g,4.0g,920mg
-Apricot - Spicy,50 ml,17,0.5g,3.9g,0.1g,0.7g,0mg
+Apricot ,50 ml,17,0.5g,3.9g,0.1g,0.7g,0mg
 Matar Pulao,100 g,290,7.5g,52.0g,6.0g,3.5g,400mg
-Almonds (Badam) - Spicy,150 g,173,6.0g,6.0g,15.0g,3.5g,0mg
+Almonds (Badam,150 g,173,6.0g,6.0g,15.0g,3.5g,0mg
 Roasted Chana - Street Style,200 ml,120,7.0g,18.0g,3.0g,4.5g,80mg
 Sourdough (2 slices) - Mild,300 g,180,6.0g,34.0g,1.5g,1.5g,340mg
 Malai Kofta - Home Style,150 g,520,10.0g,38.0g,36.0g,5.0g,480mg
@@ -9983,7 +9975,7 @@ Sambar Vada - Street Style,250 g,310,7.5g,38.0g,14.0g,4.0g,520mg
 Paneer Biryani - Street Style,200 g,520,14.0g,68.0g,20.0g,4.0g,780mg
 Jalebi (2 pcs) - Home Style,300 g,180,2.0g,30.0g,6.0g,0.5g,40mg
 Hazelnuts,250 g,176,4.5g,5.0g,17.0g,3.0g,0mg
-Corn (Sweet) - Spicy,200 g,86,3.3g,19.0g,1.2g,2.7g,15mg
+Corn (Sweet),200 g,86,3.3g,19.0g,1.2g,2.7g,15mg
 Brazil Nuts - Extra Cheese,200 g,195,4.0g,3.5g,19.5g,2.0g,1mg
 Pongal - Restaurant Style,50 ml,340,8.0g,58.0g,8.5g,3.0g,420mg
 Samosa (1 pc) - Mild,200 g,210,3.5g,24.0g,11.0g,2.0g,290mg
@@ -9999,3 +9991,21 @@ Tangdi Kabab (2 pcs) - Street Style,500 g,440,38.0g,5.0g,29.0g,0.5g,680mg
 Veg Extravaganza (1 slice) - Street Style,150 ml,320,12.0g,38.0g,13.5g,3.0g,620mg
 Navratna Korma - Spicy,150 ml,380,8.0g,22.0g,30.0g,4.5g,520mg
 Apricots (Dried) - Mild,250 g,70,1.0g,18.0g,0.1g,2.0g,2mg
+Milk (50 ml),50 ml,25,1.5g,2.5g,1.0g,0g,30mg
+Milk (100 ml),100 ml,50,3.0g,5.0g,2.0g,0g,60mg
+Milk (200 ml),200 ml,100,6.0g,10.0g,4.0g,0g,120mg
+Coffee (50 ml),50 ml,2,0.2g,0.3g,0.1g,0g,2mg
+Coffee (100 ml),100 ml,4,0.4g,0.6g,0.2g,0g,4mg
+Coffee (200 ml),200 ml,8,0.8g,1.2g,0.4g,0g,8mg
+Cold Coffee (50 ml),50 ml,35,1.0g,5.0g,1.5g,0g,25mg
+Cold Coffee (100 ml),100 ml,70,2.0g,10.0g,3.0g,0g,50mg
+Cold Coffee (200 ml),200 ml,140,4.0g,20.0g,6.0g,0g,100mg
+Turmeric Latte (50 ml),50 ml,30,0.5g,4.0g,1.5g,0.2g,15mg
+Turmeric Latte (100 ml),100 ml,60,1.0g,8.0g,3.0g,0.4g,30mg
+Turmeric Latte (200 ml),200 ml,120,2.0g,16.0g,6.0g,0.8g,60mg
+Chai (50 ml),50 ml,25,0.5g,4.0g,1.0g,0g,20mg
+Chai (100 ml),100 ml,50,1.0g,8.0g,2.0g,0g,40mg
+Chai (200 ml),200 ml,100,2.0g,16.0g,4.0g,0g,80mg
+Ice Cream (50 ml),50 ml,90,1.5g,12.0g,4.5g,0g,30mg
+Ice Cream (100 ml),100 ml,180,3.0g,24.0g,9.0g,0g,60mg
+Ice Cream (200 ml),200 ml,360,6.0g,48.0g,18.0g,0g,120mg

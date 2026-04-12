@@ -273,44 +273,50 @@ class FitnessAgent:
     # 5. ADAPT  (called weekly from /api/user/<id>/progress)
     
     def adapt(self, user_profile: Dict, progress_data: Dict,
-              current_plan: Dict, user_id: str = None) -> Dict:
+          current_plan: Dict, user_id: str = None) -> Dict:
 
-        weight_input_raw = self._prepare_weight_input(user_profile, progress_data)
-        predicted_weight = self._predict_weight(weight_input_raw, user_id)
+    # Calculate TDEE if not present
+        if 'tdee' not in user_profile or not user_profile['tdee']:
+            bmr = calculate_bmr(user_profile['weight'], user_profile['height'],
+                                user_profile['age'], user_profile['gender'])
+            user_profile['tdee'] = round(calculate_tdee(bmr, user_profile['activity_level']), 0)
 
-        actual_weight = progress_data['current_weight']
-        difference    = actual_weight - predicted_weight
-        current_cal   = current_plan['plan_overview']['daily_calories']
+            weight_input_raw = self._prepare_weight_input(user_profile, progress_data)
+            predicted_weight = self._predict_weight(weight_input_raw, user_id)
 
-        print(f"🔄 Adapt → Predicted: {predicted_weight:.1f} kg | "
-              f"Actual: {actual_weight:.1f} kg | Diff: {difference:+.2f} kg")
+            actual_weight = progress_data['current_weight']
+            difference    = actual_weight - predicted_weight
+            current_cal   = current_plan['plan_overview']['daily_calories']
 
-        if abs(difference) < 0.5:
-            status  = 'on_track'
-            message = "Great job! You're right on track. Continue with current plan."
-            cal_adj = 0
-        elif difference > 0.5:
-            status  = 'adjust_down'
-            message = "Progress slower than predicted. Reducing calories by 100."
-            cal_adj = -100
-        else:
-            status  = 'adjust_up'
-            message = "Progress faster than predicted. Increasing calories for sustainability."
-            cal_adj = +100
+            print(f"🔄 Adapt → Predicted: {predicted_weight:.1f} kg | "
+                f"Actual: {actual_weight:.1f} kg | Diff: {difference:+.2f} kg")
 
-        new_cal = current_cal + cal_adj
-        print(f"   Status: {status} | Calories: {current_cal} → {new_cal}")
+            if abs(difference) < 0.5:
+                status  = 'on_track'
+                message = "Great job! You're right on track. Continue with current plan."
+                cal_adj = 0
+            elif difference > 0.5:
+                status  = 'adjust_down'
+                message = "Progress slower than predicted. Reducing calories by 100."
+                cal_adj = -100
+            else:
+                status  = 'adjust_up'
+                message = "Progress faster than predicted. Increasing calories for sustainability."
+                cal_adj = +100
 
-        return {
-            'status':             status,
-            'message':            message,
-            'calorie_adjustment': cal_adj,
-            'new_calorie_target': new_cal,
-            'predicted_weight':   round(predicted_weight, 2),
-            'actual_weight':      actual_weight,
-            'difference':         round(difference, 2),
-            'model_used':         'pFL (0.564 kg MAE)' if self.use_pfl else 'Basic FL'
-        }
+            new_cal = current_cal + cal_adj
+            print(f"   Status: {status} | Calories: {current_cal} → {new_cal}")
+
+            return {
+                'status':             status,
+                'message':            message,
+                'calorie_adjustment': cal_adj,
+                'new_calorie_target': new_cal,
+                'predicted_weight':   round(predicted_weight, 2),
+                'actual_weight':      actual_weight,
+                'difference':         round(difference, 2),
+                'model_used':         'pFL (0.339 kg MAE)' if self.use_pfl else 'Basic FL'
+            }
 
     
     # PUBLIC ENTRY POINT

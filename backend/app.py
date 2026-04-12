@@ -175,7 +175,11 @@ def signup():
             return create_response(False, 'Username already exists', status_code=400)
         if User.query.filter_by(email=data['email']).first():
             return create_response(False, 'Email already exists', status_code=400)
-
+        if not 16 <= int(data.get('age', 0)) <= 80:
+            return create_response(False, 'Age must be between 16 and 80', status_code=400)
+        if not 30 <= float(data.get('weight', 0)) <= 300:
+            return create_response(False, 'Weight must be between 30 and 300 kg', status_code=400)
+            
         new_user = User(
             username=data['username'],
             email=data['email'],
@@ -270,6 +274,10 @@ def log_meal(user_id):
         user = get_user_by_id(user_id)
         if not user:
             return create_response(False, 'User not found', status_code=404)
+        if data.get('calories', 0) < 0 or data.get('calories', 0) > 10000:
+            return create_response(False, 'Invalid calories', status_code=400)
+        if data.get('protein', 0) < 0 or data.get('protein', 0) > 500:
+            return create_response(False, 'Invalid protein', status_code=400)
 
         data     = request.json
         meal_log = MealLog(
@@ -319,6 +327,10 @@ def log_progress(user_id):
         user = get_user_by_id(user_id)
         if not user:
             return create_response(False, 'User not found', status_code=404)
+        if data.get('weight', 0) < 30 or data.get('weight', 0) > 300:
+            return create_response(False, 'Invalid weight', status_code=400)
+        if data.get('week_number', 0) < 1 or data.get('week_number', 0) > 100:
+            return create_response(False, 'Invalid week number', status_code=400)
 
         data     = request.json
         progress = ProgressLog(
@@ -483,6 +495,8 @@ def log_exercise(user_id):
         user = get_user_by_id(user_id)
         if not user:
             return create_response(False, 'User not found', status_code=404)
+        if data.get('calories_burned', 0) < 0 or data.get('calories_burned', 0) > 5000:
+            return create_response(False, 'Invalid calories burned', status_code=400)
 
         data = request.json
         exercise = ExerciseLog(
@@ -619,6 +633,64 @@ def search_nutrition():
  
     except Exception as e:
         return create_response(False, f'Error: {str(e)}', status_code=500) 
+
+
+# ── UPDATE PROFILE + REGENERATE PLAN ─────────────────────────────────────────
+@app.route('/api/user/<int:user_id>/profile', methods=['PUT'])
+def update_profile(user_id):
+    """
+    Update user profile and regenerate FL plan.
+    Body: {age, gender, height, weight, goal, activity_level, gym_days}
+    """
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return create_response(False, 'User not found', status_code=404)
+
+        data = request.json
+
+        # Update only fields that are provided
+        if 'age' in data:
+            user.set_age(data['age'])
+        if 'gender' in data:
+            user.set_gender(data['gender'])
+        if 'height' in data:
+            user.set_height(data['height'])
+        if 'weight' in data:
+            user.set_weight(data['weight'])
+        if 'goal' in data:
+            user.set_goal(data['goal'])
+        if 'activity_level' in data:
+            user.set_activity_level(data['activity_level'])
+        if 'gym_days' in data:
+            user.set_gym_days(data['gym_days'])
+
+        db.session.commit()
+
+        # Regenerate FL plan with updated profile
+        user_profile  = user.get_profile_dict()
+        new_plan      = agent.create_personalized_plan(user_profile)
+
+        # Update plan in database
+        if user.current_plan:
+            user.current_plan.set_plan(new_plan)
+        else:
+            user_plan = UserPlan(user_id=user.id)
+            user_plan.set_plan(new_plan)
+            db.session.add(user_plan)
+
+        db.session.commit()
+
+        return create_response(True, 'Profile updated and plan regenerated', {
+            'profile': user.get_profile_dict(),
+            'plan':    new_plan
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
 if __name__ == '__main__':
     print(" STARTING FLASK SERVER")
     print(" http://localhost:5000")

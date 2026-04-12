@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Exercise Tracker - FitAI</title>
+    <title>Exercise Tracker - FitAI | Calendar & Monthly Summary</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -70,6 +70,18 @@
             .cal-day .cal-num { font-size: 0.7rem; }
             .cal-day .cal-badge { font-size: 0.55rem; }
         }
+        /* custom scroll for day details */
+        .activity-scroll::-webkit-scrollbar {
+            width: 3px;
+        }
+        .activity-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .activity-scroll::-webkit-scrollbar-thumb {
+            background: #c7d2fe;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -80,11 +92,12 @@
                 <div class="flex items-center gap-8">
                     <h1 class="text-2xl font-bold gradient-text">FitAI</h1>
                     <div class="hidden md:flex gap-6">
-                        <a href="dashboard.html" class="text-gray-500 hover:text-purple-600 font-medium">Dashboard</a>
-                        <a href="exercise.html" class="text-purple-600 font-semibold border-b-2 border-purple-600 pb-1">Exercise</a>
-                        <a href="meals.html" class="text-gray-500 hover:text-purple-600 font-medium">Meals</a>
-                        <a href="progress.html" class="text-gray-500 hover:text-purple-600 font-medium">Progress</a>
-                        <a href="chat.html" class="text-gray-500 hover:text-purple-600 font-medium">Chat</a>
+                        <a href="dashboard.html" class="text-purple-600 font-medium">Dashboard</a>
+                        <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
+                        <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
+                        <a href="chat.html" class="text-gray-700 hover:text-purple-600">Chat</a>
+                        <a href="exercise.html" class="text-gray-700 hover:text-purple-600">Exercise</a>
+                        <a href="profile.html" class="text-gray-700 hover:text-purple-600">Profile</a>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
@@ -99,7 +112,7 @@
 
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-1">Exercise Tracker</h1>
-            <p class="text-gray-500">Log your workouts and track calories burned</p>
+            <p class="text-gray-500 text-sm mt-1">Log workouts · monitor burn · stay sharp</p>
         </div>
 
         <div class="grid lg:grid-cols-3 gap-8">
@@ -128,7 +141,6 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-3">Focus / Body Part</label>
                             <div class="flex flex-wrap gap-2">
-                                <!-- Original body parts -->
                                 <button type="button" onclick="selectBodyPart(this,'Chest')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Chest</button>
                                 <button type="button" onclick="selectBodyPart(this,'Back')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Back</button>
                                 <button type="button" onclick="selectBodyPart(this,'Legs')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Legs</button>
@@ -136,7 +148,6 @@
                                 <button type="button" onclick="selectBodyPart(this,'Biceps')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Biceps</button>
                                 <button type="button" onclick="selectBodyPart(this,'Triceps')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Triceps</button>
                                 <button type="button" onclick="selectBodyPart(this,'Abdomen')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Abdomen</button>
-                                <!-- Sports & Cardio options added -->
                                 <button type="button" onclick="selectBodyPart(this,'Running')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Running</button>
                                 <button type="button" onclick="selectBodyPart(this,'Cycling')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Cycling</button>
                                 <button type="button" onclick="selectBodyPart(this,'Swimming')" class="body-part-btn px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-600">Swimming</button>
@@ -184,30 +195,35 @@
                 </div>
             </div>
 
-            <!-- Right: Monthly Summary + Compact Calendar -->
+            <!-- Right: Monthly Summary + Compact Calendar (daily calorie burn visible on each date) -->
             <div class="space-y-6">
                 <!-- Monthly Calories Card -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center">
                     <h2 class="text-lg font-bold text-gray-900 mb-2">Monthly Calories Burned</h2>
                     <p id="monthlyCalories" class="text-5xl font-bold gradient-text mt-3">0</p>
                     <p class="text-gray-400 text-sm mt-2">calories burned this month</p>
+                    <!-- additional subtle context: current month name -->
+                    <p id="currentMonthIndicator" class="text-xs text-purple-400 mt-1 font-medium"></p>
                 </div>
 
-                <!-- Compact Calendar showing daily activity & calories -->
+                <!-- Compact Calendar showing DAILY calorie burn numbers + monthly overview -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
                     <div class="flex justify-between items-center mb-3">
-                        <h2 class="text-md font-bold text-gray-900">Activity Calendar</h2>
+                        <h2 class="text-md font-bold text-gray-900">Daily Calorie Burn</h2>
                         <div class="flex gap-2 text-xs">
-                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-purple-100 border border-purple-300"></span> Active</span>
-                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-white border border-gray-200"></span> Rest</span>
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-purple-100 border border-purple-300"></span> Active day</span>
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-white border border-gray-200"></span> Rest day</span>
                         </div>
                     </div>
                     <div id="calendarContainer">
                         <div class="animate-pulse text-center py-4 text-gray-400">Loading calendar...</div>
                     </div>
-                    <!-- Selected day details panel -->
+                    <!-- Selected day details panel - shows daily breakdown for the clicked day -->
                     <div id="selectedDayDetails" class="mt-4 pt-3 border-t border-gray-100 text-sm">
-                        <p class="text-gray-400 text-center text-xs">Tap a date to see exercises & calories</p>
+                    </div>
+                    <!-- Additional Monthly summary line: total days active and average per active day (extra) -->
+                    <div id="monthlyStatsExtra" class="mt-3 text-xs text-center text-gray-400 border-t border-gray-50 pt-2 hidden">
+                        <!-- dynamic monthly summary will appear here -->
                     </div>
                 </div>
             </div>
@@ -332,7 +348,7 @@
             } catch(e) { console.error(e); }
         }
 
-        // Fetch monthly exercises and build calendar + total calories
+        // Fetch monthly exercises and build calendar + total monthly calories + daily burn shown in badge
         async function loadMonthlySummaryAndCalendar() {
             try {
                 const res = await fetch(`${API_URL}/user/${userId}/exercise/summary`);
@@ -342,7 +358,7 @@
                 const totalMonthly = data.data.total_calories || 0;
                 document.getElementById('monthlyCalories').textContent = Math.round(totalMonthly).toLocaleString();
                 
-                // Group by date
+                // Group by date with full details
                 const dateMap = new Map(); // key: YYYY-MM-DD, value: { totalCal, exercisesList }
                 allExercises.forEach(ex => {
                     const date = ex.date.split('T')[0];
@@ -358,13 +374,19 @@
                         metric: ex.weight_kg
                     });
                 });
-                renderCompactCalendar(dateMap);
+                // Update current month indicator on top card
+                const now = new Date();
+                const monthName = now.toLocaleString('default', { month: 'long' });
+                document.getElementById('currentMonthIndicator').innerHTML = `${monthName} ${now.getFullYear()} `;
+                
+                renderCompactCalendar(dateMap, totalMonthly);
             } catch(e) { console.error(e); }
         }
 
         let currentCalendarDate = new Date();
 
-        function renderCompactCalendar(activityMap) {
+        // Renders calendar where each day badge shows the exact calorie burn for that day (daily calories)
+        function renderCompactCalendar(activityMap, totalMonthlyCalories) {
             const year = currentCalendarDate.getFullYear();
             const month = currentCalendarDate.getMonth();
             const firstDayOfMonth = new Date(year, month, 1);
@@ -382,7 +404,7 @@
             weekdays.forEach(day => {
                 html += `<div class="weekday">${day}</div>`;
             });
-            // leading empty cells (adjust so Monday first? using Sunday as start)
+            // leading empty cells
             let emptyCells = startWeekday;
             for (let i = 0; i < emptyCells; i++) {
                 html += `<div class="cal-day bg-gray-50/30 opacity-30" style="background:#fafafc;"></div>`;
@@ -398,15 +420,18 @@
                 if (hasActivity) additionalClass = 'has-activity';
                 if (isToday) additionalClass += ' today-ring';
                 
+                // Display daily calorie burn prominently inside badge (if >0)
+                const badgeHtml = calTotal > 0 ? `<div class="cal-badge">🔥 ${calTotal}</div>` : (hasActivity ? `<div class="cal-badge">✨0</div>` : '');
+                
                 html += `<div class="cal-day ${additionalClass}" data-date="${dateStr}" data-cal="${calTotal}" data-activities='${JSON.stringify(dayData ? dayData.exercisesList : [])}'>
                     <div class="cal-num">${d}</div>
-                    ${calTotal > 0 ? `<div class="cal-badge">${calTotal}</div>` : ''}
+                    ${badgeHtml}
                 </div>`;
             }
             html += `</div>`;
             document.getElementById('calendarContainer').innerHTML = html;
             
-            // attach click handlers
+            // attach click handlers for detailed daily view
             document.querySelectorAll('.cal-day[data-date]').forEach(dayEl => {
                 dayEl.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -419,7 +444,27 @@
                 });
             });
             
-            // navigation
+            // compute monthly extra stats for the currently displayed month (based on activityMap filtered by currentCalendarDate)
+            const displayedMonthStr = `${year}-${String(month+1).padStart(2,'0')}`;
+            let monthActiveDays = 0;
+            let monthTotalCal = 0;
+            for (let [dateStr, dayInfo] of activityMap.entries()) {
+                if (dateStr.startsWith(displayedMonthStr)) {
+                    monthActiveDays++;
+                    monthTotalCal += dayInfo.totalCal;
+                }
+            }
+            const extraDiv = document.getElementById('monthlyStatsExtra');
+            if (monthActiveDays > 0) {
+                extraDiv.classList.remove('hidden');
+                const avgPerActive = Math.round(monthTotalCal / monthActiveDays);
+                extraDiv.innerHTML = ` ${monthActiveDays} active day(s) this month · avg ${avgPerActive} cal / active day · total ${Math.round(monthTotalCal).toLocaleString()} cal`;
+            } else {
+                extraDiv.classList.add('hidden');
+                extraDiv.innerHTML = '';
+            }
+            
+            // navigation events with rebind
             const prevBtn = document.getElementById('prevMonthCalBtn');
             const nextBtn = document.getElementById('nextMonthCalBtn');
             if (prevBtn) {
@@ -458,9 +503,9 @@
                         metric: ex.weight_kg
                     });
                 });
-                renderCompactCalendar(newMap);
+                renderCompactCalendar(newMap, data.data.total_calories || 0);
             } else {
-                renderCompactCalendar(new Map());
+                renderCompactCalendar(new Map(), 0);
             }
         }
         
@@ -469,7 +514,7 @@
             if (!activities || activities.length === 0) {
                 panel.innerHTML = `<div class="bg-gray-50 rounded-lg p-2 text-center">
                     <p class="font-semibold text-gray-700 text-xs">${formatDateDisplay(date)}</p>
-                    <p class="text-purple-600 text-sm mt-1 font-medium">0 calories</p>
+                    <p class="text-purple-600 text-sm mt-1 font-medium"> ${totalCal} calories</p>
                     <p class="text-gray-400 text-xs mt-1">No activity logged</p>
                 </div>`;
                 return;
@@ -490,9 +535,9 @@
                 <div class="bg-purple-50/30 rounded-lg p-2">
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-gray-800 text-sm">${formatDateDisplay(date)}</h3>
-                        <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold">${Math.round(totalCal)} cal</span>
+                        <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold">🔥 ${Math.round(totalCal)} cal</span>
                     </div>
-                    <div class="mt-2 space-y-1 max-h-32 overflow-y-auto">
+                    <div class="mt-2 space-y-1 max-h-32 overflow-y-auto activity-scroll">
                         ${actsHtml}
                     </div>
                 </div>
