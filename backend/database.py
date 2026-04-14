@@ -30,7 +30,12 @@ db = SQLAlchemy()
 ENCRYPTION_KEY_FILE = 'backend/encryption.key'
 
 def get_encryption_key():
-    """Get or create encryption key"""
+    """Get encryption key from environment variable or file"""
+    # On Render — read from environment variable
+    env_key = os.getenv('ENCRYPTION_KEY')
+    if env_key:
+        return env_key.encode()
+    # Local dev — read from file
     if os.path.exists(ENCRYPTION_KEY_FILE):
         with open(ENCRYPTION_KEY_FILE, 'rb') as f:
             return f.read()
