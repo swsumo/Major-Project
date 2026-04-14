@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/static/auth.js"></script>
     <title>Meal Tracking - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -228,7 +229,6 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:5000/api';
         let userId = localStorage.getItem('user_id');
         let username = localStorage.getItem('username');
         if (!userId) window.location.href = 'login.html';
@@ -290,7 +290,7 @@
             document.getElementById('searchSpinner').classList.remove('hidden');
             document.getElementById('searchResults').classList.add('hidden');
             try {
-                const response = await fetch(`${API_URL}/nutrition/search?q=${encodeURIComponent(query)}&limit=8`);
+                const response = await authFetch(`/nutrition/search?q=${encodeURIComponent(query)}&limit=8`);
                 const data = await response.json();
                 document.getElementById('searchSpinner').classList.add('hidden');
                 if (data.success && data.data.length > 0) renderSearchResults(data.data);
@@ -336,7 +336,7 @@
         // Load user's plan for targets
         async function loadTargets() {
             try {
-                const response = await fetch(`${API_URL}/user/${userId}/plan`);
+                const response = await authFetch(`/user/${userId}/plan`);
                 const data = await response.json();
                 if (data.success) {
                     const macros = data.data.plan_overview.macros;
@@ -353,7 +353,7 @@
         async function loadTodayMeals() {
             try {
                 const today = new Date().toISOString().split('T')[0];
-                const response = await fetch(`${API_URL}/user/${userId}/meals?date=${today}`);
+                const response = await authFetch(`/user/${userId}/meals?date=${today}`);
                 const data = await response.json();
                 if (data.success && data.data.length > 0) {
                     displayMeals(data.data);
@@ -424,7 +424,7 @@
                 btn.disabled = false; btn.textContent = 'Log Meal'; return;
             }
             try {
-                const response = await fetch(`${API_URL}/user/${userId}/meals`, {
+                const response = await authFetch(`/user/${userId}/meals`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mealData)
                 });
                 const data = await response.json();
@@ -458,7 +458,7 @@
                 // Fetch all meals for the current month (we'll fetch summary? but better fetch from /meals?month)
                 const year = currentCalendarDate.getFullYear();
                 const month = currentCalendarDate.getMonth() + 1;
-                const response = await fetch(`${API_URL}/user/${userId}/meals?month=${year}-${String(month).padStart(2,'0')}`);
+                const response = await authFetch(`/user/${userId}/meals?month=${year}-${String(month).padStart(2,'0')}`);
                 const data = await response.json();
                 if (data.success && data.data) {
                     const meals = data.data;
@@ -544,7 +544,10 @@
 
         function formatDateDisplay(ymd) { const [y,m,d] = ymd.split('-'); return new Date(Date.UTC(y,m-1,d)).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
 
-        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
 
         // Initialize
         loadTargets();

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <script src="/static/auth.js"></script>
     <title>Exercise Tracker - FitAI | Calendar & Monthly Summary</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -231,7 +232,6 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:5000/api';
         const userId = localStorage.getItem('user_id');
         const username = localStorage.getItem('username');
         let selectedBodyPart = 'Chest';
@@ -281,7 +281,7 @@
             };
 
             try {
-                const res = await fetch(`${API_URL}/user/${userId}/exercise`, {
+                const res = await authFetch(`/user/${userId}/exercise`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -323,7 +323,7 @@
         async function loadTodayExercises() {
             const today = new Date().toISOString().split('T')[0];
             try {
-                const res = await fetch(`${API_URL}/user/${userId}/exercise?date=${today}`);
+                const res = await authFetch(`/user/${userId}/exercise?date=${today}`);
                 const data = await res.json();
                 if (!data.success) return;
                 const exercises = data.data.exercises || [];
@@ -351,7 +351,7 @@
         // Fetch monthly exercises and build calendar + total monthly calories + daily burn shown in badge
         async function loadMonthlySummaryAndCalendar() {
             try {
-                const res = await fetch(`${API_URL}/user/${userId}/exercise/summary`);
+                const res = await authFetch(`/user/${userId}/exercise/summary`);
                 const data = await res.json();
                 if (!data.success) return;
                 const allExercises = data.data.exercises || [];
@@ -486,7 +486,7 @@
         }
         
         async function refreshCalendarData() {
-            const res = await fetch(`${API_URL}/user/${userId}/exercise/summary`);
+            const res = await authFetch(`/user/${userId}/exercise/summary`);
             const data = await res.json();
             if (data.success) {
                 const exercises = data.data.exercises || [];

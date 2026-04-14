@@ -14,7 +14,12 @@ DB_PATH = os.path.abspath(
     os.path.join(BASE_DIR, "..", "instance", "fitness_app.db")
 )
 
-DATABASE_URI = f"sqlite:///{DB_PATH}"
+DATABASE_URI = os.getenv(
+    'DATABASE_URL',
+    f"sqlite:///{DB_PATH}" 
+)
+if DATABASE_URI.startswith("postgres://"):
+    DATABASE_URI = DATABASE_URI.replace("postgres://", "postgresql://", 1)
 
 
 # Initialize database

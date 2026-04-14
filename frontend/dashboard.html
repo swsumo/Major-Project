@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/static/auth.js"></script>
     <title>Dashboard - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -236,7 +237,6 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:5000/api';
         let userId = localStorage.getItem('user_id');
         let username = localStorage.getItem('username');
 
@@ -252,7 +252,7 @@
         // Helper: fetch meals for a specific date
         async function fetchMealsForDate(date) {
             try {
-                const res = await fetch(`${API_URL}/user/${userId}/meals?date=${date}`);
+                const res = await authFetch(`/user/${userId}/meals?date=${date}`);
                 const data = await res.json();
                 if (data.success) {
                     return data.data; // array of meals logged for that date
@@ -269,8 +269,8 @@
             try {
                 const today = new Date().toISOString().split('T')[0];
                 const [planRes, mealsRes] = await Promise.all([
-                    fetch(`${API_URL}/user/${userId}/plan`),
-                    fetch(`${API_URL}/user/${userId}/meals?date=${today}`)
+                    authFetch(`/user/${userId}/plan`),
+                    authFetch(`/user/${userId}/meals?date=${today}`)
                 ]);
                 
                 const planData = await planRes.json();
@@ -527,9 +527,8 @@
         }
         
         function logout() {
-            localStorage.removeItem('user_id');
-            localStorage.removeItem('username');
-            window.location.href = 'index.html';
+            localStorage.clear();
+            window.location.href = 'login.html';
         }
         
         // Load dashboard on page load

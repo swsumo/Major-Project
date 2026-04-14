@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/static/auth.js"></script>
     <title>AI Chat - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -175,7 +176,6 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:5000/api';
         let userId = localStorage.getItem('user_id');
         let username = localStorage.getItem('username');
 
@@ -188,7 +188,7 @@
         // Load chat history
         async function loadChatHistory() {
             try {
-                const response = await fetch(`${API_URL}/user/${userId}/chat/history`);
+                const response = await authFetch(`/user/${userId}/chat/history`);
                 const data = await response.json();
                 
                 if (data.success && data.data.length > 0) {
@@ -283,7 +283,7 @@
             showTypingIndicator();
 
             try {
-                const response = await fetch(`${API_URL}/user/${userId}/chat`, {
+                const response = await authFetch(`/user/${userId}/chat`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ message })
@@ -311,7 +311,7 @@
 
         function logout() {
             localStorage.clear();
-            window.location.href = 'index.html';
+            window.location.href = 'login.html';
         }
 
         // Load chat history on page load

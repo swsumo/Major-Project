@@ -1,18 +1,23 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, date
+from datetime import datetime, date , timedelta
 import sys
 import os
 import re 
 from dotenv import load_dotenv
 import pandas as pd 
+import jwt 
+from functools import wraps
 load_dotenv()
+import secrets
+from flask import send_from_directory
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from backend.database import db, init_db, User, UserPlan, ChatMessage, MealLog, ProgressLog, ExerciseLog
 from agent.fitness_agent import FitnessAgent
 from agent.utils import EnsembleWeightPredictor, EnsembleAdherencePredictor, EnsembleMacroRecommender
+from backend.database import DATABASE_URI
 
 # ── Gemini Setup ───────────────────────────────────────────────────────────────
 from google import genai
@@ -20,13 +25,16 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 print(" Gemini AI loaded")
 
+JWT_SECRET = os.getenv('JWT_SECRET', 'fitai-jwt-secret-change-in-production')
+JWT_EXPIRY_HOURS = 24
+
+password_reset_tokens = {}
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"sqlite:///{os.path.join(BASE_DIR, '..', 'instance', 'fitness_app.db')}"
-)
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 CORS(app)
@@ -42,6 +50,79 @@ def get_user_by_id(user_id):
 def create_response(success=True, message=None, data=None, status_code=200):
     response = {'success': success, 'message': message, 'data': data}
     return jsonify(response), status_code
+
+
+def generate_token(user_id: int, username: str) -> str:
+    """Generate JWT token for user."""
+    payload = {
+        'user_id':  user_id,
+        'username': username,
+        'exp': datetime.utcnow() + timedelta(hours=JWT_EXPIRY_HOURS),
+        'iat':      datetime.utcnow()
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm='HS256')
+ 
+ 
+def verify_token(token: str) -> dict:
+    """Verify JWT token and return payload."""
+    return jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
+ 
+ 
+def token_required(f):
+    """Decorator to protect routes with JWT."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+ 
+        # Get token from Authorization header
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+ 
+        if not token:
+            return create_response(False, 'Authentication required', status_code=401)
+ 
+        try:
+            payload = verify_token(token)
+            # Inject user_id from token into kwargs if route uses it
+            request.current_user_id = payload['user_id']
+        except jwt.ExpiredSignatureError:
+            return create_response(False, 'Token expired — please login again', status_code=401)
+        except jwt.InvalidTokenError:
+            return create_response(False, 'Invalid token', status_code=401)
+ 
+        return f(*args, **kwargs)
+    return decorated
+ 
+ 
+def token_matches_user(f):
+    """Decorator — ensures token user_id matches the route user_id."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+ 
+        if not token:
+            return create_response(False, 'Authentication required', status_code=401)
+ 
+        try:
+            payload  = verify_token(token)
+            token_uid = payload['user_id']
+            route_uid = kwargs.get('user_id')
+ 
+            if route_uid and token_uid != route_uid:
+                return create_response(False, 'Access denied', status_code=403)
+ 
+            request.current_user_id = token_uid
+        except jwt.ExpiredSignatureError:
+            return create_response(False, 'Token expired — please login again', status_code=401)
+        except jwt.InvalidTokenError:
+            return create_response(False, 'Invalid token', status_code=401)
+ 
+        return f(*args, **kwargs)
+    return decorated
 
 # ── REPLACE your existing build_gemini_system_prompt function with this ────────
  
@@ -165,11 +246,6 @@ load_nutrition_data()
 def signup():
     try:
         data = request.json
-        required = ['username', 'email', 'password', 'age', 'gender', 'height',
-                    'weight', 'goal', 'activity_level', 'gym_days']
-        for field in required:
-            if field not in data:
-                return create_response(False, f'Missing field: {field}', status_code=400)
 
         if User.query.filter_by(username=data['username']).first():
             return create_response(False, 'Username already exists', status_code=400)
@@ -179,6 +255,14 @@ def signup():
             return create_response(False, 'Age must be between 16 and 80', status_code=400)
         if not 30 <= float(data.get('weight', 0)) <= 300:
             return create_response(False, 'Weight must be between 30 and 300 kg', status_code=400)
+
+        required = ['username', 'email', 'password', 'age', 'gender', 'height',
+                    'weight', 'goal', 'activity_level', 'gym_days']
+        for field in required:
+            if field not in data:
+                return create_response(False, f'Missing field: {field}', status_code=400)
+
+        
             
         new_user = User(
             username=data['username'],
@@ -203,10 +287,12 @@ def signup():
         db.session.add(user_plan)
         db.session.commit()
 
+        token = generate_token(new_user.id, new_user.username)
         return create_response(True, 'User created successfully', {
-            'user_id': new_user.id,
-            'username': new_user.username,
-            'plan_created': True
+            'user_id':      new_user.id,
+            'username':     new_user.username,
+            'plan_created': True,
+            'token':        token
         })
 
     except Exception as e:
@@ -216,27 +302,103 @@ def signup():
 
 @app.route('/api/auth/login', methods=['POST'])
 def login():
+    """Login and return JWT token."""
     try:
         data = request.json
         user = User.query.filter_by(username=data['username']).first()
+ 
         if not user or not check_password_hash(user.password_hash, data['password']):
             return create_response(False, 'Invalid credentials', status_code=401)
-
+ 
         user.last_login = datetime.utcnow()
         db.session.commit()
-
+ 
+        token = generate_token(user.id, user.username)
+ 
         return create_response(True, 'Login successful', {
-            'user_id': user.id,
+            'user_id':  user.id,
             'username': user.username,
-            'email': user.email
+            'email':    user.email,
+            'token':    token
         })
+ 
+    except Exception as e:
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+
+@app.route('/api/auth/forgot-password', methods=['POST'])
+def forgot_password():
+    """Check if email exists. Body: {email}"""
+    try:
+        data  = request.json
+        email = data.get('email', '').strip()
+        if not email:
+            return create_response(False, 'Email required', status_code=400)
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return create_response(False, 'No account found with that email', status_code=404)
+
+        # Generate a simple short-lived token (no email sent)
+        token = secrets.token_urlsafe(32)
+        password_reset_tokens[token] = {
+            'user_id': user.id,
+            'email':   email,
+            'expires': datetime.utcnow() + timedelta(hours=1)
+        }
+
+        return create_response(True, 'Email verified', {'token': token})
 
     except Exception as e:
         return create_response(False, f'Error: {str(e)}', status_code=500)
 
 
+
+@app.route('/api/auth/reset-password', methods=['POST'])
+def reset_password():
+    """Reset password with token. Body: {token, new_password}"""
+    try:
+        data         = request.json
+        token        = data.get('token', '')
+        new_password = data.get('new_password', '')
+ 
+        if not token or not new_password:
+            return create_response(False, 'Token and new password required', status_code=400)
+ 
+        if len(new_password) < 6:
+            return create_response(False, 'Password must be at least 6 characters', status_code=400)
+ 
+        # Verify token
+        token_data = password_reset_tokens.get(token)
+        if not token_data:
+            return create_response(False, 'Invalid or expired reset link', status_code=400)
+ 
+        if datetime.utcnow() > token_data['expires']:
+            del password_reset_tokens[token]
+            return create_response(False, 'Reset link expired — request a new one', status_code=400)
+ 
+        # Update password
+        user = get_user_by_id(token_data['user_id'])
+        if not user:
+            return create_response(False, 'User not found', status_code=404)
+ 
+        user.password_hash = generate_password_hash(new_password)
+        db.session.commit()
+ 
+        # Invalidate token
+        del password_reset_tokens[token]
+ 
+        return create_response(True, 'Password reset successfully — please login')
+ 
+    except Exception as e:
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+
 # ── USER PROFILE & PLAN ────────────────────────────────────────────────────────
 @app.route('/api/user/<int:user_id>/profile', methods=['GET'])
+@token_matches_user
 def get_user_profile(user_id):
     try:
         user = get_user_by_id(user_id)
@@ -253,6 +415,7 @@ def get_user_profile(user_id):
 
 
 @app.route('/api/user/<int:user_id>/plan', methods=['GET'])
+@token_matches_user
 def get_user_plan(user_id):
     try:
         user = get_user_by_id(user_id)
@@ -269,8 +432,11 @@ def get_user_plan(user_id):
 
 # ── MEAL LOGGING ───────────────────────────────────────────────────────────────
 @app.route('/api/user/<int:user_id>/meals', methods=['POST'])
+@token_matches_user
 def log_meal(user_id):
     try:
+        data     = request.json
+        
         user = get_user_by_id(user_id)
         if not user:
             return create_response(False, 'User not found', status_code=404)
@@ -279,7 +445,6 @@ def log_meal(user_id):
         if data.get('protein', 0) < 0 or data.get('protein', 0) > 500:
             return create_response(False, 'Invalid protein', status_code=400)
 
-        data     = request.json
         meal_log = MealLog(
             user_id   = user_id,
             meal_type = data.get('meal_type', 'meal'),
@@ -301,6 +466,7 @@ def log_meal(user_id):
 
 
 @app.route('/api/user/<int:user_id>/meals', methods=['GET'])
+@token_matches_user
 def get_meals(user_id):
     try:
         user = get_user_by_id(user_id)
@@ -322,16 +488,9 @@ def get_meals(user_id):
 
 # ── PROGRESS TRACKING ──────────────────────────────────────────────────────────
 @app.route('/api/user/<int:user_id>/progress', methods=['POST'])
+@token_matches_user
 def log_progress(user_id):
     try:
-        user = get_user_by_id(user_id)
-        if not user:
-            return create_response(False, 'User not found', status_code=404)
-        if data.get('weight', 0) < 30 or data.get('weight', 0) > 300:
-            return create_response(False, 'Invalid weight', status_code=400)
-        if data.get('week_number', 0) < 1 or data.get('week_number', 0) > 100:
-            return create_response(False, 'Invalid week number', status_code=400)
-
         data     = request.json
         progress = ProgressLog(
             user_id             = user_id,
@@ -344,6 +503,15 @@ def log_progress(user_id):
         progress.set_weight(data['weight'])
         if 'notes' in data:
             progress.set_notes(data['notes'])
+
+        user = get_user_by_id(user_id)
+        if not user:
+            return create_response(False, 'User not found', status_code=404)
+        if data.get('weight', 0) < 30 or data.get('weight', 0) > 300:
+            return create_response(False, 'Invalid weight', status_code=400)
+        if data.get('week_number', 0) < 1 or data.get('week_number', 0) > 100:
+            return create_response(False, 'Invalid week number', status_code=400)
+
 
         user_profile = user.get_profile_dict()
         current_plan = user.current_plan.get_plan() if user.current_plan else None
@@ -376,7 +544,10 @@ def log_progress(user_id):
         return create_response(False, f'Error: {str(e)}', status_code=500)
 
 
+
+
 @app.route('/api/user/<int:user_id>/progress', methods=['GET'])
+@token_matches_user
 def get_progress(user_id):
     try:
         user = get_user_by_id(user_id)
@@ -393,6 +564,7 @@ def get_progress(user_id):
 # ── CHAT WITH GEMINI ───────────────────────────────────────────────────────────
  
 @app.route('/api/user/<int:user_id>/chat', methods=['POST'])
+@token_matches_user
 def chat(user_id):
     """
     Chat with Gemini AI fitness coach.
@@ -402,34 +574,46 @@ def chat(user_id):
         user = get_user_by_id(user_id)
         if not user:
             return create_response(False, 'User not found', status_code=404)
- 
+
         data         = request.json
         user_message = data.get('message', '').strip()
         if not user_message:
             return create_response(False, 'Message cannot be empty', status_code=400)
- 
+
+        # ── RATE LIMIT: 10 user messages per day ─────────────────────────────
+        today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_message_count = ChatMessage.query.filter(
+            ChatMessage.user_id == user_id,
+            ChatMessage.role == 'user',
+            ChatMessage.timestamp >= today_start
+        ).count()
+
+        if today_message_count >= 10:
+            return create_response(False, 'Daily limit reached. You can send up to 10 messages per day.', status_code=429)
+        # ─────────────────────────────────────────────────────────────────────
+
         # Save user message to DB
         user_chat = ChatMessage(user_id=user_id, role='user')
         user_chat.set_message(user_message)
         db.session.add(user_chat)
- 
+
         # Get user's current plan for context
         current_plan = user.current_plan.get_plan() if user.current_plan else {}
- 
+
         # Build last 10 messages as conversation history
         recent_messages = ChatMessage.query.filter_by(user_id=user_id)\
             .order_by(ChatMessage.timestamp.desc()).limit(10).all()
         recent_messages = list(reversed(recent_messages))
- 
+
         # Build system prompt with DB context
         system_prompt = build_gemini_system_prompt(user, current_plan, user_id=user_id)
- 
+
         # Format history as conversation turns
         contents = [
             {"role": "user",  "parts": [{"text": system_prompt}]},
             {"role": "model", "parts": [{"text": "Understood! I'm FitAI, your personal fitness coach. I have your profile, meal history, and exercise logs. How can I help?"}]}
         ]
- 
+
         # Add last 10 messages as history
         for msg in recent_messages:
             role = "user" if msg.role == "user" else "model"
@@ -439,38 +623,43 @@ def chat(user_id):
                 content = ""
             if content:
                 contents.append({"role": role, "parts": [{"text": content}]})
- 
+
         # Add current message
         contents.append({"role": "user", "parts": [{"text": user_message}]})
- 
+
         # Call Gemini with full history + DB context
         gemini_response = gemini_client.models.generate_content(
             model='gemini-2.5-flash-lite',
             contents=contents
         )
         agent_response = gemini_response.text
- 
+
         # Clean markdown formatting
         import re
         agent_response = re.sub(r'\*\*(.*?)\*\*', r'\1', agent_response)
         agent_response = re.sub(r'\*(.*?)\*',     r'\1', agent_response)
         agent_response = re.sub(r'#{1,6}\s',      '',    agent_response)
- 
+
         # Save agent response
         agent_chat = ChatMessage(user_id=user_id, role='agent')
         agent_chat.set_message(agent_response)
         db.session.add(agent_chat)
         db.session.commit()
- 
+
         return create_response(True, 'Message sent', {
             'user_message':   user_message,
-            'agent_response': agent_response
+            'agent_response': agent_response,
+            'messages_remaining': max(0, 10 - (today_message_count + 1))
         })
- 
+
     except Exception as e:
         db.session.rollback()
         return create_response(False, f'Gemini Error: {str(e)}', status_code=500)
+
+
+
 @app.route('/api/user/<int:user_id>/chat/history', methods=['GET'])
+@token_matches_user
 def get_chat_history(user_id):
     try:
         user = get_user_by_id(user_id)
@@ -486,19 +675,20 @@ def get_chat_history(user_id):
 
 # ── EXERCISE LOGGING ROUTES ───────────────────────────────────────────────────
 @app.route('/api/user/<int:user_id>/exercise', methods=['POST'])
+@token_matches_user
 def log_exercise(user_id):
     """
     Log an exercise
     Body: {exercise_name, body_part, weight_kg, sets_reps, workout_duration, calories_burned, date}
     """
     try:
+        data = request.json
         user = get_user_by_id(user_id)
         if not user:
             return create_response(False, 'User not found', status_code=404)
         if data.get('calories_burned', 0) < 0 or data.get('calories_burned', 0) > 5000:
             return create_response(False, 'Invalid calories burned', status_code=400)
 
-        data = request.json
         exercise = ExerciseLog(
             user_id          = user_id,
             date             = datetime.strptime(data['date'], '%Y-%m-%d').date() if 'date' in data else date.today(),
@@ -519,6 +709,7 @@ def log_exercise(user_id):
 
 
 @app.route('/api/user/<int:user_id>/exercise', methods=['GET'])
+@token_matches_user
 def get_exercises(user_id):
     """Get exercise logs — optional ?date=YYYY-MM-DD filter"""
     try:
@@ -551,6 +742,7 @@ def get_exercises(user_id):
 
 
 @app.route('/api/user/<int:user_id>/exercise/summary', methods=['GET'])
+@token_matches_user
 def get_exercise_summary(user_id):
     """Get weekly exercise summary — body parts trained this week"""
     try:
@@ -593,11 +785,12 @@ def health_check():
     return create_response(True, 'Server is running', {
         'status':             'healthy',
         'agent_loaded':       agent is not None,
-        'gemini_loaded':      gemini_model is not None,
+        'gemini_loaded':      gemini_client is not None,
         'database_connected': True
     })
 
 @app.route('/api/nutrition/search', methods=['GET'])
+@token_matches_user
 def search_nutrition():
     """
     Search nutrition database
@@ -637,6 +830,7 @@ def search_nutrition():
 
 # ── UPDATE PROFILE + REGENERATE PLAN ─────────────────────────────────────────
 @app.route('/api/user/<int:user_id>/profile', methods=['PUT'])
+@token_matches_user
 def update_profile(user_id):
     """
     Update user profile and regenerate FL plan.
@@ -689,6 +883,7 @@ def update_profile(user_id):
     except Exception as e:
         db.session.rollback()
         return create_response(False, f'Error: {str(e)}', status_code=500)
+
 
 
 if __name__ == '__main__':

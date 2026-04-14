@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/static/auth.js"></script>
     <title>Profile - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -182,7 +183,6 @@
     </div>
 
     <script>
-        const API_URL  = 'http://localhost:5000/api';
         const userId   = localStorage.getItem('user_id');
         const username = localStorage.getItem('username');
 
@@ -194,8 +194,8 @@
         async function loadProfile() {
             try {
                 const [profileRes, planRes] = await Promise.all([
-                    fetch(`${API_URL}/user/${userId}/profile`),
-                    fetch(`${API_URL}/user/${userId}/plan`)
+                    authFetch(`/user/${userId}/profile`),
+                    authFetch(`/user/${userId}/plan`)
                 ]);
                 const profileData = await profileRes.json();
                 const planData    = await planRes.json();
@@ -259,7 +259,7 @@
             };
 
             try {
-                const res  = await fetch(`${API_URL}/user/${userId}/profile`, {
+                const res  = await authFetch(`/user/${userId}/profile`, {
                     method:  'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body:    JSON.stringify(payload)

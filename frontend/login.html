@@ -23,7 +23,7 @@
     <nav class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="index.html" class="flex items-center">
+                <a href="login.html" class="flex items-center">
                     <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">FitAI</h1>
                 </a>
                 <div class="flex gap-4">
@@ -76,6 +76,13 @@
 
                 </form>
 
+                <!-- Forgot Password Link -->
+                <div class="text-center mt-4">
+                    <a href="reset-password.html" class="text-sm text-purple-600 hover:underline">
+                        Forgot your password?
+                    </a>
+                </div>
+
                 <div class="mt-6 text-center">
                     <p class="text-gray-600">
                         Don't have an account? 
@@ -116,6 +123,7 @@
                     // Store user info
                     localStorage.setItem('user_id', data.data.user_id);
                     localStorage.setItem('username', data.data.username);
+                    localStorage.setItem('token', data.data.token);
                     
                     // Redirect to dashboard
                     window.location.href = 'dashboard.html';

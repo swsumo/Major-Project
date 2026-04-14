@@ -6,3 +6,25 @@ backend/encryption.key
 .env
 *.pkl
 results/
+fl_training_data.csv
+
+# Python
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/

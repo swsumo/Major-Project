@@ -38,7 +38,7 @@
     <nav class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="index.html" class="flex items-center">
+                <a href="login.html" class="flex items-center">
                     <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">🤖 FitAI</h1>
                 </a>
                 <div class="flex gap-4">
@@ -225,7 +225,7 @@
                             </button>
                             <button type="submit" id="submitBtn"
                                 class="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-3 rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition shadow-lg">
-                                Create Account & Get Plan 🚀
+                                Create Account & Get Plan 
                             </button>
                         </div>
                     </div>
@@ -353,6 +353,7 @@
                     // Success! Store user ID and redirect
                     localStorage.setItem('user_id', data.data.user_id);
                     localStorage.setItem('username', data.data.username);
+                    localStorage.setItem('token', data.data.token);   // ← ADD THIS
                     
                     // Show success message
                     alert('Account created successfully! Redirecting to dashboard...');

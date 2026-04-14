@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/static/auth.js"></script>
     <title>Progress Tracking - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -162,7 +163,6 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:5000/api';
         let userId = localStorage.getItem('user_id');
         let username = localStorage.getItem('username');
         let weightChart = null;
@@ -176,7 +176,7 @@
         // Load progress history
         async function loadProgress() {
             try {
-                const response = await fetch(`${API_URL}/user/${userId}/progress`);
+                const response = await authFetch(`/user/${userId}/progress`);
                 const data = await response.json();
                 
                 if (data.success && data.data.length > 0) {
@@ -329,7 +329,7 @@
                 document.getElementById('submitBtn').disabled = true;
                 document.getElementById('submitBtn').textContent = 'Processing...';
 
-                const response = await fetch(`${API_URL}/user/${userId}/progress`, {
+                const response = await authFetch(`/user/${userId}/progress`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(progressData)
@@ -392,7 +392,7 @@
         function logout() {
             localStorage.removeItem('user_id');
             localStorage.removeItem('username');
-            window.location.href = 'index.html';
+            window.location.href = 'login.html';
         }
 
         // Load on page load
