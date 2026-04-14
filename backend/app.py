@@ -9,9 +9,9 @@ from functools import wraps
 import os
 import re
 import secrets
-
+import sys
 load_dotenv()
-
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from backend.database import db, init_db, User, UserPlan, ChatMessage, MealLog, ProgressLog, ExerciseLog, DATABASE_URI
 from backend.agent.fitness_agent import FitnessAgent
 from backend.agent.utils import (
@@ -900,6 +900,10 @@ def health():
         "status": "healthy",
         "message": "Flask server is running "
     }), 200
+
+@app.route('/')
+def home():
+    return "Server is running"
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
