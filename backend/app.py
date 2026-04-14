@@ -1,23 +1,24 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, date , timedelta
-import sys
-import os
-import re 
+from datetime import datetime, date, timedelta
 from dotenv import load_dotenv
-import pandas as pd 
-import jwt 
+import pandas as pd
+import jwt
 from functools import wraps
-load_dotenv()
+import os
+import re
 import secrets
-from flask import send_from_directory
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from backend.database import db, init_db, User, UserPlan, ChatMessage, MealLog, ProgressLog, ExerciseLog
-from agent.fitness_agent import FitnessAgent
-from agent.utils import EnsembleWeightPredictor, EnsembleAdherencePredictor, EnsembleMacroRecommender
-from backend.database import DATABASE_URI
+load_dotenv()
+
+from backend.database import db, init_db, User, UserPlan, ChatMessage, MealLog, ProgressLog, ExerciseLog, DATABASE_URI
+from backend.agent.fitness_agent import FitnessAgent
+from backend.agent.utils import (
+    EnsembleWeightPredictor,
+    EnsembleAdherencePredictor,
+    EnsembleMacroRecommender
+)
 
 # ── Gemini Setup ───────────────────────────────────────────────────────────────
 from google import genai
