@@ -4,7 +4,6 @@ __pycache__/
 instance/fitness_app.db
 backend/encryption.key
 .env
-*.pkl
 results/
 fl_training_data.csv
 
