@@ -39,7 +39,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 CORS(app)
 init_db(app)
-#new added thing for render upload
+#new added thing for render
 @app.route('/')
 def index():
     return send_from_directory('../frontend', 'login.html')
@@ -892,11 +892,16 @@ def update_profile(user_id):
         db.session.rollback()
         return create_response(False, f'Error: {str(e)}', status_code=500)
 
-
+# Health Check Route
+@app.route('/api/health', methods=['GET'])
+def health():
+    return jsonify({
+        "status": "healthy",
+        "message": "Flask server is running "
+    }), 200
 
 if __name__ == '__main__':
-    print(" STARTING FLASK SERVER")
-    print(" http://localhost:5000")
-    print(" Health: http://localhost:5000/api/health")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get("PORT", 10000))
+    print(f"STARTING SERVER ON PORT {port}")
+    app.run(host='0.0.0.0', port=port)
 
