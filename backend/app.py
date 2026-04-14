@@ -39,6 +39,14 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 CORS(app)
 init_db(app)
+#new added thing for render upload
+@app.route('/')
+def index():
+    return send_from_directory('../frontend', 'login.html')
+
+@app.route('/<path:filename>')
+def serve_frontend(filename):
+    return send_from_directory('../frontend', filename)
 agent = FitnessAgent(models_path='models/trained_models')
 print("Agent loaded successfully")
 
