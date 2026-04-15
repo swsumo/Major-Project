@@ -394,6 +394,10 @@
     </div>
 
     <script>
+        const API_URL =
+    window.location.hostname.includes("localhost")
+        ? "http://localhost:5000/api"
+        : "https://major-project-20zc.onrender.com/api";
         // Create training convergence chart
         const ctx = document.getElementById('trainingChart').getContext('2d');
         

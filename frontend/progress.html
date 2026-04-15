@@ -163,6 +163,10 @@
     </div>
 
     <script>
+        const API_URL =
+    window.location.hostname.includes("localhost")
+        ? "http://localhost:5000/api"
+        : "https://major-project-20zc.onrender.com/api";
         let userId = localStorage.getItem('user_id');
         let username = localStorage.getItem('username');
         let weightChart = null;
