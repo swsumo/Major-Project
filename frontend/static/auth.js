@@ -7,8 +7,10 @@
  * Usage: authFetch('/api/user/1/plan') instead of fetch(...)
  */
 
-const API_URL = 'http://localhost:5000/api';
-
+const API_URL =
+    window.location.hostname.includes("localhost")
+        ? "http://localhost:5000/api"
+        : "https://major-project-20zc.onrender.com/api";
 function getToken() {
     return localStorage.getItem('token');
 }
