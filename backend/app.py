@@ -35,14 +35,6 @@ app = Flask(__name__)
 
 FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'frontend')
 
-@app.route('/')
-def index():
-    return send_from_directory(FRONTEND_DIR, 'login.html')
-
-@app.route('/<path:filename>')
-def serve_frontend(filename):
-    return send_from_directory(FRONTEND_DIR, filename)
-
 
 app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -55,11 +47,11 @@ init_db(app)
 #new added thing for render
 @app.route('/')
 def index():
-    return send_from_directory('../frontend', 'login.html')
+    return send_from_directory(FRONTEND_DIR, 'login.html')
 
 @app.route('/<path:filename>')
 def serve_frontend(filename):
-    return send_from_directory('../frontend', filename)
+    return send_from_directory(FRONTEND_DIR, filename)
 agent = FitnessAgent(models_path='models/trained_models')
 print("Agent loaded successfully")
 
@@ -912,10 +904,6 @@ def health():
         "status": "healthy",
         "message": "Flask server is running "
     }), 200
-
-@app.route('/')
-def home():
-    return "Server is running"
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
