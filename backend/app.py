@@ -49,9 +49,15 @@ init_db(app)
 def index():
     return send_from_directory(FRONTEND_DIR, 'login.html')
 
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(os.path.join(FRONTEND_DIR, 'static'), filename)
+
 @app.route('/<path:filename>')
 def serve_frontend(filename):
     return send_from_directory(FRONTEND_DIR, filename)
+
+
 agent = FitnessAgent(models_path='models/trained_models')
 print("Agent loaded successfully")
 
