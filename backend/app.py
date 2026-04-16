@@ -45,14 +45,17 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 CORS(app)
 init_db(app)
 #new added thing for render
-@app.route('/')
-def index():
-    return send_from_directory(FRONTEND_DIR, 'login.html')
-
+# 1️⃣ STATIC FIRST
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory(os.path.join(FRONTEND_DIR, 'static'), filename)
 
+# 2️⃣ ROOT
+@app.route('/')
+def index():
+    return send_from_directory(FRONTEND_DIR, 'login.html')
+
+# 3️⃣ CATCH-ALL LAST
 @app.route('/<path:filename>')
 def serve_frontend(filename):
     return send_from_directory(FRONTEND_DIR, filename)
