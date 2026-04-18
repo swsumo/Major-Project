@@ -21,18 +21,32 @@
                 <div class="flex items-center gap-8">
                     <h1 class="text-2xl font-bold gradient-text">FitAI</h1>
                     <div class="hidden md:flex gap-6">
-                        <a href="dashboard.html" class="text-purple-600 font-medium">Dashboard</a>
+                        <a href="dashboard.html" class="text-gray-700 hover:text-purple-600">Dashboard</a>
                         <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
                         <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
                         <a href="chat.html" class="text-gray-700 hover:text-purple-600">Chat</a>
                         <a href="exercise.html" class="text-gray-700 hover:text-purple-600">Exercise</a>
-                        <a href="profile.html" class="text-gray-700 hover:text-purple-600">Profile</a>
+                        <a href="profile.html" class="text-purple-600 font-medium">Profile</a>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <span id="username" class="text-gray-700 font-medium"></span>
+                <div class="flex items-center gap-3">
+                    <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
                     <button onclick="logout()" class="text-gray-500 hover:text-red-500 text-sm">Logout</button>
+                    <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-100 focus:outline-none" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
                 </div>
+            </div>
+            <!-- Mobile menu -->
+            <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-2 space-y-1 pb-3">
+            <a href="dashboard.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Dashboard</a>
+            <a href="meals.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Meals</a>
+            <a href="progress.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Progress</a>
+            <a href="chat.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Chat</a>
+            <a href="exercise.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Exercise</a>
+            <a href="profile.html" class="block px-4 py-2 rounded-lg text-purple-600 font-semibold bg-purple-50">Profile</a>
             </div>
         </div>
     </nav>
