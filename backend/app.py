@@ -31,9 +31,9 @@ JWT_EXPIRY_HOURS = 24
 
 password_reset_tokens = {}
 
-app = Flask(__name__)
-
 FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'frontend')
+
+app = Flask(__name__, static_folder=None)
 
 
 app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
@@ -915,7 +915,7 @@ def health():
     }), 200
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", 5000))
     print(f"STARTING SERVER ON PORT {port}")
     app.run(host='0.0.0.0', port=port)
 
