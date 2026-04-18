@@ -6,80 +6,102 @@
     <script src="static/auth.js"></script>
     <title>AI Chat - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #902f10;
+            --primary-dark: #7a2810;
+            --primary-light: #fff5ee;
+            --border: #f0f0f0;
         }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        body { font-family: 'Inter', sans-serif; background: #f5f7fb; }
+
+        /* Nav */
+        .nav-link { font-size: 14px; color: #6b7280; transition: color 0.15s; }
+        .nav-link:hover { color: #1f2937; }
+        .nav-active { color: var(--primary) !important; font-weight: 600; border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+        .mobile-nav-active { color: var(--primary); font-weight: 600; background: var(--primary-light); }
+
+        .user-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: var(--primary); color: white;
+            font-weight: 700; font-size: 12px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        
+
+        /* Chat layout */
         .chat-container {
             height: calc(100vh - 320px);
             min-height: 300px;
             overflow-y: auto;
         }
         @media (max-width: 640px) {
-            .chat-container {
-                height: calc(100vh - 260px);
-                min-height: 250px;
-            }
+            .chat-container { height: calc(100vh - 260px); min-height: 250px; }
         }
-        
+
+        /* Message bubbles */
         .message-user {
-            background: #667eea;
+            background: var(--primary);
             color: white;
             margin-left: auto;
         }
-        
         .message-agent {
             background: #f3f4f6;
             color: #1f2937;
         }
-        
-        .typing-indicator span {
-            animation: blink 1.4s infinite both;
-        }
-        
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        
+
+        /* Typing dots */
+        .typing-indicator span { animation: blink 1.4s infinite both; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes blink {
             0%, 80%, 100% { opacity: 0; }
             40% { opacity: 1; }
         }
+
+        /* Input focus */
+        #messageInput:focus {
+            outline: none;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 2px rgba(144, 47, 16, 0.15);
+        }
+
+        /* Send button */
+        #sendBtn { background: var(--primary); transition: background 0.2s; }
+        #sendBtn:hover { background: var(--primary-dark); }
     </style>
 </head>
-<body class="bg-gray-50">
+<body>
 
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-8">
-                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">FitAI</h1>
-                    <div class="hidden md:flex gap-6">
-                        <a href="dashboard.html" class="text-gray-700 hover:text-purple-600">Dashboard</a>
-                        <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
-                        <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
-                        <a href="chat.html" class="text-purple-600 font-medium">Chat</a>
-                        <a href="exercise.html" class="text-gray-700 hover:text-purple-600">Exercise</a>
-                        <a href="profile.html" class="text-gray-700 hover:text-purple-600">Profile</a>
+                    <span class="text-lg font-bold flex items-center gap-2" style="color: var(--primary);">
+                        <i class="fa-solid fa-chart-simple"></i>FitAI
+                    </span>
+                    <div class="hidden md:flex gap-6 items-center">
+                        <a href="dashboard.html" class="nav-link">Dashboard</a>
+                        <a href="meals.html"     class="nav-link">Meals</a>
+                        <a href="progress.html"  class="nav-link">Progress</a>
+                        <a href="chat.html"      class="nav-link nav-active">Chat</a>
+                        <a href="exercise.html"  class="nav-link">Exercise</a>
+                        <a href="profile.html"   class="nav-link">Profile</a>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="user-avatar" id="userAvatar"></div>
                     <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
-                    <button onclick="logout()" class="text-gray-600 hover:text-red-600 text-sm">Logout</button>
-                    <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-100 focus:outline-none" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                    <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none"
+                        onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
                     </button>
@@ -87,39 +109,38 @@
             </div>
             <!-- Mobile menu -->
             <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-2 space-y-1 pb-3">
-            <a href="dashboard.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Dashboard</a>
-            <a href="meals.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Meals</a>
-            <a href="progress.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Progress</a>
-            <a href="chat.html" class="block px-4 py-2 rounded-lg text-purple-600 font-semibold bg-purple-50">Chat</a>
-            <a href="exercise.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Exercise</a>
-            <a href="profile.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Profile</a>
+                <a href="dashboard.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Dashboard</a>
+                <a href="meals.html"     class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Meals</a>
+                <a href="progress.html"  class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Progress</a>
+                <a href="chat.html"      class="block px-4 py-2 rounded-lg mobile-nav-active">Chat</a>
+                <a href="exercise.html"  class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Exercise</a>
+                <a href="profile.html"   class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Profile</a>
             </div>
         </div>
     </nav>
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+
         <!-- Header -->
         <div class="mb-6">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">💬 Chat with AI Agent</h1>
-            <p class="text-gray-600">Ask questions about your plan, nutrition, or workouts</p>
+            <h1 class="text-3xl font-bold text-gray-900 mb-1">Chat with AI Agent</h1>
+            <p class="text-gray-500 text-sm">Ask questions about your plan, nutrition, or workouts</p>
         </div>
 
         <!-- Chat Container -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm">
+
             <!-- Chat Messages -->
             <div id="chatMessages" class="chat-container p-6 space-y-4">
-                
+
                 <!-- Welcome Message -->
                 <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                        AI
-                    </div>
-                    <div class="message-agent max-w-md rounded-lg px-4 py-3">
-                        <p class="text-sm font-medium text-purple-600 mb-1">AI Agent</p>
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                        style="background: var(--primary-light); color: var(--primary);">AI</div>
+                    <div class="message-agent max-w-md rounded-2xl px-4 py-3 text-sm">
+                        <p class="font-semibold mb-1" style="color: var(--primary);">AI Agent</p>
                         <p>Hello! I'm your AI fitness coach. I can help you with:</p>
-                        <ul class="mt-2 text-sm space-y-1">
+                        <ul class="mt-2 space-y-1">
                             <li>• Questions about your meal plan</li>
                             <li>• Workout advice and form tips</li>
                             <li>• Motivation and accountability</li>
@@ -132,30 +153,29 @@
 
             </div>
 
-            <!-- Typing Indicator (hidden by default) -->
+            <!-- Typing Indicator -->
             <div id="typingIndicator" class="hidden px-6 pb-4">
                 <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                        AI
-                    </div>
-                    <div class="bg-gray-100 rounded-lg px-4 py-3">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                        style="background: var(--primary-light); color: var(--primary);">AI</div>
+                    <div class="bg-gray-100 rounded-2xl px-4 py-3">
                         <div class="typing-indicator flex gap-1">
-                            <span class="w-2 h-2 bg-gray-500 rounded-full"></span>
-                            <span class="w-2 h-2 bg-gray-500 rounded-full"></span>
-                            <span class="w-2 h-2 bg-gray-500 rounded-full"></span>
+                            <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                            <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                            <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Input Area -->
-            <div class="border-t border-gray-200 p-4">
+            <div class="border-t border-gray-100 p-4">
                 <form id="chatForm" class="flex gap-3">
                     <input type="text" id="messageInput" required
-                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="flex-1 px-4 py-3 border border-gray-200 rounded-xl text-sm"
                         placeholder="Type your message...">
                     <button type="submit" id="sendBtn"
-                        class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition">
+                        class="text-white px-6 py-3 rounded-xl font-medium text-sm">
                         Send
                     </button>
                 </form>
@@ -163,65 +183,65 @@
                 <!-- Quick Questions -->
                 <div class="mt-3 flex flex-wrap gap-2">
                     <button onclick="quickQuestion('I feel tired today, should I skip my workout?')"
-                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full transition">
                         💤 Feeling tired
                     </button>
                     <button onclick="quickQuestion('What are good high-protein vegetarian options?')"
-                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full transition">
                         🌱 Vegetarian protein
                     </button>
                     <button onclick="quickQuestion('How can I stay motivated to workout regularly?')"
-                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full transition">
                         💪 Motivation tips
                     </button>
                     <button onclick="quickQuestion('I had a cheat meal, what should I do?')"
-                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full transition">
                         🍕 Cheat meal
                     </button>
                     <button onclick="quickQuestion('What is the best time to workout?')"
-                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full transition">
                         ⏰ Best workout time
                     </button>
                     <button onclick="quickQuestion('How much water should I drink daily?')"
-                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full transition">
                         💧 Water intake
                     </button>
                     <button onclick="quickQuestion('Give me a quick home workout routine')"
-                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition">
+                        class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full transition">
                         🏠 Home workout
                     </button>
                 </div>
             </div>
 
         </div>
-
     </div>
 
     <script>
         let userId = localStorage.getItem('user_id');
         let username = localStorage.getItem('username');
 
-        if (!userId) {
-            window.location.href = 'login.html';
-        }
+        if (!userId) window.location.href = 'login.html';
 
         document.getElementById('username').textContent = username;
+
+        // Avatar initials
+        const avatarEl = document.getElementById('userAvatar');
+        if (avatarEl && username) {
+            const parts = username.trim().split(' ');
+            avatarEl.textContent = parts.length >= 2
+                ? parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase()
+                : username[0].toUpperCase();
+        }
 
         // Load chat history
         async function loadChatHistory() {
             try {
                 const response = await authFetch(`/user/${userId}/chat/history`);
                 const data = await response.json();
-                
-                if (data.success && data.data.length > 0) {
-                    // Clear welcome message
-                    document.getElementById('chatMessages').innerHTML = '';
-                    
-                    // Display messages
-                    data.data.forEach(msg => {
-                        addMessageToUI(msg.role, msg.message);
-                    });
 
+                if (data.success && data.data.length > 0) {
+                    document.getElementById('chatMessages').innerHTML = '';
+                    data.data.forEach(msg => addMessageToUI(msg.role, msg.message));
                     scrollToBottom();
                 }
             } catch (error) {
@@ -231,34 +251,33 @@
 
         function addMessageToUI(role, message) {
             const chatMessages = document.getElementById('chatMessages');
-            
             const messageDiv = document.createElement('div');
             messageDiv.className = 'flex items-start gap-3';
-            
+
             if (role === 'user') {
                 messageDiv.innerHTML = `
                     <div class="ml-auto flex items-start gap-3 flex-row-reverse">
-                        <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+                            style="background: var(--primary);">
                             ${username.charAt(0).toUpperCase()}
                         </div>
-                        <div class="message-user max-w-md rounded-lg px-4 py-3">
-                            <p class="text-sm font-medium mb-1">You</p>
+                        <div class="message-user max-w-md rounded-2xl px-4 py-3 text-sm">
+                            <p class="font-semibold mb-1">You</p>
                             <p>${escapeHtml(message)}</p>
                         </div>
                     </div>
                 `;
             } else {
                 messageDiv.innerHTML = `
-                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                        AI
-                    </div>
-                    <div class="message-agent max-w-md rounded-lg px-4 py-3">
-                        <p class="text-sm font-medium text-purple-600 mb-1">AI Agent</p>
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                        style="background: var(--primary-light); color: var(--primary);">AI</div>
+                    <div class="message-agent max-w-md rounded-2xl px-4 py-3 text-sm">
+                        <p class="font-semibold mb-1" style="color: var(--primary);">AI Agent</p>
                         <p>${escapeHtml(message)}</p>
                     </div>
                 `;
             }
-            
+
             chatMessages.appendChild(messageDiv);
         }
 
@@ -287,41 +306,32 @@
             document.getElementById('chatForm').dispatchEvent(new Event('submit'));
         }
 
-        // Send message
         document.getElementById('chatForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const messageInput = document.getElementById('messageInput');
             const message = messageInput.value.trim();
-
             if (!message) return;
 
-            // Add user message to UI immediately
             addMessageToUI('user', message);
             messageInput.value = '';
             scrollToBottom();
-
-            // Show typing indicator
             showTypingIndicator();
 
             try {
                 const response = await authFetch(`/user/${userId}/chat`, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message })
                 });
 
                 const data = await response.json();
-
-                // Hide typing indicator
                 hideTypingIndicator();
 
                 if (data.success) {
-                    // Add agent response to UI
                     addMessageToUI('agent', data.data.agent_response);
                     scrollToBottom();
                 } else {
-                    // Error handling
                     addMessageToUI('agent', 'Sorry, I encountered an error. Please try again.');
                 }
             } catch (error) {
@@ -336,10 +346,7 @@
             window.location.href = 'login.html';
         }
 
-        // Load chat history on page load
         loadChatHistory();
-
-        // Auto-focus input
         document.getElementById('messageInput').focus();
     </script>
 

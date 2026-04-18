@@ -6,10 +6,18 @@
     <script src="static/auth.js"></script>
     <title>Meal Tracking - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        :root { --primary: #902f10; --primary-dark: #7a2810; --primary-light: #fff5ee; }
         body { font-family: 'Inter', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .nav-link { color: #4b5563; transition: color 0.15s; }
+        .nav-link:hover { color: var(--primary); }
+        .nav-active { color: var(--primary); font-weight: 600; }
+        .mobile-nav-active { color: var(--primary); font-weight: 600; background: var(--primary-light); }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+        input:focus, select:focus { outline: none; border-color: var(--primary) !important; box-shadow: 0 0 0 2px rgba(144,47,16,0.15) !important; }
+        .food-result-hover:hover { background: var(--primary-light); }
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -31,19 +39,19 @@
             min-height: 52px;
         }
         .cal-day.has-meal {
-            background: #f3f0ff;
-            border-color: #c7d2fe;
+            background: var(--primary-light);
+            border-color: rgba(144,47,16,0.2);
         }
         .cal-day.today-ring {
-            box-shadow: 0 0 0 2px #8b5cf6;
-            border-color: #8b5cf6;
+            box-shadow: 0 0 0 2px var(--primary);
+            border-color: var(--primary);
         }
         .cal-day:hover {
-            background: #eef2ff;
+            background: #fef7f4;
             transform: scale(0.96);
         }
         .cal-day .cal-num { font-size: 0.8rem; font-weight: 700; }
-        .cal-day .cal-badge { font-size: 0.6rem; font-weight: 600; background: rgba(102,126,234,0.15); padding: 2px 4px; border-radius: 20px; margin-top: 2px; }
+        .cal-day .cal-badge { font-size: 0.6rem; font-weight: 600; background: rgba(144,47,16,0.12); padding: 2px 4px; border-radius: 20px; margin-top: 2px; }
         .weekday { font-size: 0.65rem; font-weight: 600; text-align: center; color: #6b7280; margin-bottom: 4px; }
         @media (max-width: 640px) {
             .cal-day { min-height: 44px; padding: 4px 1px; }
@@ -57,20 +65,26 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-8">
-                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">FitAI</h1>
+                    <a href="dashboard.html" class="flex items-center gap-2">
+                        <i class="fa-solid fa-chart-simple text-lg" style="color: var(--primary);"></i>
+                        <h1 class="text-xl font-bold" style="color: var(--primary);">FitAI</h1>
+                    </a>
                     <div class="hidden md:flex gap-6">
-                        <a href="dashboard.html" class="text-gray-700 hover:text-purple-600">Dashboard</a>
-                        <a href="meals.html" class="text-purple-600 font-medium">Meals</a>
-                        <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
-                        <a href="chat.html" class="text-gray-700 hover:text-purple-600">Chat</a>
-                        <a href="exercise.html" class="text-gray-700 hover:text-purple-600">Exercise</a>
-                        <a href="profile.html" class="text-gray-700 hover:text-purple-600">Profile</a>
+                        <a href="dashboard.html" class="nav-link text-sm">Dashboard</a>
+                        <a href="meals.html" class="nav-active text-sm">Meals</a>
+                        <a href="progress.html" class="nav-link text-sm">Progress</a>
+                        <a href="chat.html" class="nav-link text-sm">Chat</a>
+                        <a href="exercise.html" class="nav-link text-sm">Exercise</a>
+                        <a href="profile.html" class="nav-link text-sm">Profile</a>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
                     <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
-                    <button onclick="logout()" class="text-gray-600 hover:text-red-600 text-sm">Logout</button>
-                    <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-100 focus:outline-none" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+                    <div id="userAvatar" class="user-avatar hidden sm:flex"></div>
+                    <button onclick="logout()" class="text-gray-500 hover:text-red-600 text-sm flex items-center gap-1">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                    <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
@@ -79,12 +93,12 @@
             </div>
             <!-- Mobile menu -->
             <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-2 space-y-1 pb-3">
-            <a href="dashboard.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Dashboard</a>
-            <a href="meals.html" class="block px-4 py-2 rounded-lg text-purple-600 font-semibold bg-purple-50">Meals</a>
-            <a href="progress.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Progress</a>
-            <a href="chat.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Chat</a>
-            <a href="exercise.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Exercise</a>
-            <a href="profile.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Profile</a>
+                <a href="dashboard.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Dashboard</a>
+                <a href="meals.html" class="block px-4 py-2 rounded-lg mobile-nav-active text-sm">Meals</a>
+                <a href="progress.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Progress</a>
+                <a href="chat.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Chat</a>
+                <a href="exercise.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Exercise</a>
+                <a href="profile.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Profile</a>
             </div>
         </div>
     </nav>
@@ -108,7 +122,7 @@
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Meal Type</label>
-                                <select id="mealType" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                <select id="mealType" required class="w-full px-4 py-3 border border-gray-200 rounded-lg">
                                     <option value="">Select meal type</option>
                                     <option value="breakfast">Breakfast</option>
                                     <option value="lunch">Lunch</option>
@@ -118,7 +132,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                                <input type="date" id="mealDate" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                <input type="date" id="mealDate" required class="w-full px-4 py-3 border border-gray-200 rounded-lg">
                             </div>
                         </div>
 
@@ -126,23 +140,23 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Search Food Database</label>
                             <div class="relative">
-                                <input type="text" id="foodSearch" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="Type to search e.g. chicken, rice, egg..." autocomplete="off">
-                                <div id="searchSpinner" class="hidden absolute right-3 top-3"><div class="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600"></div></div>
+                                <input type="text" id="foodSearch" class="w-full px-4 py-3 border border-gray-200 rounded-lg" placeholder="Type to search e.g. chicken, rice, egg..." autocomplete="off">
+                                <div id="searchSpinner" class="hidden absolute right-3 top-3"><div class="animate-spin rounded-full h-5 w-5 border-b-2" style="border-color: var(--primary);"></div></div>
                             </div>
                             <div id="searchResults" class="hidden mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10 relative"></div>
-                            <div id="selectedFood" class="hidden mt-2 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2">
+                            <div id="selectedFood" class="hidden mt-2 rounded-lg px-3 py-2 border" style="background: var(--primary-light); border-color: rgba(144,47,16,0.2);">
                                 <div class="flex justify-between items-center">
-                                    <span id="selectedFoodName" class="text-purple-700 font-medium text-sm"></span>
-                                    <button type="button" onclick="clearSelectedFood()" class="text-purple-400 hover:text-purple-600 text-xs">Clear</button>
+                                    <span id="selectedFoodName" class="font-medium text-sm" style="color: var(--primary-dark);"></span>
+                                    <button type="button" onclick="clearSelectedFood()" class="text-xs" style="color: var(--primary);">Clear</button>
                                 </div>
-                                <p id="selectedFoodInfo" class="text-purple-600 text-xs mt-1"></p>
+                                <p id="selectedFoodInfo" class="text-xs mt-1" style="color: var(--primary);"></p>
                             </div>
                         </div>
 
                         <!-- Indian Meals Quick Select (fixed to auto-fill name) -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Quick Select (Indian Meals)</label>
-                            <select id="quickMeal" onchange="selectQuickMeal()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <select id="quickMeal" onchange="selectQuickMeal()" class="w-full px-4 py-3 border border-gray-200 rounded-lg">
                                 <option value="">Choose a common Indian dish...</option>
                                 <optgroup label="Rice Dishes">
                                     <option value="daal_bhat_light">Daal Bhat - Light (300 cal, 12g protein)</option>
@@ -176,22 +190,22 @@
                         <!-- Manual Entry -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Meal Name</label>
-                            <input type="text" id="mealName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="e.g., Chicken Tikka Masala">
+                            <input type="text" id="mealName" required class="w-full px-4 py-3 border border-gray-200 rounded-lg" placeholder="e.g., Chicken Tikka Masala">
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-4">
-                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Calories</label><input type="number" id="calories" required min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="e.g., 450"></div>
-                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Protein (g)</label><input type="number" id="protein" required min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="e.g., 25"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Calories</label><input type="number" id="calories" required min="0" class="w-full px-4 py-3 border border-gray-200 rounded-lg" placeholder="e.g., 450"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Protein (g)</label><input type="number" id="protein" required min="0" class="w-full px-4 py-3 border border-gray-200 rounded-lg" placeholder="e.g., 25"></div>
                         </div>
                         <div class="grid md:grid-cols-2 gap-4">
-                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Carbs (g)</label><input type="number" id="carbs" required min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="e.g., 55"></div>
-                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Fat (g)</label><input type="number" id="fat" required min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="e.g., 12"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Carbs (g)</label><input type="number" id="carbs" required min="0" class="w-full px-4 py-3 border border-gray-200 rounded-lg" placeholder="e.g., 55"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Fat (g)</label><input type="number" id="fat" required min="0" class="w-full px-4 py-3 border border-gray-200 rounded-lg" placeholder="e.g., 12"></div>
                         </div>
 
                         <div id="successMessage" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">Meal logged successfully!</div>
                         <div id="errorMessage" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"></div>
 
-                        <button type="submit" id="submitBtn" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition">Log Meal</button>
+                        <button type="submit" id="submitBtn" class="w-full text-white px-6 py-3 rounded-lg font-medium transition" style="background: var(--primary);" onmouseover="this.style.background='var(--primary-dark)'" onmouseout="this.style.background='var(--primary)'">Log Meal</button>
                     </form>
                 </div>
 
@@ -205,11 +219,11 @@
             <!-- Right: Today's Summary + Calendar -->
             <div class="space-y-6">
                 <!-- Daily Summary -->
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-sm p-6 border border-purple-200">
-                    <h3 class="text-xl font-bold mb-4 text-purple-900">Today's Total</h3>
+                <div class="rounded-xl shadow-sm p-6 border" style="background: var(--primary-light); border-color: rgba(144,47,16,0.2);">
+                    <h3 class="text-xl font-bold mb-4" style="color: var(--primary-dark);">Today's Total</h3>
                     <div class="space-y-3">
-                        <div class="flex justify-between items-center"><span class="text-purple-700">Calories</span><span class="text-2xl font-bold text-purple-900"><span id="totalCalories">0</span> / <span id="targetCalories">-</span></span></div>
-                        <div class="w-full bg-purple-200 rounded-full h-3"><div class="bg-purple-600 h-3 rounded-full transition-all" id="calorieBar" style="width: 0%"></div></div>
+                        <div class="flex justify-between items-center"><span style="color: var(--primary);">Calories</span><span class="text-2xl font-bold" style="color: var(--primary-dark);"><span id="totalCalories">0</span> / <span id="targetCalories">-</span></span></div>
+                        <div class="w-full rounded-full h-3" style="background: rgba(144,47,16,0.15);"><div class="h-3 rounded-full transition-all" id="calorieBar" style="width: 0%; background: var(--primary);"></div></div>
                         <div class="grid grid-cols-3 gap-2 mt-4 text-center">
                             <div class="bg-white rounded-lg p-3"><p class="text-xs text-gray-600">Protein</p><p class="text-lg font-bold text-gray-900"><span id="totalProtein">0</span>g</p></div>
                             <div class="bg-white rounded-lg p-3"><p class="text-xs text-gray-600">Carbs</p><p class="text-lg font-bold text-gray-900"><span id="totalCarbs">0</span>g</p></div>
@@ -233,7 +247,7 @@
                 <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
                     <div class="flex justify-between items-center mb-3">
                         <h3 class="text-md font-bold text-gray-900">Nutrition Calendar</h3>
-                        <div class="flex gap-2 text-xs"><span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-purple-100 border border-purple-300"></span> Logged</span></div>
+                        <div class="flex gap-2 text-xs"><span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full border" style="background: var(--primary-light); border-color: rgba(144,47,16,0.3);"></span> Logged</span></div>
                     </div>
                     <div id="calendarContainer"><div class="animate-pulse text-center py-4 text-gray-400">Loading calendar...</div></div>
                     <div id="selectedDayDetails" class="mt-4 pt-3 border-t border-gray-100 text-sm"><p class="text-gray-400 text-center text-xs">Tap a date to see meal breakdown</p></div>
@@ -247,6 +261,11 @@
         let username = localStorage.getItem('username');
         if (!userId) window.location.href = 'login.html';
         document.getElementById('username').textContent = username || 'User';
+        const avatarEl = document.getElementById('userAvatar');
+        if (avatarEl && username) {
+            const parts = username.trim().split(/\s+/);
+            avatarEl.textContent = parts.length >= 2 ? (parts[0][0] + parts[parts.length-1][0]).toUpperCase() : username[0].toUpperCase();
+        }
         document.getElementById('mealDate').valueAsDate = new Date();
 
         // Indian meals database with proper names (fixed: now meal_name is included)
@@ -314,9 +333,9 @@
         function renderSearchResults(foods) {
             const container = document.getElementById('searchResults');
             container.innerHTML = foods.map(food => `
-                <div class="px-4 py-3 hover:bg-purple-50 cursor-pointer border-b border-gray-100 last:border-0" onclick='selectFood(${JSON.stringify(food).replace(/'/g, "&#39;")})'>
+                <div class="px-4 py-3 food-result-hover cursor-pointer border-b border-gray-100 last:border-0" onclick='selectFood(${JSON.stringify(food).replace(/'/g, "&#39;")})'>
                     <div class="flex justify-between items-start"><div><p class="font-medium text-gray-900 text-sm">${food.name}</p><p class="text-xs text-gray-500">Per ${food.serving}</p></div>
-                    <div class="text-right ml-4"><p class="text-purple-600 font-bold text-sm">${Math.round(food.calories)} cal</p><p class="text-xs text-gray-500">P: ${food.protein.toFixed(1)}g</p></div></div>
+                    <div class="text-right ml-4"><p class="font-bold text-sm" style="color:var(--primary)">${Math.round(food.calories)} cal</p><p class="text-xs text-gray-500">P: ${food.protein.toFixed(1)}g</p></div></div>
                     <div class="flex gap-3 mt-1"><span class="text-xs text-gray-400">Carbs: ${food.carbs.toFixed(1)}g</span><span class="text-xs text-gray-400">Fat: ${food.fat.toFixed(1)}g</span><span class="text-xs text-gray-400">Fiber: ${food.fiber.toFixed(1)}g</span></div>
                 </div>`).join('');
             container.classList.remove('hidden');
@@ -385,8 +404,8 @@
             container.innerHTML = meals.map(meal => `
                 <div class="border border-gray-200 rounded-lg p-4">
                     <div class="flex justify-between items-start mb-2">
-                        <div><span class="text-xs font-medium text-purple-600 uppercase">${meal.meal_type}</span><h4 class="font-bold text-gray-900">${meal.meal_name}</h4></div>
-                        <span class="text-purple-600 font-bold">${Math.round(meal.calories)} cal</span>
+                        <div><span class="text-xs font-medium uppercase" style="color:var(--primary)">${meal.meal_type}</span><h4 class="font-bold text-gray-900">${meal.meal_name}</h4></div>
+                        <span class="font-bold" style="color:var(--primary)">${Math.round(meal.calories)} cal</span>
                     </div>
                     <div class="text-sm text-gray-600">P: ${Math.round(meal.protein)}g | C: ${Math.round(meal.carbs)}g | F: ${Math.round(meal.fat)}g</div>
                 </div>`).join('');
@@ -526,7 +545,7 @@
                 html += `<div class="cal-day ${addClass}" data-date="${dateStr}" data-cal="${calTotal}" data-protein="${proteinTotal}" data-meals='${JSON.stringify(dayData ? dayData.meals : [])}'>
                     <div class="cal-num">${d}</div>
                     ${calTotal > 0 ? `<div class="cal-badge">${calTotal}</div>` : ''}
-                    ${proteinTotal > 0 ? `<div class="text-[9px] text-purple-500 mt-0.5">${proteinTotal}p</div>` : ''}
+                    ${proteinTotal > 0 ? `<div class="text-[9px] mt-0.5" style="color:var(--primary)">${proteinTotal}p</div>` : ''}
                 </div>`;
             }
             html += `</div>`;
@@ -549,11 +568,11 @@
         function showMealDetails(date, totalCal, totalProtein, meals) {
             const panel = document.getElementById('selectedDayDetails');
             if (!meals || meals.length === 0) {
-                panel.innerHTML = `<div class="bg-gray-50 rounded-lg p-2 text-center"><p class="font-semibold text-gray-700 text-xs">${formatDateDisplay(date)}</p><p class="text-purple-600 text-sm mt-1">0 calories | 0g protein</p><p class="text-gray-400 text-xs mt-1">No meals logged</p></div>`;
+                panel.innerHTML = `<div class="bg-gray-50 rounded-lg p-2 text-center"><p class="font-semibold text-gray-700 text-xs">${formatDateDisplay(date)}</p><p class="text-sm mt-1" style="color:var(--primary)">0 calories | 0g protein</p><p class="text-gray-400 text-xs mt-1">No meals logged</p></div>`;
                 return;
             }
-            let mealsHtml = meals.map(m => `<div class="flex justify-between items-center py-1.5 border-b border-gray-100 last:border-0"><div><span class="font-medium text-gray-800 text-xs">${m.name}</span><div class="flex gap-2 text-xs text-gray-500"><span>${m.type}</span></div></div><div class="text-right"><span class="text-purple-600 font-semibold text-xs">${m.calories} cal</span><div class="text-[10px] text-gray-400">P:${m.protein}g C:${m.carbs}g F:${m.fat}g</div></div></div>`).join('');
-            panel.innerHTML = `<div class="bg-purple-50/30 rounded-lg p-2"><div class="flex justify-between items-center"><h3 class="font-bold text-gray-800 text-sm">${formatDateDisplay(date)}</h3><div><span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold">${totalCal} cal</span><span class="ml-1 bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold">${totalProtein}p</span></div></div><div class="mt-2 space-y-1 max-h-36 overflow-y-auto">${mealsHtml}</div></div>`;
+            let mealsHtml = meals.map(m => `<div class="flex justify-between items-center py-1.5 border-b border-gray-100 last:border-0"><div><span class="font-medium text-gray-800 text-xs">${m.name}</span><div class="flex gap-2 text-xs text-gray-500"><span>${m.type}</span></div></div><div class="text-right"><span class="font-semibold text-xs" style="color:var(--primary)">${m.calories} cal</span><div class="text-[10px] text-gray-400">P:${m.protein}g C:${m.carbs}g F:${m.fat}g</div></div></div>`).join('');
+            panel.innerHTML = `<div class="rounded-lg p-2" style="background:rgba(144,47,16,0.04)"><div class="flex justify-between items-center"><h3 class="font-bold text-gray-800 text-sm">${formatDateDisplay(date)}</h3><div><span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background:rgba(144,47,16,0.1);color:var(--primary-dark)">${totalCal} cal</span><span class="ml-1 px-2 py-0.5 rounded-full text-xs font-bold" style="background:rgba(144,47,16,0.1);color:var(--primary-dark)">${totalProtein}p</span></div></div><div class="mt-2 space-y-1 max-h-36 overflow-y-auto">${mealsHtml}</div></div>`;
         }
 
         function formatDateDisplay(ymd) { const [y,m,d] = ymd.split('-'); return new Date(Date.UTC(y,m-1,d)).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }

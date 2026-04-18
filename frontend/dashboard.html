@@ -7,547 +7,676 @@
     <title>Dashboard - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #902f10;
+            --primary-dark: #7a2810;
+            --primary-light: #fff5ee;
+            --bg-page: #f5f7fb;
+            --border: #f0f0f0;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
         }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-page); color: var(--text-primary); }
+
+        /* Nav */
+        .nav-link { font-size: 14px; color: var(--text-secondary); transition: color 0.15s; }
+        .nav-link:hover { color: var(--text-primary); }
+        .nav-active { color: var(--primary) !important; font-weight: 600; border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+
+        /* Avatar */
+        .user-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: var(--primary); color: white;
+            font-weight: 700; font-size: 12px; letter-spacing: 0.5px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        
+
+        /* Cards */
+        .card {
+            background: #ffffff; border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            padding: 22px;
+        }
+
+        /* Stat cards */
         .stat-card {
-            transition: transform 0.2s;
+            background: #ffffff; border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            padding: 18px 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(0,0,0,0.08); }
+
+        /* Icon badge */
+        .icon-badge {
+            width: 34px; height: 34px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0;
         }
 
-        /* meal card remaining style */
-        .meal-remaining-badge {
-            background: #f3e8ff;
-            color: #6b21a5;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
+        /* Meal rows */
+        .meal-row {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 10px; border-radius: 14px; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .meal-row:hover { background: #fefaf7; }
+
+        .meal-icon-circle {
+            width: 38px; height: 38px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; flex-shrink: 0;
         }
 
-        .meal-remaining-badge.negative {
-            background: #fee2e2;
-            color: #b91c1c;
+        /* Remaining badge */
+        .rem-badge {
+            background: #f3f4f6; color: var(--text-secondary);
+            font-size: 11px; font-weight: 600;
+            padding: 3px 9px; border-radius: 99px; white-space: nowrap;
         }
+        .rem-badge.over { background: #fee2e2; color: #b91c1c; }
 
-        .total-remaining-pill {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 700;
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 8px rgba(102,126,234,0.25);
+        /* Activity items */
+        .act-item {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 9px 0; border-bottom: 1px solid #f9fafb;
         }
+        .act-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .act-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+
+        /* Macro stat below donut */
+        .macro-col { text-align: center; }
+        .macro-col .mc-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+        .macro-col .mc-g { font-size: 17px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+        .macro-col .mc-pct { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
     </style>
 </head>
-<body class="bg-gray-50">
+<body>
 
-    <!-- Navigation (unchanged) -->
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center gap-8">
-                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent"> FitAI</h1>
-                    <div class="hidden md:flex gap-6">
-                        <a href="dashboard.html" class="text-purple-600 font-medium">Dashboard</a>
-                        <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
-                        <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
-                        <a href="chat.html" class="text-gray-700 hover:text-purple-600">Chat</a>
-                        <a href="exercise.html" class="text-gray-700 hover:text-purple-600">Exercise</a>
-                        <a href="profile.html" class="text-gray-700 hover:text-purple-600">Profile</a>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
-                    <button onclick="logout()" class="text-gray-600 hover:text-red-600 text-sm">Logout</button>
-                    <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-100 focus:outline-none" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
-                    </button>
+<!-- Navigation -->
+<nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center gap-8">
+                <span class="text-lg font-bold flex items-center gap-2" style="color: var(--primary);">
+                    <i class="fa-solid fa-chart-simple"></i>FitAI
+                </span>
+                <div class="hidden md:flex gap-6 items-center">
+                    <a href="dashboard.html" class="nav-link nav-active">Dashboard</a>
+                    <a href="meals.html" class="nav-link">Meals</a>
+                    <a href="progress.html" class="nav-link">Progress</a>
+                    <a href="exercise.html" class="nav-link">Exercise</a>
+                    <a href="profile.html" class="nav-link">Profile</a>
                 </div>
             </div>
-            <!-- Mobile menu -->
-            <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-2 space-y-1 pb-3">
-            <a href="dashboard.html" class="block px-4 py-2 rounded-lg text-purple-600 font-semibold bg-purple-50">Dashboard</a>
-            <a href="meals.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Meals</a>
-            <a href="progress.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Progress</a>
-            <a href="chat.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Chat</a>
-            <a href="exercise.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Exercise</a>
-            <a href="profile.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Profile</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Welcome Header (unchanged) -->
-        <div class="gradient-bg rounded-xl p-8 mb-8 text-white">
-            <h1 class="text-3xl font-bold mb-2">Welcome back, <span id="welcomeUser"></span>! 👋</h1>
-            <p class="text-purple-100">Here's your personalized fitness plan</p>
-        </div>
-
-        <!-- Loading State (unchanged) -->
-        <div id="loadingState" class="text-center py-20">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
-            <p class="text-gray-600">Loading your dashboard...</p>
-        </div>
-
-        <!-- Main Content -->
-        <div id="mainContent" class="hidden">
-
-            <!-- Stats Overview (kept identical - no changes) -->
-            <div class="grid md:grid-cols-4 gap-6 mb-8">
-                <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-gray-600 text-sm font-medium">Daily Calories</span>
-                        <span class="text-2xl"></span>
-                    </div>
-                    <p class="text-3xl font-bold text-gray-900" id="statCalories">-</p>
-                    <p class="text-sm text-gray-500 mt-1" id="statCaloriesDesc">Target</p>
-                </div>
-
-                <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-gray-600 text-sm font-medium">Protein Goal</span>
-                        <span class="text-2xl"></span>
-                    </div>
-                    <p class="text-3xl font-bold text-gray-900" id="statProtein">-</p>
-                    <p class="text-sm text-gray-500 mt-1">grams/day</p>
-                </div>
-
-                <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-gray-600 text-sm font-medium">Workout Days</span>
-                        <span class="text-2xl"></span>
-                    </div>
-                    <p class="text-3xl font-bold text-gray-900" id="statWorkouts">-</p>
-                    <p class="text-sm text-gray-500 mt-1">days/week</p>
-                </div>
-
-                <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-gray-600 text-sm font-medium">Weekly Target</span>
-                        <span class="text-2xl"></span>
-                    </div>
-                    <p class="text-3xl font-bold text-gray-900" id="statTarget">-</p>
-                    <p class="text-sm text-gray-500 mt-1" id="statTargetDesc">kg/week</p>
-                </div>
-            </div>
-
-            <!-- Two Column Layout (unchanged structure) -->
-            <div class="grid lg:grid-cols-3 gap-8">
-                
-                <!-- LEFT COLUMN (2/3 width) - Today's Meal Plan with remaining calories per meal + total remaining -->
-                <div class="lg:col-span-2">
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                        <div class="flex justify-between items-center mb-4 flex-wrap gap-3">
-                            <h2 class="text-2xl font-bold text-gray-900">Today's Meal Plan</h2>
-                            <!-- Total remaining calories pill (replaces old remainingCalories span) -->
-                            <div class="total-remaining-pill" id="totalRemainingPill">
-                                 <span id="totalRemainingCalories">—</span> cal remaining
-                            </div>
-                        </div>
-                        
-                        <!-- Goal achieved banner (unchanged) -->
-                        <div id="goalAchievedBanner" class="hidden mb-4 bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-green-700 font-medium text-sm">
-                            🎉 Daily calorie goal achieved! You can have a cheat meal if you want.
-                        </div>
-                        
-                        <!-- Meal plan container with per-meal remaining calories -->
-                        <div class="space-y-4" id="mealPlanContainer"></div>
-                        
-                        <a href="meals.html" class="inline-block mt-4 text-purple-600 hover:text-purple-700 font-medium text-sm">📝 Log meals →</a>
-                    </div>
-                </div>
-
-                <!-- RIGHT COLUMN (1/3 width) - Plan Overview & Macros (completely unchanged) -->
-                <div class="space-y-8">
-                    
-                    <!-- Plan Overview -->
-                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-sm p-6 border border-purple-200">
-                        <h3 class="text-xl font-bold mb-4 text-purple-900">📋 Your Plan</h3>
-                        
-                        <div class="space-y-3">
-                            <div>
-                                <p class="text-sm text-purple-700">Goal</p>
-                                <p class="font-bold text-purple-900 capitalize" id="planGoal">-</p>
-                            </div>
-                            
-                            <div>
-                                <p class="text-sm text-purple-700">Plan Type</p>
-                                <p class="font-bold text-purple-900 capitalize" id="planDifficulty">-</p>
-                            </div>
-                            
-                            <div>
-                                <p class="text-sm text-purple-700">BMI</p>
-                                <p class="font-bold text-purple-900" id="planBMI">-</p>
-                            </div>
-                            
-                            <div>
-                                <p class="text-sm text-purple-700">TDEE</p>
-                                <p class="font-bold text-purple-900" id="planTDEE">-</p>
-                            </div>
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-purple-300">
-                            <p class="text-sm text-purple-700 mb-2">🤖 AI Reasoning:</p>
-                            <p class="text-sm text-purple-900" id="planReasoning">-</p>
-                        </div>
-                    </div>
-
-                    <!-- Macros Breakdown (unchanged) -->
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                        <h3 class="text-xl font-bold mb-4 text-gray-900">🥗 Breakdown</h3>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm text-gray-600">Protein</span>
-                                    <span class="text-sm font-bold" id="macroProtein">-g</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-red-500 h-2 rounded-full" id="macroProteinBar" style="width: 0%"></div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm text-gray-600">Carbs</span>
-                                    <span class="text-sm font-bold" id="macroCarbs">-g</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-blue-500 h-2 rounded-full" id="macroCarbsBar" style="width: 0%"></div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm text-gray-600">Fat</span>
-                                    <span class="text-sm font-bold" id="macroFat">-g</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-yellow-500 h-2 rounded-full" id="macroFatBar" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+            <div class="flex items-center gap-2.5">
+                <div class="user-avatar" id="userAvatar"></div>
+                <span id="username" class="text-sm font-medium text-gray-700 hidden sm:inline"></span>
+                <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
             </div>
         </div>
     </div>
+</nav>
 
-    <script>
-        let userId = localStorage.getItem('user_id');
-        let username = localStorage.getItem('username');
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
 
-        // Check if logged in
-        if (!userId) {
-            window.location.href = 'login.html';
-        }
+    <!-- Page header -->
+    <div class="mb-7">
+        <p class="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-1" id="headerDate"></p>
+        <h1 class="text-3xl font-bold text-gray-900" id="headerGreeting"></h1>
+    </div>
 
-        // Set username (unchanged)
-        document.getElementById('username').textContent = username;
-        document.getElementById('welcomeUser').textContent = username;
+    <!-- Loading -->
+    <div id="loadingState" class="text-center py-24">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 mx-auto mb-3" style="border-color: var(--primary);"></div>
+        <p class="text-sm text-gray-400">Loading your dashboard...</p>
+    </div>
 
-        // Helper: fetch meals for a specific date
-        async function fetchMealsForDate(date) {
-            try {
-                const res = await authFetch(`/user/${userId}/meals?date=${date}`);
-                const data = await res.json();
-                if (data.success) {
-                    return data.data; // array of meals logged for that date
-                }
-                return [];
-            } catch (err) {
-                console.error('Error fetching meals:', err);
-                return [];
-            }
-        }
+    <!-- Main content -->
+    <div id="mainContent" class="hidden">
 
-        // Load dashboard data (enhanced with per-meal remaining logic)
-        async function loadDashboard() {
-            try {
-                const today = new Date().toISOString().split('T')[0];
-                const [planRes, mealsRes] = await Promise.all([
-                    authFetch(`/user/${userId}/plan`),
-                    authFetch(`/user/${userId}/meals?date=${today}`)
-                ]);
-                
-                const planData = await planRes.json();
-                const mealsData = await mealsRes.json();
+        <!-- 4 stat cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
-                if (planData.success) {
-                    const plan = planData.data;
-                    
-                    // --- Standard stats (unchanged) ---
-                    displayPlanOverview(plan);
-                    
-                    // --- Calculate consumed calories from logged meals (grouped by meal type) ---
-                    let consumedCalories = 0;
-                    const consumedByMeal = {
-                        breakfast: 0,
-                        lunch: 0,
-                        dinner: 0,
-                        snack: 0
-                    };
-                    
-                    if (mealsData.success && mealsData.data) {
-                        mealsData.data.forEach(meal => {
-                            const mealType = (meal.meal_type || 'snack').toLowerCase();
-                            const cals = meal.calories || 0;
-                            consumedCalories += cals;
-                            if (consumedByMeal.hasOwnProperty(mealType)) {
-                                consumedByMeal[mealType] += cals;
-                            } else {
-                                consumedByMeal.snack += cals;
-                            }
-                        });
-                    }
-                    
-                    const dailyTarget = plan.plan_overview.daily_calories;
-                    const totalRemaining = Math.max(0, dailyTarget - consumedCalories);
-                    
-                    // Update total remaining pill
-                    const totalRemainingSpan = document.getElementById('totalRemainingCalories');
-                    totalRemainingSpan.textContent = Math.round(totalRemaining);
-                    
-                    // Show/hide goal achieved banner (based on total remaining)
-                    if (totalRemaining <= 0) {
-                        document.getElementById('goalAchievedBanner').classList.remove('hidden');
-                    } else {
-                        document.getElementById('goalAchievedBanner').classList.add('hidden');
-                    }
-                    
-                    // --- Build meal plan cards with per-meal remaining calories ---
-                    // meal_plan from API: each object has meal, calories (target), protein, suggestions
-                    const mealPlanArray = plan.meal_plan || [];
-                    
-                    // We'll create a map of target calories per meal (case-insensitive)
-                    const targetByMeal = {};
-                    mealPlanArray.forEach(mealItem => {
-                        const mealName = (mealItem.meal || '').toLowerCase();
-                        targetByMeal[mealName] = {
-                            target: mealItem.calories || 0,
-                            protein: mealItem.protein || 0,
-                            suggestions: mealItem.suggestions || []
-                        };
-                    });
-                    
-                    // Define meal order and labels
-                    const mealOrder = [
-                        { key: 'breakfast', label: 'Breakfast' },
-                        { key: 'lunch', label: 'Lunch' },
-                        { key: 'dinner', label: 'Dinner' }
-                    ];
-                    
-                    let mealCardsHTML = '';
-                    
-                    for (const meal of mealOrder) {
-                        const mealKey = meal.key;
-                        const mealLabel = meal.label;
-                        const targetInfo = targetByMeal[mealKey] || { target: 0, protein: 0, suggestions: [] };
-                        const targetCal = targetInfo.target;
-                        const consumed = consumedByMeal[mealKey] || 0;
-                        let remainingRaw = targetCal - consumed;
-                        const remaining = Math.max(0, remainingRaw);
-                        const isOver = remainingRaw < 0;
-                        
-                        // Format remaining text
-                        let remainingText = '';
-                        if (targetCal === 0) {
-                            remainingText = 'No target set';
-                        } else {
-                            remainingText = isOver 
-                                ? `${Math.abs(remainingRaw)} cal over` 
-                                : `${Math.round(remaining)} cal remaining`;
-                        }
-                        
-                        const badgeClass = isOver ? 'meal-remaining-badge negative' : 'meal-remaining-badge';
-                        const progressPercent = targetCal > 0 ? Math.min(100, (consumed / targetCal) * 100) : 0;
-                        const barColor = isOver ? 'bg-red-400' : (progressPercent >= 100 ? 'bg-green-500' : 'bg-purple-500');
-                        
-                        // Suggestions as comma-separated list
-                        const suggestionsText = targetInfo.suggestions && targetInfo.suggestions.length 
-                            ? targetInfo.suggestions.slice(0, 3).join(', ') 
-                            : 'No suggestions available';
-                        
-                        mealCardsHTML += `
-                            <div class="border border-gray-200 rounded-xl p-4 hover:border-purple-300 transition duration-200 shadow-sm">
-                                <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
-                                    <h4 class="font-bold text-gray-900 text-lg">${mealLabel}</h4>
-                                    <div class="${badgeClass} text-xs font-bold px-3 py-1 rounded-full">
-                                        ${remainingText}
-                                    </div>
-                                </div>
-                                <div class="grid md:grid-cols-2 gap-3 mt-2">
-                                    <div>
-                                        <div class="flex justify-between text-sm mb-1">
-                                            <span class="text-gray-600">Calories target</span>
-                                            <span class="font-semibold text-gray-800">${targetCal} cal</span>
-                                        </div>
-                                        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                                            <div class="${barColor} h-2 rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
-                                        </div>
-                                        <div class="flex justify-between text-xs text-gray-500 mt-1">
-                                            <span>Consumed: ${Math.round(consumed)} cal</span>
-                                            <span>${Math.round(progressPercent)}%</span>
-                                        </div>
-                                        <p class="text-sm text-gray-600 mt-2">Protein: ${targetInfo.protein}g</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500 mb-1">🍽️ Suggestions</p>
-                                        <p class="text-sm text-gray-600 leading-relaxed">${escapeHtml(suggestionsText)}</p>
-                                    </div>
-                                </div>
+            <!-- Daily calories -->
+            <div class="stat-card">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-medium text-gray-400">Daily calories</span>
+                    <div class="icon-badge" style="background: var(--primary-light); color: var(--primary);">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-gray-900 mb-1 leading-none">
+                    <span id="sc-cal-consumed">—</span><span class="text-base font-medium text-gray-400"> / <span id="sc-cal-target">—</span></span>
+                </div>
+                <p class="text-xs mt-1.5" id="sc-cal-sub"></p>
+            </div>
+
+            <!-- Protein -->
+            <div class="stat-card">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-medium text-gray-400">Protein intake</span>
+                    <div class="icon-badge" style="background: #fef2f2; color: #ef4444;">
+                        <i class="fa-solid fa-droplet"></i>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-gray-900 mb-1 leading-none">
+                    <span id="sc-prot-consumed">—</span><span class="text-base font-medium text-gray-400"> / <span id="sc-prot-target">—</span>g</span>
+                </div>
+                <p class="text-xs mt-1.5" id="sc-prot-sub"></p>
+            </div>
+
+            <!-- Workouts -->
+            <div class="stat-card">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-medium text-gray-400">Workouts this week</span>
+                    <div class="icon-badge" style="background: #eff6ff; color: #3b82f6;">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-gray-900 mb-1 leading-none">
+                    <span id="sc-wkt-done">—</span><span class="text-base font-medium text-gray-400"> / <span id="sc-wkt-target">—</span></span>
+                </div>
+                <p class="text-xs mt-1.5" id="sc-wkt-sub"></p>
+            </div>
+
+            <!-- Weight -->
+            <div class="stat-card">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-medium text-gray-400">Weight change</span>
+                    <div class="icon-badge" style="background: #f3f4f6; color: #9ca3af;">
+                        <i class="fa-solid fa-weight-scale"></i>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-gray-900 mb-1 leading-none" id="sc-weight-val">—</div>
+                <p class="text-xs mt-1.5" id="sc-weight-sub"></p>
+            </div>
+        </div>
+
+        <!-- Two column grid — left 3/5, right 2/5 -->
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+            <!-- LEFT -->
+            <div class="lg:col-span-3 space-y-6">
+
+                <!-- Today's meals -->
+                <div class="card">
+                    <div class="flex justify-between items-start mb-0.5">
+                        <h2 class="text-base font-bold text-gray-900">Today's meals</h2>
+                        <div class="flex items-center gap-1.5 text-xs text-gray-400">
+                            <i class="fa-solid fa-fork-and-knife"></i>
+                            <span id="mealsLoggedCount">0 meals logged</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-4" id="mealsSubtitle">Loading...</p>
+
+                    <!-- Goal achieved -->
+                    <div id="goalAchievedBanner" class="hidden mb-4 flex items-center gap-2 bg-green-50 border border-green-100 rounded-xl px-4 py-2.5 text-green-700 text-sm font-medium">
+                        <i class="fa-solid fa-circle-check"></i> Daily calorie goal achieved!
+                    </div>
+
+                    <!-- Meal rows -->
+                    <div class="space-y-0.5" id="mealPlanContainer"></div>
+
+                    <a href="meals.html" class="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold transition-colors" style="color: var(--primary);">
+                        <i class="fa-solid fa-circle-plus text-xs"></i> Add or edit meals
+                    </a>
+                </div>
+
+                <!-- Recent activity -->
+                <div class="card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-base font-bold text-gray-900">
+                            <i class="fa-solid fa-clock-rotate-left text-sm mr-1.5" style="color: var(--primary);"></i>Recent activity
+                        </h2>
+                        <a href="meals.html" class="text-xs font-semibold" style="color: var(--primary);">View all</a>
+                    </div>
+                    <div id="activityContainer">
+                        <p class="text-sm text-gray-400 py-4 text-center">No recent activity</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Macro split -->
+                <div class="card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-base font-bold text-gray-900">Macro split</h2>
+                        <span class="text-xs bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full font-medium">daily target</span>
+                    </div>
+                    <div class="mx-auto" style="width: 150px; height: 150px;">
+                        <canvas id="macroChart"></canvas>
+                    </div>
+                    <div class="flex justify-around mt-5 pt-4" style="border-top: 1px solid #f3f4f6;">
+                        <div class="macro-col">
+                            <div class="mc-label flex items-center justify-center gap-1">
+                                <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span>Protein
                             </div>
-                        `;
-                    }
-                    
-                    // Optional: Snack section if exists in plan (keep consistency but not required)
-                    if (targetByMeal['snack'] || targetByMeal['snacks']) {
-                        const snackTargetInfo = targetByMeal['snack'] || targetByMeal['snacks'] || { target: 0, protein: 0, suggestions: [] };
-                        const snackTargetCal = snackTargetInfo.target;
-                        const snackConsumed = consumedByMeal.snack || 0;
-                        let snackRemainingRaw = snackTargetCal - snackConsumed;
-                        const snackRemaining = Math.max(0, snackRemainingRaw);
-                        const snackIsOver = snackRemainingRaw < 0;
-                        const snackBadgeClass = snackIsOver ? 'meal-remaining-badge negative' : 'meal-remaining-badge';
-                        const snackProgress = snackTargetCal > 0 ? Math.min(100, (snackConsumed / snackTargetCal) * 100) : 0;
-                        const snackBarColor = snackIsOver ? 'bg-red-400' : (snackProgress >= 100 ? 'bg-green-500' : 'bg-purple-500');
-                        const snackSuggestions = snackTargetInfo.suggestions?.slice(0, 3).join(', ') || 'Healthy snacks like fruits, nuts, yogurt';
-                        
-                        mealCardsHTML += `
-                            <div class="border border-gray-200 rounded-xl p-4 hover:border-purple-300 transition duration-200 shadow-sm">
-                                <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
-                                    <h4 class="font-bold text-gray-900 text-lg"> Snacks</h4>
-                                    <div class="${snackBadgeClass} text-xs font-bold px-3 py-1 rounded-full">
-                                        ${snackTargetCal === 0 ? 'No target set' : (snackIsOver ? `${Math.abs(snackRemainingRaw)} cal over` : `${Math.round(snackRemaining)} cal remaining`)}
-                                    </div>
-                                </div>
-                                <div class="grid md:grid-cols-2 gap-3 mt-2">
-                                    <div>
-                                        <div class="flex justify-between text-sm mb-1">
-                                            <span class="text-gray-600">Calories target</span>
-                                            <span class="font-semibold text-gray-800">${snackTargetCal} cal</span>
-                                        </div>
-                                        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                                            <div class="${snackBarColor} h-2 rounded-full transition-all duration-300" style="width: ${snackProgress}%"></div>
-                                        </div>
-                                        <div class="flex justify-between text-xs text-gray-500 mt-1">
-                                            <span>Consumed: ${Math.round(snackConsumed)} cal</span>
-                                            <span>${Math.round(snackProgress)}%</span>
-                                        </div>
-                                        <p class="text-sm text-gray-600 mt-2">Protein: ${snackTargetInfo.protein || 0}g</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500 mb-1">🍽️ Suggestions</p>
-                                        <p class="text-sm text-gray-600 leading-relaxed">${escapeHtml(snackSuggestions)}</p>
-                                    </div>
-                                </div>
+                            <div class="mc-g" id="ms-protein-g">—</div>
+                            <div class="mc-pct" id="ms-protein-pct">—%</div>
+                        </div>
+                        <div class="macro-col">
+                            <div class="mc-label flex items-center justify-center gap-1">
+                                <span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>Carbs
                             </div>
-                        `;
-                    }
-                    
-                    // If no meal plan items found, show fallback
-                    if (mealCardsHTML === '') {
-                        mealCardsHTML = '<div class="text-center text-gray-500 py-8">No meal plan available. Please update your profile.</div>';
-                    }
-                    
-                    document.getElementById('mealPlanContainer').innerHTML = mealCardsHTML;
-                    
-                    // Display stats, plan overview, macros (call existing display functions)
-                    displayStatsAndPlanDetails(plan);
-                    
-                    document.getElementById('loadingState').classList.add('hidden');
-                    document.getElementById('mainContent').classList.remove('hidden');
-                } else {
-                    alert('Failed to load plan: ' + planData.message);
-                }
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
-                alert('Error loading dashboard. Please make sure the server is running.');
-            }
-        }
-        
-        // Separate function to display stats + plan overview + macros (unchanged from original except extracted)
-        function displayStatsAndPlanDetails(plan) {
-            // Stats Overview cards
-            document.getElementById('statCalories').textContent = plan.plan_overview.daily_calories;
-            document.getElementById('statProtein').textContent = plan.plan_overview.macros.protein_g + 'g';
-            document.getElementById('statWorkouts').textContent = plan.workout_schedule.days.length;
-            document.getElementById('statTarget').textContent = Math.abs(plan.weekly_targets.weight_change);
-            document.getElementById('statTargetDesc').textContent = plan.weekly_targets.weight_change < 0 ? 'loss/week' : 'gain/week';
-            
-            // Plan Overview (right column)
-            document.getElementById('planGoal').textContent = plan.plan_overview.goal.replace(/_/g, ' ');
-            document.getElementById('planDifficulty').textContent = plan.plan_overview.difficulty;
-            document.getElementById('planBMI').textContent = `${plan.user_profile.bmi} (${plan.user_profile.bmi_category})`;
-            document.getElementById('planTDEE').textContent = `${plan.user_profile.tdee} cal/day`;
-            document.getElementById('planReasoning').textContent = plan.plan_overview.reasoning;
-            
-            // Macros Breakdown
-            const macros = plan.plan_overview.macros;
-            const totalMacros = macros.protein_g + macros.carbs_g + macros.fat_g;
-            
-            document.getElementById('macroProtein').textContent = macros.protein_g + 'g';
-            document.getElementById('macroCarbs').textContent = macros.carbs_g + 'g';
-            document.getElementById('macroFat').textContent = macros.fat_g + 'g';
-            
-            if (totalMacros > 0) {
-                document.getElementById('macroProteinBar').style.width = (macros.protein_g / totalMacros * 100) + '%';
-                document.getElementById('macroCarbsBar').style.width = (macros.carbs_g / totalMacros * 100) + '%';
-                document.getElementById('macroFatBar').style.width = (macros.fat_g / totalMacros * 100) + '%';
-            } else {
-                document.getElementById('macroProteinBar').style.width = '0%';
-                document.getElementById('macroCarbsBar').style.width = '0%';
-                document.getElementById('macroFatBar').style.width = '0%';
-            }
-        }
-        
-        // Legacy function kept for compatibility (calls the new logic)
-        function displayPlan(plan) {
-            // This function is replaced but kept to avoid errors; actually we use displayStatsAndPlanDetails + custom meal logic
-            displayStatsAndPlanDetails(plan);
-        }
-        
-        // Original displayPlan called inside loadDashboard might cause duplication; but we handle everything.
-        function displayPlanOverview(plan) {
-            // We'll use displayStatsAndPlanDetails to avoid code duplication
-            displayStatsAndPlanDetails(plan);
-        }
-        
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
+                            <div class="mc-g" id="ms-carbs-g">—</div>
+                            <div class="mc-pct" id="ms-carbs-pct">—%</div>
+                        </div>
+                        <div class="macro-col">
+                            <div class="mc-label flex items-center justify-center gap-1">
+                                <span style="width:8px;height:8px;border-radius:50%;background:#902f10;display:inline-block;"></span>Fat
+                            </div>
+                            <div class="mc-g" id="ms-fat-g">—</div>
+                            <div class="mc-pct" id="ms-fat-pct">—%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weekly calorie trend -->
+                <div class="card">
+                    <h2 class="text-base font-bold text-gray-900 mb-0.5">Weekly calorie trend</h2>
+                    <p class="text-xs text-gray-400 mb-4" id="trendSubtitle">vs daily target</p>
+                    <div style="height: 190px;">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let userId = localStorage.getItem('user_id');
+    let username = localStorage.getItem('username');
+
+    if (!userId) window.location.href = 'login.html';
+
+    // Avatar initials
+    document.getElementById('username').textContent = username;
+    const avatarEl = document.getElementById('userAvatar');
+    if (avatarEl && username) {
+        const parts = username.trim().split(' ');
+        avatarEl.textContent = parts.length >= 2
+            ? parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase()
+            : username[0].toUpperCase();
+    }
+
+    // Date + greeting
+    (function () {
+        const now = new Date();
+        const h = now.getHours();
+        const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+        document.getElementById('headerGreeting').textContent = `${greet}, ${username}`;
+        document.getElementById('headerDate').textContent = now.toLocaleDateString('en-US', {
+            weekday: 'long', month: 'long', day: 'numeric'
+        });
+    })();
+
+    // Helpers
+    function fmtN(n) { return Math.round(n).toLocaleString(); }
+    function escapeHtml(s) {
+        if (!s) return '';
+        return s.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+    }
+    function timeAgo(ts) {
+        if (!ts) return '';
+        const diff = Date.now() - new Date(ts).getTime();
+        const m = Math.floor(diff / 60000);
+        if (m < 60) return `${m}m ago`;
+        const hh = Math.floor(m / 60);
+        if (hh < 24) return `${hh}h ago`;
+        if (Math.floor(hh / 24) === 1) return 'yesterday';
+        return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+    async function safeFetch(url) {
+        try { const r = await authFetch(url); return await r.json(); }
+        catch { return { success: false, data: null }; }
+    }
+    function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+
+    let macroChart = null, trendChart = null;
+
+    async function loadDashboard() {
+        try {
+            const today = new Date().toISOString().split('T')[0];
+
+            // Last 7 days for trend chart
+            const weekDates = Array.from({ length: 7 }, (_, i) => {
+                const d = new Date();
+                d.setDate(d.getDate() - (6 - i));
+                return d.toISOString().split('T')[0];
             });
+
+            // All fetches in parallel
+            const results = await Promise.all([
+                safeFetch(`/user/${userId}/plan`),
+                safeFetch(`/user/${userId}/meals?date=${today}`),
+                safeFetch(`/user/${userId}/exercise/summary`),
+                safeFetch(`/user/${userId}/progress`),
+                safeFetch(`/user/${userId}/exercise?date=${today}`),
+                ...weekDates.map(d => safeFetch(`/user/${userId}/meals?date=${d}`))
+            ]);
+
+            const [planData, mealsData, exerciseSumData, progressData, exerciseTodayData, ...weeklyMealsArr] = results;
+
+            if (!planData.success) {
+                alert('Failed to load plan. Please complete your profile.');
+                return;
+            }
+
+            const plan = planData.data;
+            const dailyTarget = plan.plan_overview.daily_calories;
+            const proteinTarget = plan.plan_overview.macros.protein_g;
+            const wktTarget = plan.workout_schedule.days.length;
+
+            // ── Compute today's consumed data ──
+            const todayMeals = mealsData.success && Array.isArray(mealsData.data) ? mealsData.data : [];
+            let totalCal = 0, totalProtein = 0;
+            const byType = {
+                breakfast: { cal: 0, protein: 0 },
+                lunch:     { cal: 0, protein: 0 },
+                dinner:    { cal: 0, protein: 0 },
+                snack:     { cal: 0, protein: 0 }
+            };
+            todayMeals.forEach(m => {
+                const t = (m.meal_type || 'snack').toLowerCase();
+                const c = m.calories || 0, p = m.protein || 0;
+                totalCal += c; totalProtein += p;
+                const bucket = byType[t] || byType.snack;
+                bucket.cal += c; bucket.protein += p;
+            });
+
+            // ── Stat card 1: Calories ──
+            document.getElementById('sc-cal-consumed').textContent = fmtN(totalCal);
+            document.getElementById('sc-cal-target').textContent = fmtN(dailyTarget);
+            const calDiff = dailyTarget - totalCal;
+            document.getElementById('sc-cal-sub').innerHTML = calDiff > 0
+                ? `<span style="color:var(--success)">↓ ${fmtN(calDiff)} below target</span>`
+                : calDiff < 0
+                ? `<span style="color:var(--error)">↑ ${fmtN(-calDiff)} above target</span>`
+                : `<span style="color:var(--success)">Goal reached!</span>`;
+
+            // ── Stat card 2: Protein ──
+            document.getElementById('sc-prot-consumed').textContent = fmtN(totalProtein);
+            document.getElementById('sc-prot-target').textContent = fmtN(proteinTarget);
+            const protDiff = totalProtein - proteinTarget;
+            document.getElementById('sc-prot-sub').innerHTML = protDiff >= 0
+                ? `<span style="color:var(--success)">Goal reached!</span>`
+                : `<span style="color:var(--text-muted)">${fmtN(-protDiff)}g remaining</span>`;
+
+            // ── Stat card 3: Workouts ──
+            let wktDone = 0;
+            if (exerciseSumData.success && exerciseSumData.data) {
+                const d = exerciseSumData.data;
+                wktDone = d.total_sessions ?? d.sessions_count ?? d.count ?? 0;
+            }
+            document.getElementById('sc-wkt-done').textContent = wktDone;
+            document.getElementById('sc-wkt-target').textContent = wktTarget;
+            const wktLeft = Math.max(0, wktTarget - wktDone);
+            document.getElementById('sc-wkt-sub').innerHTML = wktLeft > 0
+                ? `<span style="color:var(--info)">${wktLeft} left this week</span>`
+                : `<span style="color:var(--success)">Week goal complete!</span>`;
+
+            // ── Stat card 4: Weight ──
+            const logs = progressData.success && Array.isArray(progressData.data) ? progressData.data : [];
+            const wEl = document.getElementById('sc-weight-val');
+            const wSubEl = document.getElementById('sc-weight-sub');
+            if (logs.length >= 2) {
+                const latest = logs[logs.length - 1];
+                const prev   = logs[logs.length - 2];
+                const chg = (latest.weight || 0) - (prev.weight || 0);
+                wEl.textContent = `${chg >= 0 ? '+' : ''}${chg.toFixed(1)} kg`;
+                const goingRight = plan.weekly_targets.weight_change < 0 ? chg <= 0 : chg >= 0;
+                wSubEl.innerHTML = goingRight
+                    ? `<span style="color:var(--success)">ahead of target</span>`
+                    : `<span style="color:var(--warning)">adjust your plan</span>`;
+            } else if (logs.length === 1) {
+                wEl.textContent = `${logs[0].weight} kg`;
+                wSubEl.innerHTML = `<span style="color:var(--text-muted)">current weight</span>`;
+            } else {
+                wEl.textContent = `${Math.abs(plan.weekly_targets.weight_change)} kg`;
+                wSubEl.innerHTML = `<span style="color:var(--text-muted)">${plan.weekly_targets.weight_change < 0 ? 'loss' : 'gain'}/week target</span>`;
+            }
+
+            // ── Today's meals card ──
+            const totalRem = Math.max(0, dailyTarget - totalCal);
+            document.getElementById('mealsLoggedCount').textContent =
+                `${todayMeals.length} meal${todayMeals.length !== 1 ? 's' : ''} logged`;
+            const goal = plan.plan_overview.goal || '';
+            const planLabel = goal.includes('loss') ? 'calorie deficit plan'
+                : goal.includes('gain') ? 'muscle gain plan'
+                : 'balanced macro plan';
+            document.getElementById('mealsSubtitle').textContent =
+                `Remaining ${fmtN(totalRem)} cal • ${planLabel}`;
+            if (totalCal >= dailyTarget) {
+                document.getElementById('goalAchievedBanner').classList.remove('hidden');
+            }
+
+            // Build meal rows
+            const targetByMeal = {};
+            (plan.meal_plan || []).forEach(item => {
+                targetByMeal[(item.meal || '').toLowerCase()] = {
+                    cal: item.calories || 0,
+                    protein: item.protein || 0
+                };
+            });
+
+            // Normalize 'snacks' -> 'snack' in targetByMeal
+            if (targetByMeal['snacks'] && !targetByMeal['snack']) {
+                targetByMeal['snack'] = targetByMeal['snacks'];
+            }
+
+            const mealDefs = [
+                { key: 'breakfast', label: 'Breakfast', bg: '#fff7ed', color: '#ea580c', icon: 'fa-mug-hot' },
+                { key: 'lunch',     label: 'Lunch',     bg: '#f0fdf4', color: '#16a34a', icon: 'fa-bowl-food' },
+                { key: 'dinner',    label: 'Dinner',    bg: '#eff6ff', color: '#2563eb', icon: 'fa-utensils' },
+                { key: 'snack',     label: 'Snacks',    bg: '#fdf4ff', color: '#9333ea', icon: 'fa-apple-whole' },
+            ];
+
+            let mealsHTML = '';
+            for (const m of mealDefs) {
+                const info = targetByMeal[m.key] || { cal: 0, protein: 0 };
+                const consumed = byType[m.key]?.cal || 0;
+                const consumedP = byType[m.key]?.protein || 0;
+                const pct = info.cal > 0 ? Math.min(100, Math.round(consumed / info.cal * 100)) : 0;
+                const diff = info.cal - consumed;
+                const over = diff < 0;
+                const badgeText = info.cal === 0 ? 'no target'
+                    : over ? `${Math.abs(Math.round(diff))} over`
+                    : `${Math.round(diff)} left`;
+                const badgeCls = over ? 'rem-badge over' : 'rem-badge';
+
+                mealsHTML += `
+                <div class="meal-row">
+                    <div class="meal-icon-circle" style="background:${m.bg};">
+                        <i class="fa-solid ${m.icon}" style="color:${m.color};"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm font-semibold text-gray-800">${m.label}</div>
+                        <div class="text-xs text-gray-400 mt-0.5">
+                            ${fmtN(consumed)} / ${fmtN(info.cal)} cal &nbsp;•&nbsp; ${Math.round(consumedP)}g protein
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <span class="text-sm font-bold text-gray-700">${pct}%</span>
+                        <span class="${badgeCls}">${escapeHtml(badgeText)}</span>
+                    </div>
+                </div>`;
+            }
+            document.getElementById('mealPlanContainer').innerHTML = mealsHTML ||
+                `<p class="text-sm text-gray-400 text-center py-6">No meal plan found. Please update your profile.</p>`;
+
+            // ── Recent activity ──
+            const activities = [];
+            todayMeals.forEach(m => {
+                const label = `Logged ${m.meal_type || 'meal'}`;
+                const mName = m.meal_name || m.name || '';
+                const detail = mName
+                    ? `${escapeHtml(mName)} (${Math.round(m.calories || 0)} cal)`
+                    : `${Math.round(m.calories || 0)} cal logged`;
+                activities.push({ label, detail, ts: m.timestamp, color: '#10b981' });
+            });
+            const todayEx = exerciseTodayData.success && Array.isArray(exerciseTodayData.data) ? exerciseTodayData.data : [];
+            todayEx.forEach(ex => {
+                const name = ex.exercise_name || ex.name || 'exercise';
+                const parts = [
+                    ex.duration_minutes ? `${ex.duration_minutes} min` : '',
+                    ex.calories_burned  ? `${Math.round(ex.calories_burned)} cal burned` : ''
+                ].filter(Boolean).join(' • ');
+                activities.push({ label: `Completed ${escapeHtml(name)}`, detail: parts, ts: ex.timestamp, color: '#3b82f6' });
+            });
+            logs.slice(-2).forEach(p => {
+                activities.push({ label: 'Weight update', detail: `${p.weight} kg recorded`, ts: p.date || p.timestamp, color: '#f59e0b' });
+            });
+            activities.sort((a, b) => new Date(b.ts || 0) - new Date(a.ts || 0));
+            const recent = activities.slice(0, 5);
+            document.getElementById('activityContainer').innerHTML = recent.length
+                ? recent.map(a => `
+                    <div class="act-item">
+                        <div class="act-dot" style="background:${a.color};"></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-medium text-gray-800">${a.label}</div>
+                            ${a.detail ? `<div class="text-xs text-gray-400 mt-0.5">${a.detail}</div>` : ''}
+                        </div>
+                        <div class="text-xs text-gray-400 ml-3 flex-shrink-0">${timeAgo(a.ts)}</div>
+                    </div>`).join('')
+                : `<p class="text-sm text-gray-400 py-4 text-center">No recent activity</p>`;
+
+            // ── Macro donut chart ──
+            const mac = plan.plan_overview.macros;
+            const totalG = mac.protein_g + mac.carbs_g + mac.fat_g;
+            const pPct = totalG > 0 ? Math.round(mac.protein_g / totalG * 100) : 0;
+            const cPct = totalG > 0 ? Math.round(mac.carbs_g  / totalG * 100) : 0;
+            const fPct = totalG > 0 ? Math.round(mac.fat_g    / totalG * 100) : 0;
+            document.getElementById('ms-protein-g').textContent  = mac.protein_g + 'g';
+            document.getElementById('ms-carbs-g').textContent    = mac.carbs_g   + 'g';
+            document.getElementById('ms-fat-g').textContent      = mac.fat_g     + 'g';
+            document.getElementById('ms-protein-pct').textContent = pPct + '%';
+            document.getElementById('ms-carbs-pct').textContent   = cPct + '%';
+            document.getElementById('ms-fat-pct').textContent     = fPct + '%';
+
+            if (macroChart) macroChart.destroy();
+            macroChart = new Chart(document.getElementById('macroChart'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [mac.protein_g, mac.carbs_g, mac.fat_g],
+                        backgroundColor: ['#10b981', '#f59e0b', '#902f10'],
+                        borderWidth: 0,
+                        borderRadius: 6,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    cutout: '65%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(ctx) {
+                                    const names = ['Protein', 'Carbs', 'Fat'];
+                                    const pcts  = [pPct, cPct, fPct];
+                                    return ` ${names[ctx.dataIndex]}: ${ctx.raw}g (${pcts[ctx.dataIndex]}%)`;
+                                }
+                            }
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: true,
+                }
+            });
+
+            // ── Weekly calorie trend ──
+            document.getElementById('trendSubtitle').textContent = `vs daily target (${fmtN(dailyTarget)} cal)`;
+            const weekLabels = weekDates.map(d =>
+                new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })
+            );
+            const weekCals = weeklyMealsArr.map(dayData => {
+                if (!dayData.success || !dayData.data) return 0;
+                return Math.round(dayData.data.reduce((s, m) => s + (m.calories || 0), 0));
+            });
+
+            if (trendChart) trendChart.destroy();
+            trendChart = new Chart(document.getElementById('trendChart'), {
+                type: 'line',
+                data: {
+                    labels: weekLabels,
+                    datasets: [
+                        {
+                            label: 'Calories consumed',
+                            data: weekCals,
+                            borderColor: '#902f10',
+                            backgroundColor: 'rgba(144,47,16,0.04)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#902f10',
+                            borderWidth: 2,
+                        },
+                        {
+                            label: 'Daily target',
+                            data: Array(7).fill(dailyTarget),
+                            borderColor: '#d1d5db',
+                            borderDash: [5, 4],
+                            fill: false,
+                            pointRadius: 0,
+                            tension: 0,
+                            borderWidth: 1.5,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { boxWidth: 10, font: { size: 11 }, usePointStyle: true, padding: 12 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#f3f4f6' },
+                            ticks: { font: { size: 10 }, callback: v => v.toLocaleString() }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+
+            // Show
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+
+        } catch (err) {
+            console.error('Dashboard error:', err);
+            alert('Error loading dashboard. Please make sure the server is running.');
         }
-        
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'login.html';
-        }
-        
-        // Load dashboard on page load
-        loadDashboard();
-    </script>
+    }
+
+    loadDashboard();
+</script>
 
 </body>
 </html>

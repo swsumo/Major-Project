@@ -7,106 +7,482 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
+
+        :root {
+            --primary: #902f10;
+            --primary-dark: #7a2810;
+            --primary-light: #fff5ee;
         }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        body { font-family: 'Inter', sans-serif; background: #f5f7fb; }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 2px rgba(144, 47, 16, 0.15) !important;
+        }
+
+        /* ========== LOADING SCREEN ONLY (Dark Mountain Theme) ========== */
+        .skeleton-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #0a0a0a 0%, #1a0f0a 50%, #0d0603 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+            overflow: hidden;
+        }
+
+        /* Mountain SVG Background */
+        .mountain-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .mountain {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: auto;
+        }
+
+        .mountain-1 {
+            animation: floatMountains 20s ease-in-out infinite;
+        }
+
+        .mountain-2 {
+            animation: floatMountains 25s ease-in-out infinite reverse;
+        }
+
+        .mountain-3 {
+            animation: floatMountains 18s ease-in-out infinite;
+        }
+
+        @keyframes floatMountains {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Stars */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Moon */
+        .moon {
+            position: absolute;
+            top: 50px;
+            right: 80px;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #f5e6d9, #d4a574);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(245, 230, 217, 0.3);
+            animation: moonGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes moonGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(245, 230, 217, 0.3); transform: scale(1); }
+            50% { box-shadow: 0 0 40px rgba(245, 230, 217, 0.5); transform: scale(1.02); }
+        }
+
+        .skeleton-content {
+            text-align: center;
+            color: #f5e6d9;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            max-width: 90%;
+        }
+
+        /* Animated fitness icons */
+        .fitness-icon {
+            font-size: 3.5rem;
+            animation: bounce 2s ease-in-out infinite;
+            display: inline-block;
+            margin: 0 0.75rem;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        .fitness-icon:nth-child(2) { animation-delay: 0.2s; }
+        .fitness-icon:nth-child(3) { animation-delay: 0.4s; }
+        .fitness-icon:nth-child(4) { animation-delay: 0.6s; }
+        .fitness-icon:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(245, 230, 217, 0.2);
+            border-top: 4px solid #d4a574;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(245, 230, 217, 0.15);
+            border-radius: 2px;
+            margin: 2rem auto;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #902f10, #d4a574);
+            border-radius: 2px;
+            animation: progress 10s linear forwards;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Quote containers */
+        .quote-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            min-height: 120px;
+        }
+
+        .quote-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeInOut 4s ease-in-out infinite;
+            line-height: 1.6;
+            color: #f5e6d9;
+        }
+
+        .quote-author {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+            color: #d4a574;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(10px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Category badge */
+        .quote-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(212, 165, 116, 0.15);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #d4a574;
+        }
+
+        /* Hide main content initially */
+        .main-content {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .main-content.visible {
+            opacity: 1;
+        }
+
+        /* Loading text styling */
+        .loading-text {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            color: #d4a574;
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body>
 
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="login.html" class="flex items-center">
-                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">FitAI</h1>
-                </a>
-                <div class="flex gap-4">
-                    <a href="signup.html" class="text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md font-medium">Sign Up</a>
+    <!-- SKELETON LOADER (Dark Mountain Theme - Shows for 10 seconds) -->
+    <div id="skeletonLoader" class="skeleton-loader">
+        
+        <!-- Stars -->
+        <div class="stars" id="stars"></div>
+        
+        <!-- Moon -->
+        <div class="moon"></div>
+        
+        <!-- Mountain SVGs -->
+        <div class="mountain-bg">
+            <svg class="mountain mountain-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" style="position: absolute; bottom: 0; left: 0; opacity: 0.4;">
+                <path fill="#2a1a10" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,224C672,224,768,192,864,170.7C960,149,1056,139,1152,149.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+            <svg class="mountain mountain-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" style="position: absolute; bottom: 0; left: 0; opacity: 0.6;">
+                <path fill="#3a2518" fill-opacity="1" d="M0,256L48,234.7C96,213,192,171,288,176C384,181,480,235,576,245.3C672,256,768,224,864,197.3C960,171,1056,149,1152,160C1248,171,1344,213,1392,234.7L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+            <svg class="mountain mountain-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" style="position: absolute; bottom: 0; left: 0; opacity: 0.8;">
+                <path fill="#4a3020" fill-opacity="1" d="M0,192L48,176C96,160,192,128,288,138.7C384,149,480,203,576,208C672,213,768,171,864,160C960,149,1056,171,1152,181.3C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </div>
+
+        <div class="skeleton-content">
+            <!-- Loading Spinner -->
+            <div class="spinner"></div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+
+            <!-- Rotating Quotes -->
+            <div class="quote-container" id="quoteContainer">
+                <div id="quoteCategory" class="quote-category">🏔️ PERSPECTIVE</div>
+                <div class="quote-text" id="quoteText">
+                    "The man who moves a mountain begins by carrying away small stones."
                 </div>
+                <div class="quote-author" id="quoteAuthor">
+                    — Confucius
+                </div>
+            </div>
+
+            <div class="loading-text">
+                Scaling new heights...
             </div>
         </div>
-    </nav>
+    </div>
 
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full">
-            
-            <!-- Login Card -->
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h2>
-                    <p class="text-gray-600">Login to continue your fitness journey</p>
-                </div>
-
-                <form id="loginForm" class="space-y-6">
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                        <input type="text" id="username" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            placeholder="Enter your username">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                        <input type="password" id="password" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            placeholder="Enter your password">
-                    </div>
-
-                    <!-- Error Message -->
-                    <div id="errorMessage" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                        <p id="errorText"></p>
-                    </div>
-
-                    <!-- Loading State -->
-                    <div id="loadingState" class="hidden text-center py-4">
-                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
-                    </div>
-
-                    <button type="submit" id="loginBtn"
-                        class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition">
-                        Login
-                    </button>
-
-                </form>
-
-                <!-- Forgot Password Link -->
-                <div class="text-center mt-4">
-                    <a href="reset-password.html" class="text-sm text-purple-600 hover:underline">
-                        Forgot your password?
+    <!-- ORIGINAL LOGIN PAGE (UNCHANGED) -->
+    <div class="main-content" id="mainContent">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <a href="login.html" class="flex items-center">
+                        <h1 class="text-xl font-bold" style="color: var(--primary);">FitAI</h1>
                     </a>
-                </div>
-
-                <div class="mt-6 text-center">
-                    <p class="text-gray-600">
-                        Don't have an account? 
-                        <a href="signup.html" class="text-purple-600 hover:text-purple-700 font-medium">Sign up</a>
-                    </p>
+                    <div class="flex gap-4">
+                        <a href="signup.html" class="text-sm font-medium text-gray-500 hover:text-gray-800 px-4 py-2 rounded-md transition-colors">Sign Up</a>
+                    </div>
                 </div>
             </div>
+        </nav>
 
+        <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full">
+                
+                <!-- Login Card -->
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h2>
+                        <p class="text-gray-600">Login to continue your fitness journey</p>
+                    </div>
+
+                    <form id="loginForm" class="space-y-6">
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                            <input type="text" id="username" required
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm"
+                                placeholder="Enter your username">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                            <input type="password" id="password" required
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm"
+                                placeholder="Enter your password">
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="errorMessage" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                            <p id="errorText"></p>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="loadingState" class="hidden text-center py-4">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto" style="border-color: var(--primary);"></div>
+                        </div>
+
+                        <button type="submit" id="loginBtn"
+                            class="w-full text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors"
+                            style="background: var(--primary);"
+                            onmouseover="this.style.background='var(--primary-dark)'"
+                            onmouseout="this.style.background='var(--primary)'">
+                            Login
+                        </button>
+
+                    </form>
+
+                    <!-- Forgot Password Link -->
+                    <div class="text-center mt-4">
+                        <a href="reset-password.html" class="text-sm hover:underline" style="color: var(--primary);">
+                            Forgot your password?
+                        </a>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-gray-600">
+                            Don't have an account? 
+                            <a href="signup.html" class="font-medium hover:underline" style="color: var(--primary);">Sign up</a>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 
     <script>
-        const API_URL =
-    window.location.hostname.includes("localhost")
-        ? "http://localhost:5000/api"
-        : "https://major-project-20zc.onrender.com/api";
+        // Your provided quotes
+        const perspectiveQuotes = [
+            { text: "The man who moves a mountain begins by carrying away small stones.", author: "Confucius" },
+            { text: "It is not the mountain we conquer, but ourselves.", author: "Sir Edmund Hillary" },
+            { text: "Comparison is the thief of joy.", author: "Theodore Roosevelt" }
+        ];
 
+        const realityQuotes = [
+            { text: "I'm a great believer in luck, and I find the harder I work the more I have of it.", author: "Thomas Jefferson" },
+            { text: "I've had a lot of worries in my life, most of which never happened.", author: "Mark Twain" },
+            { text: "Life is what happens when you're busy making other plans.", author: "John Lennon" }
+        ];
+
+        // Combine all quotes with categories
+        const allQuotes = [
+            ...perspectiveQuotes.map(q => ({ ...q, category: "🏔️" })),
+            ...realityQuotes.map(q => ({ ...q, category: "🌄" }))
+        ];
+
+        let quoteIndex = 0;
+
+        // Rotate quotes every 3 seconds
+        function rotateQuote() {
+            quoteIndex = (quoteIndex + 1) % allQuotes.length;
+            const quoteElement = document.getElementById('quoteText');
+            const authorElement = document.getElementById('quoteAuthor');
+            const categoryElement = document.getElementById('quoteCategory');
+            
+            if (quoteElement && authorElement && categoryElement) {
+                quoteElement.style.opacity = '0';
+                setTimeout(() => {
+                    quoteElement.textContent = `"${allQuotes[quoteIndex].text}"`;
+                    authorElement.textContent = `— ${allQuotes[quoteIndex].author}`;
+                    categoryElement.textContent = allQuotes[quoteIndex].category;
+                    quoteElement.style.opacity = '1';
+                }, 500);
+            }
+        }
+
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            if (!starsContainer) return;
+            
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 60}%`;
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                star.style.animationDuration = `${Math.random() * 2 + 2}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Simulate 10-second loading
+        function simulateLoading() {
+            return new Promise((resolve) => {
+                let timePassed = 0;
+                const interval = setInterval(() => {
+                    timePassed++;
+                    if (timePassed >= 10) {
+                        clearInterval(interval);
+                        resolve();
+                    }
+                }, 1000);
+            });
+        }
+
+        // Initialize page
+        async function initPage() {
+            createStars();
+            
+            // Start rotating quotes
+            const quoteInterval = setInterval(rotateQuote, 3000);
+            
+            // Simulate 10-second loading
+            await simulateLoading();
+            
+            // Hide skeleton loader and show main content
+            const skeletonLoader = document.getElementById('skeletonLoader');
+            const mainContent = document.getElementById('mainContent');
+            
+            skeletonLoader.style.opacity = '0';
+            setTimeout(() => {
+                skeletonLoader.style.display = 'none';
+                mainContent.classList.add('visible');
+            }, 500);
+            
+            clearInterval(quoteInterval);
+        }
+
+        initPage();
+
+        // API Configuration
+        const API_URL =
+            window.location.hostname.includes("localhost")
+                ? "http://localhost:5000/api"
+                : "https://major-project-20zc.onrender.com/api";
+
+        // Login form handler
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Show loading
             document.getElementById('loginBtn').disabled = true;
             document.getElementById('loadingState').classList.remove('hidden');
             document.getElementById('errorMessage').classList.add('hidden');
@@ -123,15 +499,11 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Store user info
                     localStorage.setItem('user_id', data.data.user_id);
                     localStorage.setItem('username', data.data.username);
                     localStorage.setItem('token', data.data.token);
-                    
-                    // Redirect to dashboard
                     window.location.href = 'dashboard.html';
                 } else {
-                    // Show error
                     document.getElementById('errorText').textContent = data.message || 'Invalid credentials';
                     document.getElementById('errorMessage').classList.remove('hidden');
                 }
@@ -145,6 +517,5 @@
             }
         });
     </script>
-
 </body>
 </html>

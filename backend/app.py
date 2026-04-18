@@ -906,14 +906,6 @@ def update_profile(user_id):
         db.session.rollback()
         return create_response(False, f'Error: {str(e)}', status_code=500)
 
-# Health Check Route
-@app.route('/api/health', methods=['GET'])
-def health():
-    return jsonify({
-        "status": "healthy",
-        "message": "Flask server is running "
-    }), 200
-
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     print(f"STARTING SERVER ON PORT {port}")

@@ -7,40 +7,65 @@
     <title>Progress Tracking - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
+
+        :root {
+            --primary: #902f10;
+            --primary-dark: #7a2810;
+            --primary-light: #fff5ee;
         }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        body { font-family: 'Inter', sans-serif; background: #f5f7fb; }
+
+        .nav-link { font-size: 14px; color: #6b7280; transition: color 0.15s; }
+        .nav-link:hover { color: #1f2937; }
+        .nav-active { color: var(--primary) !important; font-weight: 600; border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+        .mobile-nav-active { color: var(--primary); font-weight: 600; background: var(--primary-light); }
+
+        .user-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: var(--primary); color: white;
+            font-weight: 700; font-size: 12px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 2px rgba(144, 47, 16, 0.15) !important;
         }
     </style>
 </head>
 <body class="bg-gray-50">
 
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-8">
-                    <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">FitAI</h1>
-                    <div class="hidden md:flex gap-6">
-                        <a href="dashboard.html" class="text-gray-700 hover:text-purple-600">Dashboard</a>
-                        <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
-                        <a href="progress.html" class="text-purple-600 font-medium">Progress</a>
-                        <a href="chat.html" class="text-gray-700 hover:text-purple-600">Chat</a>
-                        <a href="exercise.html" class="text-gray-700 hover:text-purple-600">Exercise</a>
-                        <a href="profile.html" class="text-gray-700 hover:text-purple-600">Profile</a>
+                    <span class="text-lg font-bold flex items-center gap-2" style="color: var(--primary);">
+                        <i class="fa-solid fa-chart-simple"></i>FitAI
+                    </span>
+                    <div class="hidden md:flex gap-6 items-center">
+                        <a href="dashboard.html" class="nav-link">Dashboard</a>
+                        <a href="meals.html"     class="nav-link">Meals</a>
+                        <a href="progress.html"  class="nav-link nav-active">Progress</a>
+                        <a href="chat.html"      class="nav-link">Chat</a>
+                        <a href="exercise.html"  class="nav-link">Exercise</a>
+                        <a href="profile.html"   class="nav-link">Profile</a>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="user-avatar" id="userAvatar"></div>
                     <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
-                    <button onclick="logout()" class="text-gray-600 hover:text-red-600 text-sm">Logout</button>
-                    <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-100 focus:outline-none" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                    <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none"
+                        onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
                     </button>
@@ -48,12 +73,12 @@
             </div>
             <!-- Mobile menu -->
             <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-2 space-y-1 pb-3">
-            <a href="dashboard.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Dashboard</a>
-            <a href="meals.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Meals</a>
-            <a href="progress.html" class="block px-4 py-2 rounded-lg text-purple-600 font-semibold bg-purple-50">Progress</a>
-            <a href="chat.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Chat</a>
-            <a href="exercise.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Exercise</a>
-            <a href="profile.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Profile</a>
+                <a href="dashboard.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Dashboard</a>
+                <a href="meals.html"     class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Meals</a>
+                <a href="progress.html"  class="block px-4 py-2 rounded-lg mobile-nav-active">Progress</a>
+                <a href="chat.html"      class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Chat</a>
+                <a href="exercise.html"  class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Exercise</a>
+                <a href="profile.html"   class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Profile</a>
             </div>
         </div>
     </nav>
@@ -82,13 +107,13 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Week Number</label>
                                 <input type="number" id="weekNumber" required min="1" value="1"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg border-gray-200">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Current Weight (kg)</label>
                                 <input type="number" id="currentWeight" required min="30" max="200" step="0.1"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg border-gray-200"
                                     placeholder="e.g., 78.5">
                             </div>
                         </div>
@@ -97,13 +122,13 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Workouts Completed</label>
                                 <input type="number" id="workoutsCompleted" required min="0" max="7" value="3"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg border-gray-200">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Avg Daily Calories</label>
                                 <input type="number" id="avgCalories" required min="0"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg border-gray-200"
                                     placeholder="e.g., 1850">
                             </div>
                         </div>
@@ -120,8 +145,11 @@
                         </div>
 
                         <button type="submit" id="submitBtn"
-                            class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition">
-                            Log Progress & Get AI Feedback
+                            class="w-full text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors"
+                            style="background: var(--primary);"
+                            onmouseover="this.style.background='var(--primary-dark)'"
+                            onmouseout="this.style.background='var(--primary)'">
+                            Log Progress &amp; Get AI Feedback
                         </button>
                     </form>
                 </div>
@@ -138,28 +166,25 @@
             <div class="space-y-6">
                 
                 <!-- Overall Stats -->
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-sm p-6 border border-purple-200">
-                    <h3 class="text-xl font-bold mb-4 text-purple-900"> Overall Stats</h3>
-                    
+                <div class="rounded-xl shadow-sm p-6 border" style="background: var(--primary-light); border-color: rgba(144,47,16,0.15);">
+                    <h3 class="text-base font-bold mb-4" style="color: var(--primary);">Overall Stats</h3>
+
                     <div class="space-y-3">
                         <div>
-                            <p class="text-sm text-purple-700">Total Weeks</p>
-                            <p class="text-2xl font-bold text-purple-900" id="totalWeeks">0</p>
+                            <p class="text-xs font-medium" style="color: var(--primary);">Total Weeks</p>
+                            <p class="text-2xl font-bold text-gray-900" id="totalWeeks">0</p>
                         </div>
-                        
                         <div>
-                            <p class="text-sm text-purple-700">Total Weight Change</p>
-                            <p class="text-2xl font-bold text-purple-900" id="totalChange">-</p>
+                            <p class="text-xs font-medium" style="color: var(--primary);">Total Weight Change</p>
+                            <p class="text-2xl font-bold text-gray-900" id="totalChange">-</p>
                         </div>
-                        
                         <div>
-                            <p class="text-sm text-purple-700">Avg Weekly Change</p>
-                            <p class="text-lg font-bold text-purple-900" id="avgChange">-</p>
+                            <p class="text-xs font-medium" style="color: var(--primary);">Avg Weekly Change</p>
+                            <p class="text-lg font-bold text-gray-900" id="avgChange">-</p>
                         </div>
-
                         <div>
-                            <p class="text-sm text-purple-700">Avg Workouts/Week</p>
-                            <p class="text-lg font-bold text-purple-900" id="avgWorkouts">-</p>
+                            <p class="text-xs font-medium" style="color: var(--primary);">Avg Workouts/Week</p>
+                            <p class="text-lg font-bold text-gray-900" id="avgWorkouts">-</p>
                         </div>
                     </div>
                 </div>
@@ -187,6 +212,14 @@
 
         document.getElementById('username').textContent = username;
 
+        const avatarEl = document.getElementById('userAvatar');
+        if (avatarEl && username) {
+            const parts = username.trim().split(' ');
+            avatarEl.textContent = parts.length >= 2
+                ? parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase()
+                : username[0].toUpperCase();
+        }
+
         // Load progress history
         async function loadProgress() {
             try {
@@ -209,9 +242,9 @@
             const recent = progressLogs.slice(-5).reverse();
             
             const html = recent.map(log => `
-                <div class="border border-gray-200 rounded-lg p-3 hover:border-purple-300 transition">
+                <div class="border border-gray-100 rounded-xl p-3 hover:border-orange-200 transition" style="hover:background:#fefaf7;">
                     <div class="flex justify-between items-start mb-1">
-                        <span class="text-xs font-medium text-purple-600">Week ${log.week_number}</span>
+                        <span class="text-xs font-medium" style="color:var(--primary);">Week ${log.week_number}</span>
                         <span class="font-bold text-gray-900">${log.weight} kg</span>
                     </div>
                     <div class="text-xs text-gray-600">
@@ -263,23 +296,24 @@
                         {
                             label: 'Actual Weight',
                             data: actualWeights,
-                            borderColor: 'rgb(102, 126, 234)',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            borderColor: '#902f10',
+                            backgroundColor: 'rgba(144, 47, 16, 0.08)',
                             tension: 0.3,
                             fill: true,
                             pointRadius: 4,
-                            pointHoverRadius: 6
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#902f10'
                         },
                         {
                             label: 'AI Predicted',
                             data: predictedWeights,
-                            borderColor: 'rgb(168, 85, 247)',
-                            backgroundColor: 'rgba(168, 85, 247, 0.05)',
+                            borderColor: '#d1d5db',
+                            backgroundColor: 'rgba(209, 213, 219, 0.05)',
                             borderDash: [5, 5],
                             tension: 0.3,
                             fill: false,
                             pointRadius: 3,
-                            pointBackgroundColor: 'rgb(168, 85, 247)'
+                            pointBackgroundColor: '#9ca3af'
                         }
                     ]
                 },

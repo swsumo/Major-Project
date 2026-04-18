@@ -7,33 +7,93 @@
     <title>Profile - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #3f2857 100%); }
-        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        :root {
+            --primary: #902f10;
+            --primary-dark: #7a2810;
+            --primary-light: #fff5ee;
+            --border: #f0f0f0;
+        }
+        body { font-family: 'Inter', sans-serif; background: #f5f7fb; }
+
+        .nav-link { font-size: 14px; color: #6b7280; transition: color 0.15s; }
+        .nav-link:hover { color: #1f2937; }
+        .nav-active { color: var(--primary) !important; font-weight: 600; border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+
+        .user-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: var(--primary); color: white;
+            font-weight: 700; font-size: 12px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+
+        /* Form inputs — primary focus ring */
+        input[type="number"], input[type="text"], input[type="email"], select {
+            outline: none;
+        }
+        input[type="number"]:focus, input[type="text"]:focus, input[type="email"]:focus, select:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 2px rgba(144, 47, 16, 0.15) !important;
+        }
+
+        /* Submit button */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Plan summary card */
+        .plan-summary-card {
+            background: var(--primary-light);
+            border: 1px solid rgba(144, 47, 16, 0.12);
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        /* Stat mini cards */
+        .stat-mini {
+            text-align: center;
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+
+        /* Mobile menu active */
+        .mobile-nav-active { color: var(--primary); font-weight: 600; background: var(--primary-light); }
     </style>
 </head>
-<body class="bg-gray-50">
+<body>
 
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-8">
-                    <h1 class="text-2xl font-bold gradient-text">FitAI</h1>
-                    <div class="hidden md:flex gap-6">
-                        <a href="dashboard.html" class="text-gray-700 hover:text-purple-600">Dashboard</a>
-                        <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
-                        <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
-                        <a href="chat.html" class="text-gray-700 hover:text-purple-600">Chat</a>
-                        <a href="exercise.html" class="text-gray-700 hover:text-purple-600">Exercise</a>
-                        <a href="profile.html" class="text-purple-600 font-medium">Profile</a>
+                    <span class="text-lg font-bold flex items-center gap-2" style="color: var(--primary);">
+                        <i class="fa-solid fa-chart-simple"></i>FitAI
+                    </span>
+                    <div class="hidden md:flex gap-6 items-center">
+                        <a href="dashboard.html" class="nav-link">Dashboard</a>
+                        <a href="meals.html" class="nav-link">Meals</a>
+                        <a href="progress.html" class="nav-link">Progress</a>
+                        <a href="chat.html" class="nav-link">Chat</a>
+                        <a href="exercise.html" class="nav-link">Exercise</a>
+                        <a href="profile.html" class="nav-link nav-active">Profile</a>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="user-avatar" id="userAvatar"></div>
                     <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
-                    <button onclick="logout()" class="text-gray-500 hover:text-red-500 text-sm">Logout</button>
-                    <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-100 focus:outline-none" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                    <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none"
+                        onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
                     </button>
@@ -41,12 +101,12 @@
             </div>
             <!-- Mobile menu -->
             <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-2 space-y-1 pb-3">
-            <a href="dashboard.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Dashboard</a>
-            <a href="meals.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Meals</a>
-            <a href="progress.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Progress</a>
-            <a href="chat.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Chat</a>
-            <a href="exercise.html" class="block px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 hover:bg-gray-50">Exercise</a>
-            <a href="profile.html" class="block px-4 py-2 rounded-lg text-purple-600 font-semibold bg-purple-50">Profile</a>
+                <a href="dashboard.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Dashboard</a>
+                <a href="meals.html"     class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Meals</a>
+                <a href="progress.html"  class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Progress</a>
+                <a href="chat.html"      class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Chat</a>
+                <a href="exercise.html"  class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Exercise</a>
+                <a href="profile.html"   class="block px-4 py-2 rounded-lg mobile-nav-active">Profile</a>
             </div>
         </div>
     </nav>
@@ -55,36 +115,36 @@
 
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-1">My Profile</h1>
-            <p class="text-gray-500">Update your details to regenerate your personalized FL plan</p>
+            <p class="text-gray-500 text-sm">Update your details to regenerate your personalized FL plan</p>
         </div>
 
         <!-- Current Plan Summary -->
-        <div class="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-100 rounded-2xl p-6 mb-8" id="currentPlanCard">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Current Plan Summary</h2>
+        <div class="plan-summary-card mb-8" id="currentPlanCard">
+            <h2 class="text-base font-bold text-gray-900 mb-4">Current Plan Summary</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="planSummary">
-                <div class="text-center bg-white rounded-xl p-4">
-                    <p class="text-2xl font-bold text-purple-600" id="planCalories">—</p>
-                    <p class="text-xs text-gray-500 mt-1">Daily Calories</p>
+                <div class="stat-mini">
+                    <p class="text-2xl font-bold" style="color: var(--primary);" id="planCalories">—</p>
+                    <p class="text-xs text-gray-400 mt-1">Daily Calories</p>
                 </div>
-                <div class="text-center bg-white rounded-xl p-4">
-                    <p class="text-2xl font-bold text-purple-600" id="planProtein">—</p>
-                    <p class="text-xs text-gray-500 mt-1">Protein (g)</p>
+                <div class="stat-mini">
+                    <p class="text-2xl font-bold" style="color: var(--primary);" id="planProtein">—</p>
+                    <p class="text-xs text-gray-400 mt-1">Protein (g)</p>
                 </div>
-                <div class="text-center bg-white rounded-xl p-4">
-                    <p class="text-2xl font-bold text-purple-600" id="planGoal">—</p>
-                    <p class="text-xs text-gray-500 mt-1">Goal</p>
+                <div class="stat-mini">
+                    <p class="text-2xl font-bold capitalize" style="color: var(--primary);" id="planGoal">—</p>
+                    <p class="text-xs text-gray-400 mt-1">Goal</p>
                 </div>
-                <div class="text-center bg-white rounded-xl p-4">
-                    <p class="text-2xl font-bold text-purple-600" id="planDifficulty">—</p>
-                    <p class="text-xs text-gray-500 mt-1">Difficulty</p>
+                <div class="stat-mini">
+                    <p class="text-2xl font-bold capitalize" style="color: var(--primary);" id="planDifficulty">—</p>
+                    <p class="text-xs text-gray-400 mt-1">Difficulty</p>
                 </div>
             </div>
         </div>
 
         <!-- Edit Profile Form -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold text-gray-900">Edit Profile</h2>
+                <h2 class="text-base font-bold text-gray-900">Edit Profile</h2>
                 <span class="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">Saving regenerates your FL plan</span>
             </div>
 
@@ -95,17 +155,17 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Age</label>
                         <input type="number" id="age" min="16" max="80" required
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Height (cm)</label>
                         <input type="number" id="height" min="100" max="250" required
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Current Weight (kg)</label>
                         <input type="number" id="weight" min="30" max="300" step="0.1" required
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm">
                     </div>
                 </div>
 
@@ -114,11 +174,11 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
                     <div class="flex gap-4">
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="gender" value="M" class="text-purple-600">
+                            <input type="radio" name="gender" value="M" style="accent-color: var(--primary);">
                             <span class="text-sm font-medium text-gray-700">Male</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="gender" value="F" class="text-purple-600">
+                            <input type="radio" name="gender" value="F" style="accent-color: var(--primary);">
                             <span class="text-sm font-medium text-gray-700">Female</span>
                         </label>
                     </div>
@@ -128,7 +188,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Fitness Goal</label>
                     <select id="goal" required
-                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm">
                         <option value="weight_loss">Weight Loss</option>
                         <option value="muscle_gain">Muscle Gain</option>
                         <option value="maintenance">Maintenance</option>
@@ -140,7 +200,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Activity Level</label>
                         <select id="activity_level" required
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm">
                             <option value="sedentary">Sedentary (little exercise)</option>
                             <option value="light">Light (1-3 days/week)</option>
                             <option value="moderate">Moderate (3-5 days/week)</option>
@@ -150,45 +210,45 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Gym Days per Week</label>
                         <input type="number" id="gym_days" min="0" max="7" required
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm">
                     </div>
                 </div>
 
                 <!-- Messages -->
-                <div id="successMessage" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl">
+                <div id="successMessage" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm">
                     Profile updated! Your FL plan has been regenerated. Dashboard will reflect new targets.
                 </div>
-                <div id="errorMessage" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl"></div>
-                <div id="loadingMessage" class="hidden bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-xl">
+                <div id="errorMessage" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm"></div>
+                <div id="loadingMessage" class="hidden bg-orange-50 border border-orange-200 text-orange-700 px-4 py-3 rounded-xl text-sm">
                     Regenerating your personalized FL plan... this takes a few seconds.
                 </div>
 
                 <button type="submit" id="submitBtn"
-                    class="w-full gradient-bg text-white py-3 rounded-xl font-semibold hover:opacity-90 transition">
-                    Save & Regenerate Plan
+                    class="btn-primary w-full py-3 rounded-xl font-semibold text-sm">
+                    Save &amp; Regenerate Plan
                 </button>
 
             </form>
         </div>
 
         <!-- Account Info (read only) -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-6">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Account Info</h2>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mt-6">
+            <h2 class="text-base font-bold text-gray-900 mb-4">Account Info</h2>
             <div class="grid md:grid-cols-2 gap-4">
                 <div>
-                    <p class="text-sm text-gray-500">Username</p>
-                    <p class="font-semibold text-gray-900" id="accountUsername">—</p>
+                    <p class="text-xs text-gray-400 mb-0.5">Username</p>
+                    <p class="font-semibold text-gray-900 text-sm" id="accountUsername">—</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Email</p>
-                    <p class="font-semibold text-gray-900" id="accountEmail">—</p>
+                    <p class="text-xs text-gray-400 mb-0.5">Email</p>
+                    <p class="font-semibold text-gray-900 text-sm" id="accountEmail">—</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Password</p>
+                    <p class="text-xs text-gray-400 mb-0.5">Password</p>
                     <p class="font-semibold text-gray-400 text-sm">Securely hashed — cannot be displayed</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Privacy</p>
+                    <p class="text-xs text-gray-400 mb-0.5">Privacy</p>
                     <p class="font-semibold text-green-600 text-sm">Protected by FL + AES-256 + DP</p>
                 </div>
             </div>
@@ -204,6 +264,15 @@
         document.getElementById('username').textContent = username;
         document.getElementById('accountUsername').textContent = username;
 
+        // Avatar initials
+        const avatarEl = document.getElementById('userAvatar');
+        if (avatarEl && username) {
+            const parts = username.trim().split(' ');
+            avatarEl.textContent = parts.length >= 2
+                ? parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase()
+                : username[0].toUpperCase();
+        }
+
         // Load current profile and plan
         async function loadProfile() {
             try {
@@ -216,15 +285,14 @@
 
                 if (profileData.success) {
                     const p = profileData.data;
-                    document.getElementById('age').value           = p.age || '';
-                    document.getElementById('height').value        = p.height || '';
-                    document.getElementById('weight').value        = p.weight || '';
-                    document.getElementById('goal').value          = p.goal || 'weight_loss';
+                    document.getElementById('age').value            = p.age || '';
+                    document.getElementById('height').value         = p.height || '';
+                    document.getElementById('weight').value         = p.weight || '';
+                    document.getElementById('goal').value           = p.goal || 'weight_loss';
                     document.getElementById('activity_level').value = p.activity_level || 'moderate';
-                    document.getElementById('gym_days').value      = p.gym_days || 3;
+                    document.getElementById('gym_days').value       = p.gym_days || 3;
                     document.getElementById('accountEmail').textContent = p.email || '—';
 
-                    // Set gender radio
                     const genderRadio = document.querySelector(`input[name="gender"][value="${p.gender}"]`);
                     if (genderRadio) genderRadio.checked = true;
                 }
@@ -285,7 +353,6 @@
                 if (data.success) {
                     document.getElementById('successMessage').classList.remove('hidden');
 
-                    // Update plan summary with new values
                     const plan = data.data.plan;
                     document.getElementById('planCalories').textContent   = plan.plan_overview.daily_calories;
                     document.getElementById('planProtein').textContent    = plan.plan_overview.macros.protein_g + 'g';
