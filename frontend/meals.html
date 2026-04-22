@@ -150,6 +150,15 @@
                                     <button type="button" onclick="clearSelectedFood()" class="text-xs" style="color: var(--primary);">Clear</button>
                                 </div>
                                 <p id="selectedFoodInfo" class="text-xs mt-1" style="color: var(--primary);"></p>
+                                <div class="flex flex-wrap gap-1.5 mt-2">
+                                    <span class="text-xs text-gray-500 self-center mr-1">Qty:</span>
+                                    <button type="button" onclick="applyMultiplier(0.5)" data-mult="0.5" class="mult-btn px-2.5 py-1 rounded-full text-xs font-semibold border border-gray-300 bg-white text-gray-600 hover:border-[#902f10] hover:text-[#902f10] transition">0.5x <span class="text-gray-400 font-normal">50g</span></button>
+                                    <button type="button" onclick="applyMultiplier(1)" data-mult="1" class="mult-btn px-2.5 py-1 rounded-full text-xs font-semibold border bg-[#902f10] text-white transition">1x <span class="opacity-70 font-normal">100g</span></button>
+                                    <button type="button" onclick="applyMultiplier(2)" data-mult="2" class="mult-btn px-2.5 py-1 rounded-full text-xs font-semibold border border-gray-300 bg-white text-gray-600 hover:border-[#902f10] hover:text-[#902f10] transition">2x <span class="text-gray-400 font-normal">200g</span></button>
+                                    <button type="button" onclick="applyMultiplier(3)" data-mult="3" class="mult-btn px-2.5 py-1 rounded-full text-xs font-semibold border border-gray-300 bg-white text-gray-600 hover:border-[#902f10] hover:text-[#902f10] transition">3x <span class="text-gray-400 font-normal">300g</span></button>
+                                    <button type="button" onclick="applyMultiplier(5)" data-mult="5" class="mult-btn px-2.5 py-1 rounded-full text-xs font-semibold border border-gray-300 bg-white text-gray-600 hover:border-[#902f10] hover:text-[#902f10] transition">5x <span class="text-gray-400 font-normal">500g</span></button>
+                                    <button type="button" onclick="applyMultiplier(10)" data-mult="10" class="mult-btn px-2.5 py-1 rounded-full text-xs font-semibold border border-gray-300 bg-white text-gray-600 hover:border-[#902f10] hover:text-[#902f10] transition">10x <span class="text-gray-400 font-normal">1kg</span></button>
+                                </div>
                             </div>
                         </div>
 
@@ -306,6 +315,23 @@
             }
         }
 
+        // Base 100g values for multiplier buttons
+        let selectedFoodBase = null;
+
+        function applyMultiplier(factor) {
+            if (!selectedFoodBase) return;
+            document.getElementById('calories').value = roundNutrition(selectedFoodBase.calories * factor);
+            document.getElementById('protein').value = roundNutrition(selectedFoodBase.protein * factor);
+            document.getElementById('carbs').value = roundNutrition(selectedFoodBase.carbs * factor);
+            document.getElementById('fat').value = roundNutrition(selectedFoodBase.fat * factor);
+            document.querySelectorAll('.mult-btn').forEach(btn => {
+                const active = parseFloat(btn.getAttribute('data-mult')) === factor;
+                btn.className = active
+                    ? 'mult-btn px-2.5 py-1 rounded-full text-xs font-semibold border bg-[#902f10] text-white transition'
+                    : 'mult-btn px-2.5 py-1 rounded-full text-xs font-semibold border border-gray-300 bg-white text-gray-600 hover:border-[#902f10] hover:text-[#902f10] transition';
+            });
+        }
+
         // Food search logic (same as before, but rounds values)
         let searchTimeout = null;
         document.getElementById('foodSearch').addEventListener('input', function() {
@@ -345,19 +371,23 @@
             document.getElementById('searchResults').classList.remove('hidden');
         }
         function selectFood(food) {
+            selectedFoodBase = { calories: food.calories, protein: food.protein, carbs: food.carbs, fat: food.fat };
             document.getElementById('mealName').value = food.name;
             document.getElementById('calories').value = roundNutrition(food.calories);
             document.getElementById('protein').value = roundNutrition(food.protein);
             document.getElementById('carbs').value = roundNutrition(food.carbs);
             document.getElementById('fat').value = roundNutrition(food.fat);
             document.getElementById('selectedFoodName').textContent = food.name;
-            document.getElementById('selectedFoodInfo').innerHTML = `${Math.round(food.calories)} cal | P: ${food.protein.toFixed(1)}g | C: ${food.carbs.toFixed(1)}g | F: ${food.fat.toFixed(1)}g | Per ${food.serving}`;
+            document.getElementById('selectedFoodInfo').innerHTML = `${Math.round(food.calories)} cal | P: ${food.protein.toFixed(1)}g | C: ${food.carbs.toFixed(1)}g | F: ${food.fat.toFixed(1)}g | Per 100g`;
             document.getElementById('selectedFood').classList.remove('hidden');
             document.getElementById('foodSearch').value = '';
             document.getElementById('searchResults').classList.add('hidden');
             document.getElementById('quickMeal').value = '';
+            // Reset to 1x active
+            applyMultiplier(1);
         }
         function clearSelectedFood() {
+            selectedFoodBase = null;
             document.getElementById('selectedFood').classList.add('hidden');
             document.getElementById('mealName').value = '';
             document.getElementById('calories').value = '';
