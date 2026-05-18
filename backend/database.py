@@ -3,7 +3,7 @@ DATABASE SETUP: SQLite database with encryption for user data
 Stores: Users, Chat History, Meal Logs, Progress Tracking
 """
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, date
 from cryptography.fernet import Fernet
 import os
 import json
@@ -16,8 +16,9 @@ DB_PATH = os.path.abspath(
 
 DATABASE_URI = os.getenv(
     'DATABASE_URL',
-    f"sqlite:///{DB_PATH}" 
+    f"sqlite:///{DB_PATH}"
 )
+# Fix Heroku/Railway shorthand
 if DATABASE_URI.startswith("postgres://"):
     DATABASE_URI = DATABASE_URI.replace("postgres://", "postgresql://", 1)
 
@@ -83,6 +84,13 @@ class User(db.Model):
     activity_level_encrypted = db.Column(db.String(200))
     gym_days_encrypted = db.Column(db.String(200))
     
+    # Sick mode
+    is_sick = db.Column(db.Boolean, default=False, nullable=False)
+
+    # Streak tracking
+    current_streak = db.Column(db.Integer, default=0, nullable=False)
+    last_log_date  = db.Column(db.Date, nullable=True)
+
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
@@ -315,15 +323,47 @@ class ExerciseLog(db.Model):
             'timestamp':        self.timestamp.isoformat()
         }
 
+class WaterLog(db.Model):
+    """Daily water intake tracking"""
+    __tablename__ = 'water_logs'
+
+    id        = db.Column(db.Integer, primary_key=True)
+    user_id   = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    date      = db.Column(db.Date, nullable=False, default=date.today)
+    amount_ml = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id':        self.id,
+            'date':      self.date.isoformat(),
+            'amount_ml': self.amount_ml,
+            'timestamp': self.timestamp.isoformat()
+        }
+
+
 # DATABASE INITIALIZATION
 def init_db(app):
     """Initialize database with Flask app"""
     db.init_app(app)
-    
+
     with app.app_context():
-        # Create all tables
         db.create_all()
         print("Database tables created")
+
+        # Add new columns to existing tables.
+        # try/except handles both "column exists" and syntax differences across DBs.
+        migrations = [
+            "ALTER TABLE users ADD COLUMN is_sick BOOLEAN DEFAULT FALSE NOT NULL",
+            "ALTER TABLE users ADD COLUMN current_streak INTEGER DEFAULT 0 NOT NULL",
+            "ALTER TABLE users ADD COLUMN last_log_date DATE",
+        ]
+        for sql in migrations:
+            try:
+                db.session.execute(db.text(sql))
+                db.session.commit()
+            except Exception:
+                db.session.rollback()  # column already exists — safe to ignore
 
 
 def reset_db(app):

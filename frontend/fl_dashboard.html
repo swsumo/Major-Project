@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#902f10">
+    <link rel="stylesheet" href="static/dark.css">
+    <script src="static/theme.js"></script>
     <title>Federated Learning Dashboard - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -48,6 +51,7 @@
                         <a href="dashboard.html" class="text-gray-700 hover:text-purple-600">Dashboard</a>
                         <a href="meals.html" class="text-gray-700 hover:text-purple-600">Meals</a>
                         <a href="progress.html" class="text-gray-700 hover:text-purple-600">Progress</a>
+                        <a href="sleep.html" class="text-gray-700 hover:text-purple-600">Sleep</a>
                         <a href="chat.html" class="text-gray-700 hover:text-purple-600">Chat</a>
                         <a href="fl_dashboard.html" class="text-purple-600 font-medium">FL Info</a>
                     </div>
@@ -394,10 +398,7 @@
     </div>
 
     <script>
-        const API_URL =
-    window.location.hostname.includes("localhost")
-        ? "http://localhost:5000/api"
-        : "https://major-project-20zc.onrender.com/api";
+        const API_URL = window.location.origin + "/api";
         // Create training convergence chart
         const ctx = document.getElementById('trainingChart').getContext('2d');
         
@@ -447,6 +448,5 @@
             }
         });
     </script>
-
 </body>
 </html>

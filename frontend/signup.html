@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#902f10">
+    <link rel="stylesheet" href="static/dark.css">
+    <script src="static/theme.js"></script>
     <title>Sign Up - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -237,10 +240,7 @@
     </div>
 
     <script>
-        const API_URL =
-    window.location.hostname.includes("localhost")
-        ? "http://localhost:5000/api"
-        : "https://major-project-20zc.onrender.com/api";
+        const API_URL = window.location.origin + "/api";
         let currentStep = 1;
 
         function nextStep(step) {
@@ -380,6 +380,5 @@
             }
         });
     </script>
-
 </body>
 </html>

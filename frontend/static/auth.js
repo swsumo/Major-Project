@@ -7,10 +7,8 @@
  * Usage: authFetch('/api/user/1/plan') instead of fetch(...)
  */
 
-const API_URL =
-    window.location.hostname.includes("localhost")
-        ? "http://localhost:5000/api"
-        : "https://major-project-20zc.onrender.com/api";
+// Use same-origin relative URL — works on localhost, LAN IP, Railway, anywhere
+const API_URL = window.location.origin + "/api";
 function getToken() {
     return localStorage.getItem('token');
 }

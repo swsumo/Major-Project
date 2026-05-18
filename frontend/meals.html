@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#902f10">
+    <link rel="stylesheet" href="static/dark.css">
+    <script src="static/theme.js"></script>
     <script src="static/auth.js"></script>
     <title>Meal Tracking - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -73,6 +76,7 @@
                         <a href="dashboard.html" class="nav-link text-sm">Dashboard</a>
                         <a href="meals.html" class="nav-active text-sm">Meals</a>
                         <a href="progress.html" class="nav-link text-sm">Progress</a>
+                    <a href="sleep.html" class="nav-link text-sm">Sleep</a>
                         <a href="chat.html" class="nav-link text-sm">Chat</a>
                         <a href="exercise.html" class="nav-link text-sm">Exercise</a>
                         <a href="profile.html" class="nav-link text-sm">Profile</a>
@@ -81,7 +85,8 @@
                 <div class="flex items-center gap-3">
                     <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
                     <div id="userAvatar" class="user-avatar hidden sm:flex"></div>
-                    <button onclick="logout()" class="text-gray-500 hover:text-red-600 text-sm flex items-center gap-1">
+                    <button id="themeToggle" onclick="toggleTheme()" class="dark-toggle mr-1" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+                <button onclick="logout()" class="text-gray-500 hover:text-red-600 text-sm flex items-center gap-1">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                     <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
@@ -96,6 +101,7 @@
                 <a href="dashboard.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Dashboard</a>
                 <a href="meals.html" class="block px-4 py-2 rounded-lg mobile-nav-active text-sm">Meals</a>
                 <a href="progress.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Progress</a>
+                <a href="sleep.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Sleep</a>
                 <a href="chat.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Chat</a>
                 <a href="exercise.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Exercise</a>
                 <a href="profile.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50 text-sm">Profile</a>
@@ -105,6 +111,15 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
+        <!-- Sick mode banner -->
+        <div id="sickBanner" class="hidden mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-4">
+            <span class="text-2xl">🤒</span>
+            <div class="flex-1">
+                <p class="font-semibold text-red-800">Recovery Mode — light eating only</p>
+                <p class="text-sm text-red-700 mt-0.5">Focus on easy foods — soups, fruits, hydration. No strict targets today.</p>
+            </div>
+        </div>
+
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Meal Tracking</h1>
             <p class="text-gray-600">Log what you eat and track your daily nutrition</p>
@@ -238,6 +253,19 @@
                             <div class="bg-white rounded-lg p-3"><p class="text-xs text-gray-600">Carbs</p><p class="text-lg font-bold text-gray-900"><span id="totalCarbs">0</span>g</p></div>
                             <div class="bg-white rounded-lg p-3"><p class="text-xs text-gray-600">Fat</p><p class="text-lg font-bold text-gray-900"><span id="totalFat">0</span>g</p></div>
                         </div>
+                        <!-- Water + Antioxidant row -->
+                        <div class="grid grid-cols-2 gap-2 mt-2 text-center">
+                            <div class="bg-white rounded-lg p-3">
+                                <p class="text-xs text-gray-600">💧 Water</p>
+                                <p class="text-lg font-bold text-blue-600"><span id="totalWaterMeals">0</span>ml</p>
+                                <p class="text-xs text-gray-400">of <span id="waterTargetMeals">—</span>ml</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3">
+                                <p class="text-xs text-gray-600">🫐 Antioxidant</p>
+                                <p class="text-lg font-bold text-purple-600"><span id="totalAntioxMeals">0</span>/10</p>
+                                <p class="text-xs text-gray-400" id="antioxLabelMeals">—</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -250,6 +278,30 @@
                         <div class="flex justify-between"><span class="text-gray-600">Carbs:</span><span class="font-bold" id="targetCarbs">-</span></div>
                         <div class="flex justify-between"><span class="text-gray-600">Fat:</span><span class="font-bold" id="targetFat">-</span></div>
                     </div>
+                </div>
+
+                <!-- Antioxidant Score -->
+                <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-lg">🫐</span>
+                        <h3 class="text-md font-bold text-gray-900">Antioxidant Score</h3>
+                        <span class="ml-auto text-xs text-gray-400">based on today's meals</span>
+                    </div>
+                    <div class="flex items-center gap-4 mb-3">
+                        <div class="relative w-16 h-16 flex-shrink-0">
+                            <svg viewBox="0 0 36 36" class="w-16 h-16 -rotate-90">
+                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f3f4f6" stroke-width="3"/>
+                                <circle id="antioxCircle" cx="18" cy="18" r="15.9" fill="none" stroke="#8b5cf6" stroke-width="3"
+                                    stroke-dasharray="0 100" stroke-linecap="round" class="transition-all duration-700"/>
+                            </svg>
+                            <span id="antioxScore" class="absolute inset-0 flex items-center justify-center text-sm font-bold text-purple-600">0</span>
+                        </div>
+                        <div class="flex-1">
+                            <p id="antioxLabel" class="text-sm font-semibold text-gray-700">No data yet</p>
+                            <p id="antioxTip" class="text-xs text-gray-500 mt-1">Log meals with fruits or vegetables to see your score.</p>
+                        </div>
+                    </div>
+                    <div id="antioxFoods" class="flex flex-wrap gap-1.5 text-xs"></div>
                 </div>
 
                 <!-- Compact Nutrition Calendar (shows daily calorie & protein, with meal breakdown on click) -->
@@ -396,23 +448,109 @@
             document.getElementById('fat').value = '';
         }
 
+        let waterTargetMlMeals = 2500;
+
         // Load user's plan for targets
         async function loadTargets() {
             try {
                 const response = await authFetch(`/user/${userId}/plan`);
                 const data = await response.json();
                 if (data.success) {
-                    const macros = data.data.plan_overview.macros;
+                    const macros   = data.data.plan_overview.macros;
+                    const targets  = data.data.weekly_targets || {};
                     document.getElementById('targetCalories').textContent = macros.calories;
                     document.getElementById('targetCal2').textContent = macros.calories + ' cal';
                     document.getElementById('targetProtein').textContent = macros.protein_g + 'g';
                     document.getElementById('targetCarbs').textContent = macros.carbs_g + 'g';
                     document.getElementById('targetFat').textContent = macros.fat_g + 'g';
+                    if (targets.water_intake) {
+                        waterTargetMlMeals = Math.round(parseFloat(targets.water_intake) * 1000);
+                        document.getElementById('waterTargetMeals').textContent = waterTargetMlMeals;
+                    }
                 }
             } catch (error) { console.error(error); }
         }
 
+        async function loadTodayWater() {
+            try {
+                const r = await authFetch(`/user/${userId}/water`);
+                const d = await r.json();
+                if (d.success) {
+                    document.getElementById('totalWaterMeals').textContent = d.data.total_ml;
+                }
+            } catch(e) {}
+        }
+
         // Load today's meals and totals
+        // ── Antioxidant Score ──────────────────────────────────────────────────
+        const ANTIOXIDANT_FOODS = {
+            // Berries (highest)
+            blueberry:5, blueberries:5, strawberry:4, strawberries:4,
+            raspberry:4, raspberries:4, blackberry:4, blackberries:4,
+            pomegranate:5, cranberry:3, cherry:3, cherries:3, grape:3, grapes:3,
+            // Fruits
+            apple:2, orange:2, mango:3, papaya:3, guava:4, amla:5, kiwi:3,
+            pineapple:2, watermelon:2, banana:1, aam:3, jamun:5,
+            // Leafy greens
+            spinach:4, palak:4, kale:5, methi:4, sarson:3,
+            // Vegetables
+            broccoli:4, carrot:2, gajar:2, tomato:3, tamatar:3, beetroot:4,
+            'sweet potato':3, pepper:3, capsicum:3, cauliflower:2, gobi:2,
+            onion:2, garlic:3, ginger:3, turmeric:4, haldi:4, pumpkin:2,
+            // Nuts & seeds
+            almond:2, almonds:2, walnut:3, walnuts:3, flaxseed:2,
+            // Others
+            'dark chocolate':3, 'green tea':4, rajma:2, beans:2, dal:1, lentil:2
+        };
+
+        function calcAntioxidant(meals) {
+            let score = 0, detectedFoods = [];
+            meals.forEach(meal => {
+                const name = (meal.meal_name || '').toLowerCase();
+                Object.entries(ANTIOXIDANT_FOODS).forEach(([food, pts]) => {
+                    if (name.includes(food)) {
+                        score += pts;
+                        if (!detectedFoods.find(f => f.name === food))
+                            detectedFoods.push({ name: food, pts });
+                    }
+                });
+            });
+            score = Math.min(10, Math.round(score * 10) / 10);
+            updateAntioxidantUI(score, detectedFoods);
+        }
+
+        function updateAntioxidantUI(score, foods) {
+            const pct = (score / 10) * 100;
+            document.getElementById('antioxScore').textContent = score;
+            document.getElementById('antioxCircle').setAttribute('stroke-dasharray', `${pct} 100`);
+            // Also update the summary panel
+            document.getElementById('totalAntioxMeals').textContent = score;
+            document.getElementById('antioxLabelMeals').textContent = score === 0 ? 'None yet'
+                : score < 4 ? 'Low' : score < 7 ? 'Good' : 'Excellent';
+
+            const label = document.getElementById('antioxLabel');
+            const tip   = document.getElementById('antioxTip');
+            if (score === 0) {
+                label.textContent = 'No antioxidant-rich foods yet';
+                tip.textContent = 'Add fruits, veggies or nuts to boost your score.';
+            } else if (score < 4) {
+                label.textContent = 'Low — add more colour to your plate';
+                tip.textContent = 'Try spinach, tomatoes, or a fruit with your next meal.';
+            } else if (score < 7) {
+                label.textContent = 'Good — decent variety today';
+                tip.textContent = 'Add berries, amla or dark greens to push higher.';
+            } else {
+                label.textContent = 'Excellent antioxidant intake!';
+                tip.textContent = 'Your body is getting great protection today.';
+            }
+
+            const foodEl = document.getElementById('antioxFoods');
+            foodEl.innerHTML = foods.map(f =>
+                `<span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-medium">${f.name} +${f.pts}</span>`
+            ).join('');
+        }
+        // ──────────────────────────────────────────────────────────────────────
+
         async function loadTodayMeals() {
             try {
                 const today = new Date().toISOString().split('T')[0];
@@ -421,9 +559,11 @@
                 if (data.success && data.data.length > 0) {
                     displayMeals(data.data);
                     calculateTotals(data.data);
+                    calcAntioxidant(data.data);
                 } else {
                     document.getElementById('todayMeals').innerHTML = '<p class="text-gray-500 text-center py-8">No meals logged yet today</p>';
                     calculateTotals([]);
+                    calcAntioxidant([]);
                 }
             } catch (error) { console.error(error); }
         }
@@ -432,13 +572,30 @@
             const container = document.getElementById('todayMeals');
             if (meals.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center py-8">No meals logged yet today</p>'; return; }
             container.innerHTML = meals.map(meal => `
-                <div class="border border-gray-200 rounded-lg p-4">
+                <div class="border border-gray-200 rounded-lg p-4" id="meal-${meal.id}">
                     <div class="flex justify-between items-start mb-2">
                         <div><span class="text-xs font-medium uppercase" style="color:var(--primary)">${meal.meal_type}</span><h4 class="font-bold text-gray-900">${meal.meal_name}</h4></div>
-                        <span class="font-bold" style="color:var(--primary)">${Math.round(meal.calories)} cal</span>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold" style="color:var(--primary)">${Math.round(meal.calories)} cal</span>
+                            <button onclick="deleteMeal(${meal.id})" title="Delete" class="text-gray-300 hover:text-red-500 transition text-xs ml-1">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="text-sm text-gray-600">P: ${Math.round(meal.protein)}g | C: ${Math.round(meal.carbs)}g | F: ${Math.round(meal.fat)}g</div>
                 </div>`).join('');
+        }
+
+        async function deleteMeal(mealId) {
+            if (!confirm('Delete this meal entry?')) return;
+            try {
+                const r = await authFetch(`/user/${userId}/meals/${mealId}`, { method: 'DELETE' });
+                const d = await r.json();
+                if (d.success) {
+                    document.getElementById(`meal-${mealId}`)?.remove();
+                    loadTodayMeals();
+                }
+            } catch(e) { alert('Error deleting meal'); }
         }
 
         function calculateTotals(meals) {
@@ -516,15 +673,26 @@
         let currentCalendarDate = new Date();
         let allMealsByDate = new Map(); // stores { totalCal, totalProtein, meals: [{meal_name, meal_type, calories, protein, carbs, fat}] }
 
+        let allWaterByDate = {};
+
         async function loadMonthlyCalendarData() {
             try {
-                // Fetch all meals for the current month (we'll fetch summary? but better fetch from /meals?month)
-                const year = currentCalendarDate.getFullYear();
+                const year  = currentCalendarDate.getFullYear();
                 const month = currentCalendarDate.getMonth() + 1;
-                const response = await authFetch(`/user/${userId}/meals?month=${year}-${String(month).padStart(2,'0')}`);
-                const data = await response.json();
-                if (data.success && data.data) {
-                    const meals = data.data;
+                const monthStr = `${year}-${String(month).padStart(2,'0')}`;
+
+                // Fetch meals + water in parallel
+                const [mealsRes, waterRes] = await Promise.all([
+                    authFetch(`/user/${userId}/meals?month=${monthStr}`),
+                    authFetch(`/user/${userId}/water?month=${monthStr}`)
+                ]);
+                const mealsData = await mealsRes.json();
+                const waterData = await waterRes.json();
+
+                allWaterByDate = (waterData.success && waterData.data) ? waterData.data : {};
+
+                if (mealsData.success && mealsData.data) {
+                    const meals = mealsData.data;
                     const map = new Map();
                     meals.forEach(meal => {
                         const date = meal.date.split('T')[0];
@@ -567,42 +735,46 @@
                 const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                 const hasData = allMealsByDate.has(dateStr);
                 const dayData = allMealsByDate.get(dateStr);
-                const calTotal = dayData ? dayData.totalCal : 0;
+                const calTotal    = dayData ? dayData.totalCal : 0;
                 const proteinTotal = dayData ? dayData.totalProtein : 0;
+                const waterMl     = allWaterByDate[dateStr] || 0;
                 const isToday = dateStr === todayYMD;
                 let addClass = hasData ? 'has-meal' : '';
                 if (isToday) addClass += ' today-ring';
-                html += `<div class="cal-day ${addClass}" data-date="${dateStr}" data-cal="${calTotal}" data-protein="${proteinTotal}" data-meals='${JSON.stringify(dayData ? dayData.meals : [])}'>
+                html += `<div class="cal-day ${addClass}" data-date="${dateStr}" data-cal="${calTotal}" data-protein="${proteinTotal}" data-water="${waterMl}" data-meals='${JSON.stringify(dayData ? dayData.meals : [])}'>
                     <div class="cal-num">${d}</div>
                     ${calTotal > 0 ? `<div class="cal-badge">${calTotal}</div>` : ''}
                     ${proteinTotal > 0 ? `<div class="text-[9px] mt-0.5" style="color:var(--primary)">${proteinTotal}p</div>` : ''}
+                    ${waterMl > 0 ? `<div class="text-[8px] mt-0.5 text-blue-500">${Math.round(waterMl/100)/10}L</div>` : ''}
                 </div>`;
             }
             html += `</div>`;
             document.getElementById('calendarContainer').innerHTML = html;
             document.querySelectorAll('.cal-day[data-date]').forEach(el => {
                 el.addEventListener('click', () => {
-                    const date = el.getAttribute('data-date');
-                    const cal = el.getAttribute('data-cal');
+                    const date   = el.getAttribute('data-date');
+                    const cal    = el.getAttribute('data-cal');
                     const protein = el.getAttribute('data-protein');
+                    const water  = el.getAttribute('data-water');
                     const mealsJson = el.getAttribute('data-meals');
                     let meals = [];
                     try { meals = JSON.parse(mealsJson); } catch(e) { meals = []; }
-                    showMealDetails(date, cal, protein, meals);
+                    showMealDetails(date, cal, protein, water, meals);
                 });
             });
             document.getElementById('prevMonthCalBtn')?.addEventListener('click', () => { currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1); loadMonthlyCalendarData(); });
             document.getElementById('nextMonthCalBtn')?.addEventListener('click', () => { currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1); loadMonthlyCalendarData(); });
         }
 
-        function showMealDetails(date, totalCal, totalProtein, meals) {
+        function showMealDetails(date, totalCal, totalProtein, waterMl, meals) {
             const panel = document.getElementById('selectedDayDetails');
+            const waterStr = waterMl > 0 ? `<span class="ml-1 px-2 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700">💧${waterMl}ml</span>` : '';
             if (!meals || meals.length === 0) {
-                panel.innerHTML = `<div class="bg-gray-50 rounded-lg p-2 text-center"><p class="font-semibold text-gray-700 text-xs">${formatDateDisplay(date)}</p><p class="text-sm mt-1" style="color:var(--primary)">0 calories | 0g protein</p><p class="text-gray-400 text-xs mt-1">No meals logged</p></div>`;
+                panel.innerHTML = `<div class="bg-gray-50 rounded-lg p-2 text-center"><p class="font-semibold text-gray-700 text-xs">${formatDateDisplay(date)}</p><p class="text-sm mt-1" style="color:var(--primary)">0 calories | 0g protein</p>${waterStr}<p class="text-gray-400 text-xs mt-1">No meals logged</p></div>`;
                 return;
             }
             let mealsHtml = meals.map(m => `<div class="flex justify-between items-center py-1.5 border-b border-gray-100 last:border-0"><div><span class="font-medium text-gray-800 text-xs">${m.name}</span><div class="flex gap-2 text-xs text-gray-500"><span>${m.type}</span></div></div><div class="text-right"><span class="font-semibold text-xs" style="color:var(--primary)">${m.calories} cal</span><div class="text-[10px] text-gray-400">P:${m.protein}g C:${m.carbs}g F:${m.fat}g</div></div></div>`).join('');
-            panel.innerHTML = `<div class="rounded-lg p-2" style="background:rgba(144,47,16,0.04)"><div class="flex justify-between items-center"><h3 class="font-bold text-gray-800 text-sm">${formatDateDisplay(date)}</h3><div><span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background:rgba(144,47,16,0.1);color:var(--primary-dark)">${totalCal} cal</span><span class="ml-1 px-2 py-0.5 rounded-full text-xs font-bold" style="background:rgba(144,47,16,0.1);color:var(--primary-dark)">${totalProtein}p</span></div></div><div class="mt-2 space-y-1 max-h-36 overflow-y-auto">${mealsHtml}</div></div>`;
+            panel.innerHTML = `<div class="rounded-lg p-2" style="background:rgba(144,47,16,0.04)"><div class="flex justify-between items-center flex-wrap gap-1"><h3 class="font-bold text-gray-800 text-sm">${formatDateDisplay(date)}</h3><div class="flex flex-wrap gap-1"><span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background:rgba(144,47,16,0.1);color:var(--primary-dark)">${totalCal} cal</span><span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background:rgba(144,47,16,0.1);color:var(--primary-dark)">${totalProtein}p</span>${waterStr}</div></div><div class="mt-2 space-y-1 max-h-36 overflow-y-auto">${mealsHtml}</div></div>`;
         }
 
         function formatDateDisplay(ymd) { const [y,m,d] = ymd.split('-'); return new Date(Date.UTC(y,m-1,d)).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
@@ -615,7 +787,14 @@
         // Initialize
         loadTargets();
         loadTodayMeals();
+        loadTodayWater();
         loadMonthlyCalendarData();
+
+        // Check sick mode
+        authFetch(`/user/${userId}/sick`).then(r => r.json()).then(d => {
+            if (d.success && d.data.is_sick)
+                document.getElementById('sickBanner').classList.remove('hidden');
+        }).catch(() => {});
     </script>
 </body>
 </html> 

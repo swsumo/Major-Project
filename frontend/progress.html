@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#902f10">
+    <link rel="stylesheet" href="static/dark.css">
+    <script src="static/theme.js"></script>
     <script src="static/auth.js"></script>
     <title>Progress Tracking - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -60,7 +63,8 @@
                 <div class="flex items-center gap-2.5">
                     <div class="user-avatar" id="userAvatar"></div>
                     <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
-                    <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
+                    <button id="themeToggle" onclick="toggleTheme()" class="dark-toggle mr-1" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+                <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                     <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none"
@@ -133,6 +137,12 @@
                             </div>
                         </div>
 
+                        <!-- Sleep moved to sleep.html -->
+                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 text-sm text-indigo-700 flex items-center gap-2">
+                            <i class="fa-solid fa-bed"></i>
+                            <span>Track your sleep on the <a href="sleep.html" class="font-semibold underline">Sleep page</a></span>
+                        </div>
+
                         <!-- AI Adaptation Result -->
                         <div id="adaptationResult" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-4">
                             <h4 class="font-bold text-blue-900 mb-2">🤖 AI Agent Feedback:</h4>
@@ -159,6 +169,7 @@
                     <h2 class="text-2xl font-bold mb-6 text-gray-900">📈 Weight Progress</h2>
                     <canvas id="weightChart" height="80"></canvas>
                 </div>
+
 
             </div>
 
@@ -220,16 +231,17 @@
                 : username[0].toUpperCase();
         }
 
-        // Load progress history
+        // Load progress history — always shows chart + history on load
         async function loadProgress() {
             try {
                 const response = await authFetch(`/user/${userId}/progress`);
                 const data = await response.json();
-                
-                if (data.success && data.data.length > 0) {
-                    displayProgress(data.data);
-                    updateStats(data.data);
-                    createChart(data.data);
+                if (data.success) {
+                    displayProgress(data.data || []);
+                    if (data.data && data.data.length > 0) {
+                        updateStats(data.data);
+                        createChart(data.data);
+                    }
                 }
             } catch (error) {
                 console.error('Error loading progress:', error);
@@ -238,22 +250,37 @@
 
         function displayProgress(progressLogs) {
             const container = document.getElementById('recentProgress');
-            
-            const recent = progressLogs.slice(-5).reverse();
-            
-            const html = recent.map(log => `
-                <div class="border border-gray-100 rounded-xl p-3 hover:border-orange-200 transition" style="hover:background:#fefaf7;">
+            if (!progressLogs.length) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">No progress logged yet</p>';
+                return;
+            }
+            const all = [...progressLogs].reverse();
+            container.innerHTML = all.map(log => `
+                <div class="border border-gray-100 rounded-xl p-3 hover:border-orange-200 transition" id="prog-${log.id}">
                     <div class="flex justify-between items-start mb-1">
                         <span class="text-xs font-medium" style="color:var(--primary);">Week ${log.week_number}</span>
-                        <span class="font-bold text-gray-900">${log.weight} kg</span>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-gray-900">${log.weight} kg</span>
+                            <button onclick="deleteProgress(${log.id})" title="Delete" class="text-gray-300 hover:text-red-500 transition text-xs">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="text-xs text-gray-600">
                         Workouts: ${log.workouts_completed} | Calories: ${log.avg_calories || '—'}
+                        ${log.predicted_weight ? `| Predicted: ${log.predicted_weight} kg` : ''}
                     </div>
                 </div>
             `).join('');
-            
-            container.innerHTML = html;
+        }
+
+        async function deleteProgress(progressId) {
+            if (!confirm('Delete this progress entry?')) return;
+            try {
+                const r = await authFetch(`/user/${userId}/progress/${progressId}`, { method: 'DELETE' });
+                const d = await r.json();
+                if (d.success) { loadProgress(); }
+            } catch(e) { alert('Error deleting entry'); }
         }
 
         function updateStats(progressLogs) {
@@ -445,7 +472,8 @@
 
         // Load on page load
         loadProgress();
-    </script>
 
+        // Sleep tracking moved to sleep.html
+    </script>
 </body>
 </html>

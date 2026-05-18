@@ -1,0 +1,26 @@
+{
+  "name": "FitAI - Personal Fitness Coach",
+  "short_name": "FitAI",
+  "description": "Privacy-preserving AI fitness planner using Federated Learning",
+  "start_url": "/login.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#902f10",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "static/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "fitness"],
+  "screenshots": []
+}

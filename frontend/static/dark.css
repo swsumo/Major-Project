@@ -1,0 +1,141 @@
+/* FitAI Dark Mode — warm palette, lighter tone */
+
+[data-theme="dark"] {
+    --bg-page:        #1c1916;
+    --border:         #332b27;
+    --text-primary:   #f0ede8;
+    --text-secondary: #a8998f;
+    --text-muted:     #786860;
+    --primary-light:  #2e1c14;
+    --success:        #22c55e;
+    --warning:        #f59e0b;
+    --error:          #ef4444;
+    --info:           #60a5fa;
+    color-scheme: dark;
+}
+
+/* ── Page ── */
+[data-theme="dark"] body           { background: #1c1916 !important; color: #f0ede8; }
+
+/* ── Nav ── */
+[data-theme="dark"] nav            { background: #231f1c !important; border-color: #332b27 !important; }
+
+/* ── General white surfaces → dark ── */
+[data-theme="dark"] .bg-white      { background-color: #272320 !important; }
+[data-theme="dark"] .card,
+[data-theme="dark"] .stat-card     { background-color: #272320 !important; }
+[data-theme="dark"] .bg-gray-50    { background-color: #1c1916 !important; }
+[data-theme="dark"] .bg-gray-100   { background-color: #2d2724 !important; }
+[data-theme="dark"] .bg-gray-200   { background-color: #332b27 !important; }
+
+/* ── Borders ── */
+[data-theme="dark"] .border-gray-100,
+[data-theme="dark"] .border-gray-200,
+[data-theme="dark"] .border-gray-300 { border-color: #332b27 !important; }
+
+/* ── General text ── */
+[data-theme="dark"] .text-gray-900  { color: #f5f2ee !important; }
+[data-theme="dark"] .text-gray-800  { color: #ede8e2 !important; }
+[data-theme="dark"] .text-gray-700  { color: #d8d0c8 !important; }
+[data-theme="dark"] .text-gray-600  { color: #a8998f !important; }
+[data-theme="dark"] .text-gray-500  { color: #7d706a !important; }
+[data-theme="dark"] .text-gray-400  { color: #9e9088 !important; }
+
+/* ── STAT CARDS: KPI numbers must be bright white ── */
+[data-theme="dark"] .stat-card .text-2xl,
+[data-theme="dark"] .stat-card .text-lg,
+[data-theme="dark"] .stat-card .leading-none { color: #ffffff !important; }
+
+/* The value spans inside stat cards (sc-cal-consumed etc.) */
+[data-theme="dark"] .stat-card span { color: #ffffff; }
+/* But the muted sub-text "/ target" stays muted */
+[data-theme="dark"] .stat-card .text-gray-400 { color: #8a7e76 !important; }
+[data-theme="dark"] .stat-card .text-base.font-medium { color: #8a7e76 !important; }
+
+/* ── KPI sub-text (sc-cal-sub etc.) inherits correctly ── */
+[data-theme="dark"] .stat-card p { color: #a8998f; }
+
+/* ── Inputs ── */
+[data-theme="dark"] input:not([type=range]):not([type=radio]):not([type=checkbox]),
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background-color: #2d2724 !important;
+    color: #f0ede8 !important;
+    border-color: #3d3028 !important;
+}
+[data-theme="dark"] input::placeholder { color: #786860 !important; }
+
+/* ── Tinted panels ── */
+[data-theme="dark"] .bg-blue-50     { background-color: #151e2e !important; }
+[data-theme="dark"] .bg-green-50    { background-color: #111f14 !important; }
+[data-theme="dark"] .bg-amber-50    { background-color: #221a08 !important; }
+[data-theme="dark"] .bg-purple-50   { background-color: #1c1228 !important; }
+[data-theme="dark"] .bg-red-50      { background-color: #221212 !important; }
+[data-theme="dark"] .bg-orange-50   { background-color: #221408 !important; }
+
+[data-theme="dark"] .border-blue-100,
+[data-theme="dark"] .border-blue-200   { border-color: #1e3a5f !important; }
+[data-theme="dark"] .border-amber-200  { border-color: #5c3d12 !important; }
+[data-theme="dark"] .border-red-200    { border-color: #5c1f1f !important; }
+[data-theme="dark"] .border-green-200  { border-color: #1a4a1f !important; }
+
+/* ── Colored text on tinted panels ── */
+[data-theme="dark"] .text-blue-600,
+[data-theme="dark"] .text-blue-700  { color: #60a5fa !important; }
+[data-theme="dark"] .text-green-600,
+[data-theme="dark"] .text-green-700 { color: #4ade80 !important; }
+[data-theme="dark"] .text-amber-700,
+[data-theme="dark"] .text-amber-800 { color: #fbbf24 !important; }
+[data-theme="dark"] .text-red-700,
+[data-theme="dark"] .text-red-800   { color: #f87171 !important; }
+[data-theme="dark"] .text-purple-600,
+[data-theme="dark"] .text-purple-700 { color: #c084fc !important; }
+[data-theme="dark"] .text-orange-500 { color: #fb923c !important; }
+[data-theme="dark"] .text-indigo-600 { color: #818cf8 !important; }
+[data-theme="dark"] .text-indigo-400 { color: #a5b4fc !important; }
+
+/* ── Macro columns (pie chart labels) ── */
+[data-theme="dark"] .mc-g           { color: #ffffff !important; }
+[data-theme="dark"] .mc-label,
+[data-theme="dark"] .mc-pct         { color: #a8998f !important; }
+
+/* ── Calendar cells ── */
+[data-theme="dark"] .cal-day        { background: #2d2724 !important; border-color: #332b27 !important; color: #f0ede8 !important; }
+[data-theme="dark"] .cal-day.has-meal,
+[data-theme="dark"] .cal-day.has-activity { background: #3a2218 !important; border-color: rgba(176,72,32,0.4) !important; }
+[data-theme="dark"] .cal-day .cal-num { color: #f0ede8 !important; }
+[data-theme="dark"] .cal-day .cal-badge { background: rgba(176,72,32,0.25) !important; color: #e07040 !important; }
+
+/* ── Charts — always white background ── */
+[data-theme="dark"] canvas          { background-color: #ffffff !important; border-radius: 6px; }
+
+/* ── Shadows ── */
+[data-theme="dark"] .shadow-sm      { box-shadow: 0 1px 4px rgba(0,0,0,0.4) !important; }
+
+/* ── Mobile menu ── */
+[data-theme="dark"] #mobileMenu    { background: #231f1c !important; border-color: #332b27 !important; }
+
+/* ── Nav links ── */
+[data-theme="dark"] .nav-link       { color: #a8998f !important; }
+[data-theme="dark"] .nav-link:hover { color: #f0ede8 !important; }
+
+/* ── rem-badge (meal remaining) ── */
+[data-theme="dark"] .rem-badge     { background: #2d2724 !important; color: #a8998f !important; }
+[data-theme="dark"] .rem-badge.over { background: #3a1a1a !important; color: #f87171 !important; }
+
+/* ── meal-row ── */
+[data-theme="dark"] .meal-row      { border-color: #332b27 !important; }
+
+/* ── Dark mode toggle button ── */
+.dark-toggle {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border, #e5e7eb);
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    transition: background 0.2s;
+    color: var(--text-secondary, #6b7280);
+}
+.dark-toggle:hover { background: var(--primary-light, #fff5ee); }

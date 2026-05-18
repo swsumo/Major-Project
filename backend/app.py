@@ -12,7 +12,7 @@ import secrets
 import sys
 load_dotenv()
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from backend.database import db, init_db, User, UserPlan, ChatMessage, MealLog, ProgressLog, ExerciseLog, DATABASE_URI
+from backend.database import db, init_db, User, UserPlan, ChatMessage, MealLog, ProgressLog, ExerciseLog, WaterLog, DATABASE_URI
 from backend.agent.fitness_agent import FitnessAgent
 from backend.agent.utils import (
     EnsembleWeightPredictor,
@@ -20,11 +20,11 @@ from backend.agent.utils import (
     EnsembleMacroRecommender
 )
 
-# ── Gemini Setup ───────────────────────────────────────────────────────────────
-from google import genai
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-print(" Gemini AI loaded")
+# ── Groq Setup ─────────────────────────────────────────────────────────────────
+from groq import Groq
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+groq_client  = Groq(api_key=GROQ_API_KEY)
+print(" Groq AI loaded")
 
 JWT_SECRET = os.getenv('JWT_SECRET', 'fitai-jwt-secret-change-in-production')
 JWT_EXPIRY_HOURS = 24
@@ -58,7 +58,12 @@ def index():
 # 3️⃣ CATCH-ALL LAST
 @app.route('/<path:filename>')
 def serve_frontend(filename):
-    return send_from_directory(FRONTEND_DIR, filename)
+    response = send_from_directory(FRONTEND_DIR, filename)
+    # Disable caching for HTML files so changes are always picked up
+    if filename.endswith('.html'):
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+    return response
 
 
 agent = FitnessAgent(models_path='models/trained_models')
@@ -69,15 +74,29 @@ def get_user_by_id(user_id):
     return User.query.get(user_id)
 
 
+def update_streak(user):
+    """Call after any meal or exercise is logged. Updates streak and last_log_date."""
+    today = date.today()
+    last  = user.last_log_date
+    if last == today:
+        return  # already logged today, streak unchanged
+    yesterday = today - timedelta(days=1)
+    if last == yesterday:
+        user.current_streak = (user.current_streak or 0) + 1
+    else:
+        user.current_streak = 1  # gap in logs — reset
+    user.last_log_date = today
+
+
 def create_response(success=True, message=None, data=None, status_code=200):
     response = {'success': success, 'message': message, 'data': data}
     return jsonify(response), status_code
 
 
 def generate_token(user_id: int, username: str) -> str:
-    """Generate JWT token for user."""
+    """Generate JWT token for user. user_id stored as string to avoid JSON float precision loss."""
     payload = {
-        'user_id':  user_id,
+        'user_id':  str(user_id),   # string prevents 64-bit int rounding in JWT JSON
         'username': username,
         'exp': datetime.utcnow() + timedelta(hours=JWT_EXPIRY_HOURS),
         'iat':      datetime.utcnow()
@@ -106,8 +125,7 @@ def token_required(f):
  
         try:
             payload = verify_token(token)
-            # Inject user_id from token into kwargs if route uses it
-            request.current_user_id = payload['user_id']
+            request.current_user_id = int(payload['user_id'])
         except jwt.ExpiredSignatureError:
             return create_response(False, 'Token expired — please login again', status_code=401)
         except jwt.InvalidTokenError:
@@ -130,13 +148,13 @@ def token_matches_user(f):
             return create_response(False, 'Authentication required', status_code=401)
  
         try:
-            payload  = verify_token(token)
-            token_uid = payload['user_id']
+            payload   = verify_token(token)
+            token_uid = int(payload['user_id'])  # was string in token, convert back
             route_uid = kwargs.get('user_id')
- 
-            if route_uid and token_uid != route_uid:
+
+            if route_uid and token_uid != int(route_uid):
                 return create_response(False, 'Access denied', status_code=403)
- 
+
             request.current_user_id = token_uid
         except jwt.ExpiredSignatureError:
             return create_response(False, 'Token expired — please login again', status_code=401)
@@ -146,8 +164,6 @@ def token_matches_user(f):
         return f(*args, **kwargs)
     return decorated
 
-# ── REPLACE your existing build_gemini_system_prompt function with this ────────
- 
 def build_gemini_system_prompt(user, plan, user_id=None):
     """Build context-aware system prompt using user's plan + DB data."""
     profile      = user.get_profile_dict()
@@ -200,16 +216,34 @@ def build_gemini_system_prompt(user, plan, user_id=None):
                 pg_lines = []
                 for p in progress_logs:
                     pg_lines.append(
-                        f"  - Week {p.week_number}: {p.weight}kg "
+                        f"  - Week {p.week_number}: {p.get_weight()}kg "
                         f"(predicted: {p.predicted_weight}kg, "
                         f"adherence: {round(p.adherence_score*100) if p.adherence_score else 'N/A'}%)"
                     )
                 progress_context = "\nRECENT PROGRESS (last 4 weeks):\n" + "\n".join(pg_lines)
         except:
             pass
- 
+
+    # ── Fetch today's water intake from DB ─────────────────────────────────────
+    water_context = ""
+    if user_id:
+        try:
+            today = date.today()
+            water_logs = WaterLog.query.filter_by(user_id=user_id, date=today).all()
+            total_water_ml = sum(w.amount_ml for w in water_logs)
+            water_target_l = targets.get('water_intake', 2.5)
+            water_target_ml = int(float(water_target_l) * 1000)
+            pct = round((total_water_ml / water_target_ml) * 100) if water_target_ml else 0
+            water_context = (
+                f"\nTODAY'S WATER INTAKE: {total_water_ml}ml of {water_target_ml}ml target ({pct}%)"
+            )
+        except:
+            pass
+
+    sick_context = "\nUSER STATUS: SICK MODE ON — user is currently unwell." if user.is_sick else ""
+
     return f"""You are FitAI, a friendly and knowledgeable personal fitness coach assistant.
- 
+
 USER PROFILE:
 - Name: {user.username}
 - Age: {profile.get('age')} | Gender: {profile.get('gender')}
@@ -217,29 +251,34 @@ USER PROFILE:
 - Goal: {profile.get('goal', 'Not set').replace('_', ' ').title()}
 - Activity Level: {profile.get('activity_level', 'moderate')}
 - Gym Days: {profile.get('gym_days')} days/week
- 
+{sick_context}
 CURRENT AI-GENERATED PLAN (from Personalized Federated Learning):
 - Daily Calories: {plan_overview.get('daily_calories', 'N/A')} kcal
 - Protein: {macros.get('protein_g', 'N/A')}g | Carbs: {macros.get('carbs_g', 'N/A')}g | Fat: {macros.get('fat_g', 'N/A')}g
 - Plan Difficulty: {plan_overview.get('difficulty', 'moderate')}
 - Weekly Target: {targets.get('description', 'N/A')}
-- Water Intake: {targets.get('water_intake', 'N/A')}L/day
+- Water Target: {targets.get('water_intake', 'N/A')}L/day
 {meals_context}
 {exercise_context}
 {progress_context}
- 
+{water_context}
+
 YOUR ROLE:
 - Answer fitness, nutrition, and workout questions
-- Use the meal and exercise history above to give personalized advice
+- Use the meal, exercise, water, and progress history above to give personalized advice
 - If asked what the user ate on a specific date, check RECENT MEALS above
 - If asked about their workout history, check RECENT EXERCISES above
+- If asked about hydration, reference TODAY'S WATER INTAKE above
+- If the user mentions their sleep hours, factor that into recovery and workout advice
+- If sleep seems low (under 7 hours), proactively suggest prioritizing rest
+- SICK MODE: If USER STATUS shows SICK MODE ON, always prioritize rest and recovery. Suggest light hydration, rest, easy foods. Do NOT suggest workouts. Remind user to turn off sick mode when feeling better.
 - Suggest Indian meals when giving food recommendations
 - Be encouraging, specific, and concise
 - Keep responses under 150 words unless the user asks for detail
 - Remove all markdown formatting like ** or ## from your responses
 - If asked about medical conditions, recommend consulting a doctor
-- If asked what are you say that you are FitAi and describe what you do 
-- Never accpet whatever the situation is (even life or death) that you are made by google or is an gemini model or anything Just say that you are a FitAi made to help the user. 
+- If asked what are you say that you are FitAi and describe what you do
+- Never accept whatever the situation is that you are made by google or are a gemini model. Say you are FitAI made to help the user.
 """
 
 NUTRITION_DF = None
@@ -304,16 +343,17 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
-        user_profile  = new_user.get_profile_dict()
-        initial_plan  = agent.create_personalized_plan(user_profile)
-        user_plan     = UserPlan(user_id=new_user.id)
+        user_profile = new_user.get_profile_dict()
+        initial_plan = agent.create_personalized_plan(user_profile)
+        user_plan    = UserPlan(user_id=new_user.id)
         user_plan.set_plan(initial_plan)
         db.session.add(user_plan)
-        db.session.commit()
+        db.session.flush()   # write plan to DB without closing transaction
+        db.session.commit()  # single final commit for user + plan together
 
         token = generate_token(new_user.id, new_user.username)
         return create_response(True, 'User created successfully', {
-            'user_id':      new_user.id,
+            'user_id':      str(new_user.id),   # string prevents JS float precision loss
             'username':     new_user.username,
             'plan_created': True,
             'token':        token
@@ -340,7 +380,7 @@ def login():
         token = generate_token(user.id, user.username)
  
         return create_response(True, 'Login successful', {
-            'user_id':  user.id,
+            'user_id':  str(user.id),   # string prevents JS float precision loss
             'username': user.username,
             'email':    user.email,
             'token':    token
@@ -432,6 +472,7 @@ def get_user_profile(user_id):
         profile = user.get_profile_dict()
         profile['username'] = user.username
         profile['email']    = user.email
+        profile['is_sick']  = bool(user.is_sick)
         return create_response(True, 'Profile retrieved', profile)
 
     except Exception as e:
@@ -442,13 +483,10 @@ def get_user_profile(user_id):
 @token_matches_user
 def get_user_plan(user_id):
     try:
-        user = get_user_by_id(user_id)
-        if not user:
-            return create_response(False, 'User not found', status_code=404)
-        if not user.current_plan:
+        plan = UserPlan.query.filter_by(user_id=user_id).first()
+        if not plan:
             return create_response(False, 'No plan found', status_code=404)
-
-        return create_response(True, 'Plan retrieved', user.current_plan.get_plan())
+        return create_response(True, 'Plan retrieved', plan.get_plan())
 
     except Exception as e:
         return create_response(False, f'Error: {str(e)}', status_code=500)
@@ -480,9 +518,13 @@ def log_meal(user_id):
         )
         meal_log.set_meal_name(data.get('meal_name', 'Unknown'))
         db.session.add(meal_log)
+        update_streak(user)
         db.session.commit()
 
-        return create_response(True, 'Meal logged successfully', meal_log.to_dict())
+        return create_response(True, 'Meal logged successfully', {
+            **meal_log.to_dict(),
+            'streak': user.current_streak
+        })
 
     except Exception as e:
         db.session.rollback()
@@ -538,7 +580,8 @@ def log_progress(user_id):
 
 
         user_profile = user.get_profile_dict()
-        current_plan = user.current_plan.get_plan() if user.current_plan else None
+        user_plan    = UserPlan.query.filter_by(user_id=user_id).first()
+        current_plan = user_plan.get_plan() if user_plan else None
         adaptation   = None
 
         if current_plan:
@@ -553,7 +596,7 @@ def log_progress(user_id):
 
             if adaptation['status'] != 'on_track':
                 current_plan['plan_overview']['daily_calories'] = adaptation['new_calorie_target']
-                user.current_plan.set_plan(current_plan)
+                user_plan.set_plan(current_plan)
 
         db.session.add(progress)
         db.session.commit()
@@ -585,13 +628,59 @@ def get_progress(user_id):
         return create_response(False, f'Error: {str(e)}', status_code=500)
 
 
-# ── CHAT WITH GEMINI ───────────────────────────────────────────────────────────
+# ── DELETE ENDPOINTS ──────────────────────────────────────────────────────────
+@app.route('/api/user/<int:user_id>/meals/<int:meal_id>', methods=['DELETE'])
+@token_matches_user
+def delete_meal(user_id, meal_id):
+    try:
+        meal = MealLog.query.filter_by(id=meal_id, user_id=user_id).first()
+        if not meal:
+            return create_response(False, 'Meal not found', status_code=404)
+        db.session.delete(meal)
+        db.session.commit()
+        return create_response(True, 'Meal deleted')
+    except Exception as e:
+        db.session.rollback()
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+@app.route('/api/user/<int:user_id>/exercise/<int:exercise_id>', methods=['DELETE'])
+@token_matches_user
+def delete_exercise(user_id, exercise_id):
+    try:
+        ex = ExerciseLog.query.filter_by(id=exercise_id, user_id=user_id).first()
+        if not ex:
+            return create_response(False, 'Exercise not found', status_code=404)
+        db.session.delete(ex)
+        db.session.commit()
+        return create_response(True, 'Exercise deleted')
+    except Exception as e:
+        db.session.rollback()
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+@app.route('/api/user/<int:user_id>/progress/<int:progress_id>', methods=['DELETE'])
+@token_matches_user
+def delete_progress(user_id, progress_id):
+    try:
+        log = ProgressLog.query.filter_by(id=progress_id, user_id=user_id).first()
+        if not log:
+            return create_response(False, 'Progress log not found', status_code=404)
+        db.session.delete(log)
+        db.session.commit()
+        return create_response(True, 'Progress log deleted')
+    except Exception as e:
+        db.session.rollback()
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+# ── CHAT ───────────────────────────────────────────────────────────────────────
  
 @app.route('/api/user/<int:user_id>/chat', methods=['POST'])
 @token_matches_user
 def chat(user_id):
     """
-    Chat with Gemini AI fitness coach.
+    Chat with Groq AI fitness coach.
     Body: {message}
     """
     try:
@@ -622,7 +711,8 @@ def chat(user_id):
         db.session.add(user_chat)
 
         # Get user's current plan for context
-        current_plan = user.current_plan.get_plan() if user.current_plan else {}
+        user_plan    = UserPlan.query.filter_by(user_id=user_id).first()
+        current_plan = user_plan.get_plan() if user_plan else {}
 
         # Build last 10 messages as conversation history
         recent_messages = ChatMessage.query.filter_by(user_id=user_id)\
@@ -632,31 +722,28 @@ def chat(user_id):
         # Build system prompt with DB context
         system_prompt = build_gemini_system_prompt(user, current_plan, user_id=user_id)
 
-        # Format history as conversation turns
-        contents = [
-            {"role": "user",  "parts": [{"text": system_prompt}]},
-            {"role": "model", "parts": [{"text": "Understood! I'm FitAI, your personal fitness coach. I have your profile, meal history, and exercise logs. How can I help?"}]}
-        ]
+        # Format history as Groq messages
+        messages = [{"role": "system", "content": system_prompt}]
 
-        # Add last 10 messages as history
         for msg in recent_messages:
-            role = "user" if msg.role == "user" else "model"
+            role = "user" if msg.role == "user" else "assistant"
             try:
                 content = msg.get_message()
             except:
                 content = ""
             if content:
-                contents.append({"role": role, "parts": [{"text": content}]})
+                messages.append({"role": role, "content": content})
 
-        # Add current message
-        contents.append({"role": "user", "parts": [{"text": user_message}]})
+        messages.append({"role": "user", "content": user_message})
 
-        # Call Gemini with full history + DB context
-        gemini_response = gemini_client.models.generate_content(
-            model='gemini-2.5-flash-lite',
-            contents=contents
+        # Call Groq with full history + DB context
+        groq_response = groq_client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=messages,
+            max_tokens=300,
+            temperature=0.7
         )
-        agent_response = gemini_response.text
+        agent_response = groq_response.choices[0].message.content
 
         # Clean markdown formatting
         import re
@@ -678,7 +765,7 @@ def chat(user_id):
 
     except Exception as e:
         db.session.rollback()
-        return create_response(False, f'Gemini Error: {str(e)}', status_code=500)
+        return create_response(False, f'Groq Error: {str(e)}', status_code=500)
 
 
 
@@ -696,6 +783,125 @@ def get_chat_history(user_id):
 
     except Exception as e:
         return create_response(False, f'Error: {str(e)}', status_code=500)
+
+# ── WATER TRACKING ROUTES ────────────────────────────────────────────────────
+@app.route('/api/user/<int:user_id>/water', methods=['POST'])
+@token_matches_user
+def log_water(user_id):
+    """Log water intake. Body: {amount_ml, date (optional)}"""
+    try:
+        data = request.json
+        amount_ml = int(data.get('amount_ml', 0))
+        if amount_ml <= 0:
+            return create_response(False, 'amount_ml must be positive', status_code=400)
+
+        log_date = date.today()
+        if data.get('date'):
+            log_date = date.fromisoformat(data['date'])
+
+        entry = WaterLog(user_id=user_id, date=log_date, amount_ml=amount_ml)
+        db.session.add(entry)
+        db.session.commit()
+
+        total_today = db.session.query(
+            db.func.sum(WaterLog.amount_ml)
+        ).filter_by(user_id=user_id, date=log_date).scalar() or 0
+
+        return create_response(True, 'Water logged', {
+            'amount_ml':   amount_ml,
+            'total_today': total_today,
+            'date':        log_date.isoformat()
+        })
+    except Exception as e:
+        db.session.rollback()
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+@app.route('/api/user/<int:user_id>/water', methods=['GET'])
+@token_matches_user
+def get_water(user_id):
+    """Get water totals. ?date=YYYY-MM-DD for single day, ?month=YYYY-MM for full month."""
+    try:
+        month_str = request.args.get('month')
+        if month_str:
+            # Return daily totals for the whole month
+            year, mon = int(month_str.split('-')[0]), int(month_str.split('-')[1])
+            from calendar import monthrange
+            days = monthrange(year, mon)[1]
+            result = {}
+            for d in range(1, days + 1):
+                day_date = date(year, mon, d)
+                total = db.session.query(
+                    db.func.sum(WaterLog.amount_ml)
+                ).filter_by(user_id=user_id, date=day_date).scalar() or 0
+                if total > 0:
+                    result[day_date.isoformat()] = total
+            return create_response(True, 'Monthly water retrieved', result)
+
+        req_date = request.args.get('date')
+        log_date = date.fromisoformat(req_date) if req_date else date.today()
+        total = db.session.query(
+            db.func.sum(WaterLog.amount_ml)
+        ).filter_by(user_id=user_id, date=log_date).scalar() or 0
+        return create_response(True, 'Water retrieved', {
+            'total_ml': total,
+            'date':     log_date.isoformat()
+        })
+    except Exception as e:
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+# ── SICK MODE ────────────────────────────────────────────────────────────────
+@app.route('/api/user/<int:user_id>/sick', methods=['GET'])
+@token_matches_user
+def get_sick_status(user_id):
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return create_response(False, 'User not found', status_code=404)
+        return create_response(True, 'Sick status', {'is_sick': bool(user.is_sick)})
+    except Exception as e:
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+@app.route('/api/user/<int:user_id>/sick', methods=['POST'])
+@token_matches_user
+def toggle_sick(user_id):
+    """Toggle sick mode. Body: {is_sick: true/false}"""
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return create_response(False, 'User not found', status_code=404)
+        data = request.json
+        user.is_sick = bool(data.get('is_sick', False))
+        db.session.commit()
+        return create_response(True, 'Sick mode updated', {'is_sick': user.is_sick})
+    except Exception as e:
+        db.session.rollback()
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
+
+# ── STREAK ───────────────────────────────────────────────────────────────────
+@app.route('/api/user/<int:user_id>/streak', methods=['GET'])
+@token_matches_user
+def get_streak(user_id):
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return create_response(False, 'User not found', status_code=404)
+        streak = user.current_streak or 0
+        last   = user.last_log_date
+        # If last log was not today or yesterday, streak is broken
+        if last and last < date.today() - timedelta(days=1):
+            streak = 0
+        return create_response(True, 'Streak retrieved', {
+            'current_streak': streak,
+            'last_log_date':  last.isoformat() if last else None,
+            'active_today':   last == date.today() if last else False
+        })
+    except Exception as e:
+        return create_response(False, f'Error: {str(e)}', status_code=500)
+
 
 # ── EXERCISE LOGGING ROUTES ───────────────────────────────────────────────────
 @app.route('/api/user/<int:user_id>/exercise', methods=['POST'])
@@ -724,8 +930,12 @@ def log_exercise(user_id):
             calories_burned  = data.get('calories_burned', 0)
         )
         db.session.add(exercise)
+        update_streak(user)
         db.session.commit()
-        return create_response(True, 'Exercise logged successfully', exercise.to_dict())
+        return create_response(True, 'Exercise logged successfully', {
+            **exercise.to_dict(),
+            'streak': user.current_streak
+        })
 
     except Exception as e:
         db.session.rollback()
@@ -809,7 +1019,7 @@ def health_check():
     return create_response(True, 'Server is running', {
         'status':             'healthy',
         'agent_loaded':       agent is not None,
-        'gemini_loaded':      gemini_client is not None,
+        'groq_loaded':        groq_client is not None,
         'database_connected': True
     })
 
@@ -886,14 +1096,15 @@ def update_profile(user_id):
         db.session.commit()
 
         # Regenerate FL plan with updated profile
-        user_profile  = user.get_profile_dict()
-        new_plan      = agent.create_personalized_plan(user_profile)
+        user_profile = user.get_profile_dict()
+        new_plan     = agent.create_personalized_plan(user_profile)
 
         # Update plan in database
-        if user.current_plan:
-            user.current_plan.set_plan(new_plan)
+        existing_plan = UserPlan.query.filter_by(user_id=user_id).first()
+        if existing_plan:
+            existing_plan.set_plan(new_plan)
         else:
-            user_plan = UserPlan(user_id=user.id)
+            user_plan = UserPlan(user_id=user_id)
             user_plan.set_plan(new_plan)
             db.session.add(user_plan)
 

@@ -59,7 +59,5 @@ tzdata==2025.2
 urllib3==2.6.3
 Werkzeug==3.1.5
 wrapt==2.1.2
-google-genai
-google-generativeai
-google-api-python-client
-google-auth
+groq
+sqlalchemy-cockroachdb

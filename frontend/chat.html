@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#902f10">
+    <link rel="stylesheet" href="static/dark.css">
+    <script src="static/theme.js"></script>
     <script src="static/auth.js"></script>
     <title>AI Chat - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -88,6 +91,7 @@
                         <a href="dashboard.html" class="nav-link">Dashboard</a>
                         <a href="meals.html"     class="nav-link">Meals</a>
                         <a href="progress.html"  class="nav-link">Progress</a>
+                    <a href="sleep.html"     class="nav-link">Sleep</a>
                         <a href="chat.html"      class="nav-link nav-active">Chat</a>
                         <a href="exercise.html"  class="nav-link">Exercise</a>
                         <a href="profile.html"   class="nav-link">Profile</a>
@@ -96,7 +100,8 @@
                 <div class="flex items-center gap-2.5">
                     <div class="user-avatar" id="userAvatar"></div>
                     <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
-                    <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
+                    <button id="themeToggle" onclick="toggleTheme()" class="dark-toggle mr-1" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+                <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                     <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none"
@@ -112,6 +117,7 @@
                 <a href="dashboard.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Dashboard</a>
                 <a href="meals.html"     class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Meals</a>
                 <a href="progress.html"  class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Progress</a>
+                <a href="sleep.html"     class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Sleep</a>
                 <a href="chat.html"      class="block px-4 py-2 rounded-lg mobile-nav-active">Chat</a>
                 <a href="exercise.html"  class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Exercise</a>
                 <a href="profile.html"   class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Profile</a>
@@ -170,6 +176,12 @@
 
             <!-- Input Area -->
             <div class="border-t border-gray-100 p-4">
+                <!-- Daily limit counter -->
+                <div class="flex justify-end mb-2">
+                    <span id="chatLimitBadge" class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">
+                        10/10 questions left today
+                    </span>
+                </div>
                 <form id="chatForm" class="flex gap-3">
                     <input type="text" id="messageInput" required
                         class="flex-1 px-4 py-3 border border-gray-200 rounded-xl text-sm"
@@ -306,6 +318,24 @@
             document.getElementById('chatForm').dispatchEvent(new Event('submit'));
         }
 
+        function updateLimitBadge(remaining) {
+            const badge = document.getElementById('chatLimitBadge');
+            const input = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            badge.textContent = `${remaining}/10 questions left today`;
+            if (remaining <= 0) {
+                badge.className = 'text-xs px-2 py-1 rounded-full bg-red-100 text-red-600 font-medium';
+                input.disabled = true;
+                input.placeholder = 'Daily limit reached. Resets tomorrow.';
+                sendBtn.disabled = true;
+                sendBtn.style.opacity = '0.5';
+            } else if (remaining <= 3) {
+                badge.className = 'text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-600 font-medium';
+            } else {
+                badge.className = 'text-xs px-2 py-1 rounded-full bg-green-100 text-green-600';
+            }
+        }
+
         document.getElementById('chatForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -331,6 +361,12 @@
                 if (data.success) {
                     addMessageToUI('agent', data.data.agent_response);
                     scrollToBottom();
+                    if (data.data.messages_remaining !== undefined) {
+                        updateLimitBadge(data.data.messages_remaining);
+                    }
+                } else if (response.status === 429) {
+                    updateLimitBadge(0);
+                    addMessageToUI('agent', 'You have reached your daily limit of 10 questions. Come back tomorrow!');
                 } else {
                     addMessageToUI('agent', 'Sorry, I encountered an error. Please try again.');
                 }
@@ -349,6 +385,5 @@
         loadChatHistory();
         document.getElementById('messageInput').focus();
     </script>
-
 </body>
 </html>

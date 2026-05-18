@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#902f10">
+    <link rel="stylesheet" href="static/dark.css">
+    <script src="static/theme.js"></script>
     <script src="static/auth.js"></script>
     <title>Profile - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -80,6 +83,7 @@
                         <a href="dashboard.html" class="nav-link">Dashboard</a>
                         <a href="meals.html" class="nav-link">Meals</a>
                         <a href="progress.html" class="nav-link">Progress</a>
+                    <a href="sleep.html"     class="nav-link">Sleep</a>
                         <a href="chat.html" class="nav-link">Chat</a>
                         <a href="exercise.html" class="nav-link">Exercise</a>
                         <a href="profile.html" class="nav-link nav-active">Profile</a>
@@ -88,7 +92,8 @@
                 <div class="flex items-center gap-2.5">
                     <div class="user-avatar" id="userAvatar"></div>
                     <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
-                    <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
+                    <button id="themeToggle" onclick="toggleTheme()" class="dark-toggle mr-1" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+                <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                     <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none"
@@ -250,6 +255,26 @@
                 <div>
                     <p class="text-xs text-gray-400 mb-0.5">Privacy</p>
                     <p class="font-semibold text-green-600 text-sm">Protected by FL + AES-256 + DP</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact / Support -->
+        <div class="mt-6 bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+            <h2 class="text-base font-bold text-gray-900 mb-3">Support & Contact</h2>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="flex-1">
+                    <p class="text-sm text-gray-600">For any queries, bugs, or feedback regarding FitAI:</p>
+                    <a href="mailto:swapnilmogal26@gmail.com"
+                       class="inline-flex items-center gap-2 mt-1.5 text-sm font-semibold"
+                       style="color:var(--primary)">
+                        <i class="fa-solid fa-envelope"></i>
+                        swapnilmogal26@gmail.com
+                    </a>
+                </div>
+                <div class="text-xs text-gray-400 text-right">
+                    <p>FitAI v1.0</p>
+                    <p>Built with Federated Learning</p>
                 </div>
             </div>
         </div>

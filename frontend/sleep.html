@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#902f10">
+    <link rel="stylesheet" href="static/dark.css">
+    <script src="static/theme.js"></script>
+    <script src="static/auth.js"></script>
+    <title>Sleep Tracker - FitAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        :root {
+            --primary: #902f10;
+            --primary-dark: #7a2810;
+            --primary-light: #fff5ee;
+        }
+        body { font-family: 'Inter', sans-serif; background: #f5f7fb; }
+        .nav-link { font-size: 14px; color: #6b7280; transition: color 0.15s; }
+        .nav-link:hover { color: #1f2937; }
+        .nav-active { color: var(--primary) !important; font-weight: 600; border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+        .mobile-nav-active { color: var(--primary); font-weight: 600; background: var(--primary-light); }
+        .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: white; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        input:focus, select:focus { outline: none; border-color: var(--primary) !important; box-shadow: 0 0 0 2px rgba(144,47,16,0.15) !important; }
+
+        /* Quality buttons */
+        .quality-btn { transition: all 0.15s; border: 2px solid #e5e7eb; cursor: pointer; }
+        .quality-btn.active-good    { border-color: #16a34a; background: #f0fdf4; color: #16a34a; }
+        .quality-btn.active-decent  { border-color: #d97706; background: #fffbeb; color: #d97706; }
+        .quality-btn.active-bad     { border-color: #dc2626; background: #fef2f2; color: #dc2626; }
+
+        /* Calendar */
+        .sleep-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .s-day {
+            border-radius: 10px; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 5px 2px; min-height: 54px;
+            border: 1px solid #f1f3f5; font-size: 0.72rem; font-weight: 500;
+            cursor: pointer; transition: all 0.15s; background: white;
+        }
+        .s-day:hover { transform: scale(0.95); }
+        .s-day.today-ring { outline: 2px solid var(--primary); }
+        .s-day.q-good    { background: #f0fdf4; border-color: #86efac; }
+        .s-day.q-decent  { background: #fffbeb; border-color: #fcd34d; }
+        .s-day.q-bad     { background: #fef2f2; border-color: #fca5a5; }
+        .s-day .s-num    { font-size: 0.8rem; font-weight: 700; color: #374151; }
+        .s-day .s-hrs    { font-size: 0.6rem; font-weight: 600; margin-top: 1px; }
+        .s-day .s-nap    { font-size: 0.55rem; color: #6366f1; margin-top: 1px; }
+        .weekday-hdr     { font-size: 0.62rem; font-weight: 600; text-align: center; color: #9ca3af; padding-bottom: 3px; }
+        @media(max-width:640px) { .s-day { min-height: 44px; } }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center gap-8">
+                <span class="text-lg font-bold flex items-center gap-2" style="color:var(--primary);">
+                    <i class="fa-solid fa-chart-simple"></i>FitAI
+                </span>
+                <div class="hidden md:flex gap-6 items-center">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="meals.html"     class="nav-link">Meals</a>
+                    <a href="progress.html"  class="nav-link">Progress</a>
+                    <a href="sleep.html"     class="nav-link nav-active">Sleep</a>
+                    <a href="exercise.html"  class="nav-link">Exercise</a>
+                    <a href="chat.html"      class="nav-link">Chat</a>
+                    <a href="profile.html"   class="nav-link">Profile</a>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5">
+                <div class="user-avatar" id="userAvatar"></div>
+                <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
+                <button id="themeToggle" onclick="toggleTheme()" class="dark-toggle mr-1" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+                <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+                <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none"
+                    onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-2 space-y-1 pb-3">
+            <a href="dashboard.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Dashboard</a>
+            <a href="meals.html"     class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Meals</a>
+            <a href="progress.html"  class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Progress</a>
+            <a href="sleep.html"     class="block px-4 py-2 rounded-lg mobile-nav-active">Sleep</a>
+            <a href="exercise.html"  class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Exercise</a>
+            <a href="chat.html"      class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Chat</a>
+            <a href="profile.html"   class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Profile</a>
+        </div>
+    </div>
+</nav>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-1">Sleep Tracker</h1>
+        <p class="text-gray-500 text-sm">Log daily sleep quality and track your patterns</p>
+    </div>
+
+    <!-- Weekly KPIs -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center">
+            <p class="text-xs text-gray-400 mb-1">Avg Night Sleep</p>
+            <p class="text-2xl font-bold text-gray-900" id="kpiNight">—</p>
+            <p class="text-xs text-gray-400">this week</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center">
+            <p class="text-xs text-gray-400 mb-1">Avg Nap</p>
+            <p class="text-2xl font-bold text-gray-900" id="kpiNap">—</p>
+            <p class="text-xs text-gray-400">this week</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center">
+            <p class="text-xs text-gray-400 mb-1">Good Nights</p>
+            <p class="text-2xl font-bold text-green-600" id="kpiGood">—</p>
+            <p class="text-xs text-gray-400">this week</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center">
+            <p class="text-xs text-gray-400 mb-1">Logged Today</p>
+            <p class="text-2xl font-bold text-gray-900" id="kpiToday">—</p>
+            <p class="text-xs text-gray-400" id="kpiTodaySub">not yet</p>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6">
+
+        <!-- Left: Daily Entry Form -->
+        <div class="space-y-4">
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4">Log Today's Sleep</h2>
+
+                <!-- Date picker -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input type="date" id="sleepDate" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm">
+                </div>
+
+                <!-- Night sleep -->
+                <div class="mb-4">
+                    <div class="flex justify-between items-baseline mb-2">
+                        <label class="text-sm font-medium text-gray-700">
+                            <i class="fa-solid fa-moon text-indigo-400 mr-1"></i>Night Sleep
+                        </label>
+                        <span class="text-lg font-bold text-indigo-600" id="nightDisplay">7.0 hrs</span>
+                    </div>
+                    <input type="range" id="nightHours" min="2" max="12" step="0.5" value="7"
+                        class="w-full accent-indigo-500"
+                        oninput="updateNightDisplay(this.value)">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>2h</span><span>12h</span>
+                    </div>
+                </div>
+
+                <!-- Nap -->
+                <div class="mb-4">
+                    <div class="flex justify-between items-baseline mb-2">
+                        <label class="text-sm font-medium text-gray-700">
+                            <i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i>Afternoon Nap
+                        </label>
+                        <span class="text-lg font-bold text-amber-600" id="napDisplay">None</span>
+                    </div>
+                    <input type="range" id="napHours" min="0" max="3" step="0.25" value="0"
+                        class="w-full accent-amber-400"
+                        oninput="updateNapDisplay(this.value)">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>None</span><span>3h</span>
+                    </div>
+                </div>
+
+                <!-- Quality -->
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sleep Quality</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setQuality('good')" id="q-good"
+                            class="quality-btn rounded-lg py-2.5 text-sm font-semibold text-gray-500">
+                            <i class="fa-solid fa-face-smile block text-lg mb-0.5"></i>Good
+                        </button>
+                        <button onclick="setQuality('decent')" id="q-decent"
+                            class="quality-btn rounded-lg py-2.5 text-sm font-semibold text-gray-500">
+                            <i class="fa-solid fa-face-meh block text-lg mb-0.5"></i>Decent
+                        </button>
+                        <button onclick="setQuality('bad')" id="q-bad"
+                            class="quality-btn rounded-lg py-2.5 text-sm font-semibold text-gray-500">
+                            <i class="fa-solid fa-face-tired block text-lg mb-0.5"></i>Bad
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Save -->
+                <button onclick="saveSleep()"
+                    class="w-full py-3 rounded-xl text-white font-semibold text-sm transition-colors"
+                    style="background:var(--primary)"
+                    onmouseover="this.style.background='var(--primary-dark)'"
+                    onmouseout="this.style.background='var(--primary)'">
+                    Save Entry
+                </button>
+
+                <div id="saveMsg" class="hidden mt-3 text-center text-sm text-green-600 font-medium">
+                    Saved successfully!
+                </div>
+            </div>
+
+            <!-- Today's summary (shows after save) -->
+            <div id="todaySummary" class="hidden bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                <h3 class="text-sm font-bold text-gray-700 mb-2">Today's Entry</h3>
+                <div class="space-y-1 text-sm text-gray-600" id="todaySummaryText"></div>
+            </div>
+        </div>
+
+        <!-- Right: Calendar (2 cols wide) -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                <div id="sleepCalendarContainer"></div>
+
+                <!-- Legend -->
+                <div class="flex gap-4 mt-4 text-xs text-gray-500 flex-wrap">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-green-100 border border-green-300 inline-block"></span>Good</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-50 border border-amber-300 inline-block"></span>Decent</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-red-50 border border-red-200 inline-block"></span>Bad</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-white border border-gray-200 inline-block"></span>No data</span>
+                    <span class="flex items-center gap-1.5"><span class="text-indigo-500 font-bold">·</span>+ nap logged</span>
+                </div>
+
+                <!-- Day detail popup -->
+                <div id="dayDetail" class="hidden mt-4 pt-4 border-t border-gray-100 text-sm"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    requireAuth();
+    const userId  = localStorage.getItem('user_id');
+    const username = localStorage.getItem('username');
+    document.getElementById('username').textContent = username || '';
+    const avatarEl = document.getElementById('userAvatar');
+    if (avatarEl && username) {
+        const parts = username.trim().split(' ');
+        avatarEl.textContent = parts.length >= 2
+            ? parts[0][0].toUpperCase() + parts[parts.length-1][0].toUpperCase()
+            : username[0].toUpperCase();
+    }
+    document.getElementById('sleepDate').valueAsDate = new Date();
+
+    let selectedQuality = 'good';
+    let calDate = new Date();
+
+    // ── Key helpers ──────────────────────────────────────────────────────────
+    function nKey(d) { return 'fitai_sleep_' + d; }        // night (compat with dashboard)
+    function napKey(d) { return 'fitai_sleep_nap_' + d; }
+    function qKey(d)  { return 'fitai_sleep_q_' + d; }
+
+    function getEntry(d) {
+        return {
+            night:   parseFloat(localStorage.getItem(nKey(d)))   || 0,
+            nap:     parseFloat(localStorage.getItem(napKey(d))) || 0,
+            quality: localStorage.getItem(qKey(d)) || null
+        };
+    }
+
+    // ── Sliders ───────────────────────────────────────────────────────────────
+    function updateNightDisplay(v) {
+        document.getElementById('nightDisplay').textContent = parseFloat(v).toFixed(1) + ' hrs';
+    }
+    function updateNapDisplay(v) {
+        const n = parseFloat(v);
+        document.getElementById('napDisplay').textContent = n === 0 ? 'None' : n.toFixed(2).replace('.00','').replace('.25','¼').replace('.50','½').replace('.75','¾') + ' hrs';
+    }
+
+    // ── Quality ───────────────────────────────────────────────────────────────
+    function setQuality(q) {
+        selectedQuality = q;
+        ['good','decent','bad'].forEach(k => {
+            const btn = document.getElementById('q-' + k);
+            btn.className = 'quality-btn rounded-lg py-2.5 text-sm font-semibold text-gray-500' + (k === q ? ` active-${k}` : '');
+        });
+    }
+    setQuality('good');
+
+    // ── Save ──────────────────────────────────────────────────────────────────
+    function saveSleep() {
+        const date  = document.getElementById('sleepDate').value;
+        const night = parseFloat(document.getElementById('nightHours').value);
+        const nap   = parseFloat(document.getElementById('napHours').value);
+
+        localStorage.setItem(nKey(date), night);
+        if (nap > 0) localStorage.setItem(napKey(date), nap);
+        else         localStorage.removeItem(napKey(date));
+        localStorage.setItem(qKey(date), selectedQuality);
+
+        const msg = document.getElementById('saveMsg');
+        msg.classList.remove('hidden');
+        setTimeout(() => msg.classList.add('hidden'), 2000);
+
+        renderCalendar();
+        computeKPIs();
+        showTodaySummary(date);
+    }
+
+    // ── Today summary ─────────────────────────────────────────────────────────
+    function showTodaySummary(date) {
+        const e = getEntry(date);
+        if (!e.quality) { document.getElementById('todaySummary').classList.add('hidden'); return; }
+        const qualityColor = e.quality === 'good' ? '#16a34a' : e.quality === 'decent' ? '#d97706' : '#dc2626';
+        document.getElementById('todaySummaryText').innerHTML = `
+            <div class="flex justify-between"><span>Night sleep</span><span class="font-semibold">${e.night.toFixed(1)} hrs</span></div>
+            ${e.nap > 0 ? `<div class="flex justify-between"><span>Afternoon nap</span><span class="font-semibold">${e.nap.toFixed(1)} hrs</span></div>` : ''}
+            <div class="flex justify-between"><span>Quality</span><span class="font-semibold" style="color:${qualityColor}">${e.quality.charAt(0).toUpperCase() + e.quality.slice(1)}</span></div>`;
+        document.getElementById('todaySummary').classList.remove('hidden');
+    }
+
+    // ── KPIs ──────────────────────────────────────────────────────────────────
+    function computeKPIs() {
+        const today = new Date();
+        const days  = Array.from({ length: 7 }, (_, i) => {
+            const d = new Date(today); d.setDate(d.getDate() - i);
+            return d.toISOString().split('T')[0];
+        });
+
+        const entries = days.map(d => getEntry(d)).filter(e => e.quality);
+        const nights  = entries.map(e => e.night).filter(v => v > 0);
+        const naps    = entries.map(e => e.nap).filter(v => v > 0);
+        const good    = entries.filter(e => e.quality === 'good').length;
+
+        document.getElementById('kpiNight').textContent = nights.length
+            ? (nights.reduce((a,b) => a+b,0) / nights.length).toFixed(1) + 'h'
+            : '—';
+        document.getElementById('kpiNap').textContent = naps.length
+            ? (naps.reduce((a,b) => a+b,0) / naps.length).toFixed(1) + 'h'
+            : 'None';
+        document.getElementById('kpiGood').textContent = good + '/' + entries.length;
+
+        const todayStr = today.toISOString().split('T')[0];
+        const todayEntry = getEntry(todayStr);
+        if (todayEntry.quality) {
+            document.getElementById('kpiToday').textContent = todayEntry.night.toFixed(1) + 'h';
+            document.getElementById('kpiTodaySub').textContent = todayEntry.quality;
+        } else {
+            document.getElementById('kpiToday').textContent = '—';
+            document.getElementById('kpiTodaySub').textContent = 'not logged';
+        }
+    }
+
+    // ── Calendar ──────────────────────────────────────────────────────────────
+    function renderCalendar() {
+        const year  = calDate.getFullYear();
+        const month = calDate.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const startWeekday = firstDay.getDay();
+        const todayYMD = new Date().toISOString().split('T')[0];
+        const monthName = firstDay.toLocaleString('default', { month: 'long' });
+
+        let html = `<div class="flex justify-between items-center mb-4">
+            <button onclick="calDate.setMonth(calDate.getMonth()-1);renderCalendar()" class="bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center text-gray-600 text-sm">←</button>
+            <span class="font-bold text-gray-800">${monthName} ${year}</span>
+            <button onclick="calDate.setMonth(calDate.getMonth()+1);renderCalendar()" class="bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center text-gray-600 text-sm">→</button>
+        </div>`;
+
+        html += `<div class="sleep-cal-grid">`;
+        ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d =>
+            html += `<div class="weekday-hdr">${d}</div>`);
+
+        for (let i = 0; i < startWeekday; i++) html += `<div></div>`;
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const e  = getEntry(ds);
+            const isToday = ds === todayYMD;
+            const qClass = e.quality ? `q-${e.quality}` : '';
+            const todayClass = isToday ? 'today-ring' : '';
+            html += `<div class="s-day ${qClass} ${todayClass}" onclick="showDayDetail('${ds}')">
+                <div class="s-num">${d}</div>
+                ${e.night > 0 ? `<div class="s-hrs" style="color:${e.quality==='good'?'#16a34a':e.quality==='decent'?'#d97706':e.quality==='bad'?'#dc2626':'#6b7280'}">${e.night}h</div>` : ''}
+                ${e.nap  > 0 ? `<div class="s-nap">+${e.nap}h</div>` : ''}
+            </div>`;
+        }
+        html += `</div>`;
+        document.getElementById('sleepCalendarContainer').innerHTML = html;
+    }
+
+    function showDayDetail(ds) {
+        const e = getEntry(ds);
+        const panel = document.getElementById('dayDetail');
+        const label = new Date(ds + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+        if (!e.quality) {
+            panel.innerHTML = `<p class="text-gray-400 text-center">${label} — no entry logged</p>`;
+        } else {
+            const qColor = e.quality === 'good' ? '#16a34a' : e.quality === 'decent' ? '#d97706' : '#dc2626';
+            panel.innerHTML = `
+                <p class="font-semibold text-gray-700 mb-2">${label}</p>
+                <div class="flex gap-4 text-sm">
+                    <span><i class="fa-solid fa-moon text-indigo-400 mr-1"></i>${e.night.toFixed(1)} hrs night</span>
+                    ${e.nap > 0 ? `<span><i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i>${e.nap.toFixed(1)} hrs nap</span>` : ''}
+                    <span style="color:${qColor};font-weight:600">${e.quality.charAt(0).toUpperCase()+e.quality.slice(1)}</span>
+                </div>`;
+        }
+        panel.classList.remove('hidden');
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
+
+    // ── Load today's saved data ───────────────────────────────────────────────
+    (function loadToday() {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const e = getEntry(todayStr);
+        if (e.night > 0) {
+            document.getElementById('nightHours').value = e.night;
+            updateNightDisplay(e.night);
+        }
+        if (e.nap > 0) {
+            document.getElementById('napHours').value = e.nap;
+            updateNapDisplay(e.nap);
+        }
+        if (e.quality) {
+            setQuality(e.quality);
+            showTodaySummary(todayStr);
+        }
+    })();
+
+    renderCalendar();
+    computeKPIs();
+</script>
+</body>
+</html>

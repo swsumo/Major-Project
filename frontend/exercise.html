@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#902f10">
+    <link rel="stylesheet" href="static/dark.css">
+    <script src="static/theme.js"></script>
     <script src="static/auth.js"></script>
     <title>Exercise Tracker - FitAI | Calendar & Monthly Summary</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -83,6 +86,7 @@
                         <a href="dashboard.html" class="nav-link">Dashboard</a>
                         <a href="meals.html"     class="nav-link">Meals</a>
                         <a href="progress.html"  class="nav-link">Progress</a>
+                    <a href="sleep.html"     class="nav-link">Sleep</a>
                         <a href="chat.html"      class="nav-link">Chat</a>
                         <a href="exercise.html"  class="nav-link nav-active">Exercise</a>
                         <a href="profile.html"   class="nav-link">Profile</a>
@@ -91,7 +95,8 @@
                 <div class="flex items-center gap-2.5">
                     <div class="user-avatar" id="userAvatar"></div>
                     <span id="username" class="hidden sm:inline text-gray-700 font-medium text-sm"></span>
-                    <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
+                    <button id="themeToggle" onclick="toggleTheme()" class="dark-toggle mr-1" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+                <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                     <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none"
@@ -107,6 +112,7 @@
                 <a href="dashboard.html" class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Dashboard</a>
                 <a href="meals.html"     class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Meals</a>
                 <a href="progress.html"  class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Progress</a>
+                <a href="sleep.html"     class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Sleep</a>
                 <a href="chat.html"      class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Chat</a>
                 <a href="exercise.html"  class="block px-4 py-2 rounded-lg mobile-nav-active">Exercise</a>
                 <a href="profile.html"   class="block px-4 py-2 rounded-lg nav-link hover:bg-gray-50">Profile</a>
@@ -115,6 +121,15 @@
     </nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Sick mode banner -->
+        <div id="sickBanner" class="hidden mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-4">
+            <span class="text-2xl">🤒</span>
+            <div class="flex-1">
+                <p class="font-semibold text-red-800">Recovery Mode is ON — rest today</p>
+                <p class="text-sm text-red-700 mt-0.5">No workouts needed. Let your body heal. Turn off recovery mode on the dashboard when you feel better.</p>
+            </div>
+        </div>
 
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-1">Exercise Tracker</h1>
@@ -348,7 +363,7 @@
                     return;
                 }
                 container.innerHTML = exercises.map(ex => `
-                    <div class="flex justify-between items-center py-3 border-b border-gray-50 last:border-0">
+                    <div class="flex justify-between items-center py-3 border-b border-gray-50 last:border-0" id="ex-${ex.id}">
                         <div>
                             <p class="font-semibold text-gray-900 text-sm">${escapeHtml(ex.exercise_name)}</p>
                             <div class="flex gap-2 mt-1">
@@ -356,7 +371,12 @@
                                 ${ex.weight_kg > 0 ? `<span class="text-xs text-gray-400">${ex.weight_kg} ${ex.body_part === 'Running' || ex.body_part === 'Cycling' || ex.body_part === 'Cardio' ? 'min' : 'kg'}</span>` : ''}
                             </div>
                         </div>
-                        <p class="font-bold text-sm" style="color:var(--primary);">${Math.round(ex.calories_burned)} cal</p>
+                        <div class="flex items-center gap-3">
+                            <p class="font-bold text-sm" style="color:var(--primary);">${Math.round(ex.calories_burned)} cal</p>
+                            <button onclick="deleteExercise(${ex.id})" title="Delete" class="text-gray-300 hover:text-red-500 transition text-xs">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 `).join('');
             } catch(e) { console.error(e); }
@@ -574,12 +594,29 @@
             });
         }
         
+        async function deleteExercise(exId) {
+            if (!confirm('Delete this exercise entry?')) return;
+            try {
+                const r = await authFetch(`/user/${userId}/exercise/${exId}`, { method: 'DELETE' });
+                const d = await r.json();
+                if (d.success) { loadTodayExercises(); }
+            } catch(e) { alert('Error deleting exercise'); }
+        }
+
         function logout() {
             localStorage.clear();
             window.location.href = 'login.html';
         }
         
         async function init() {
+            // Check sick mode
+            try {
+                const r = await authFetch(`/user/${userId}/sick`);
+                const d = await r.json();
+                if (d.success && d.data.is_sick) {
+                    document.getElementById('sickBanner').classList.remove('hidden');
+                }
+            } catch(e) {}
             await loadTodayExercises();
             await loadMonthlySummaryAndCalendar();
         }

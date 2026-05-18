@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#902f10">
+    <link rel="stylesheet" href="static/dark.css">
+    <script src="static/theme.js"></script>
     <script src="static/auth.js"></script>
     <title>Dashboard - FitAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -117,6 +120,7 @@
                     <a href="dashboard.html" class="nav-link nav-active">Dashboard</a>
                     <a href="meals.html" class="nav-link">Meals</a>
                     <a href="progress.html" class="nav-link">Progress</a>
+                    <a href="sleep.html"     class="nav-link">Sleep</a>
                     <a href="exercise.html" class="nav-link">Exercise</a>
                     <a href="profile.html" class="nav-link">Profile</a>
                 </div>
@@ -124,6 +128,7 @@
             <div class="flex items-center gap-2.5">
                 <div class="user-avatar" id="userAvatar"></div>
                 <span id="username" class="text-sm font-medium text-gray-700 hidden sm:inline"></span>
+                <button id="themeToggle" onclick="toggleTheme()" class="dark-toggle mr-1" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
                 <button onclick="logout()" class="ml-1 text-gray-300 hover:text-red-400 text-sm transition-colors" title="Logout">
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </button>
@@ -148,6 +153,78 @@
 
     <!-- Main content -->
     <div id="mainContent" class="hidden">
+
+        <!-- No plan banner -->
+        <div id="noPlanBanner" class="hidden mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-4">
+            <span class="text-2xl">⚠️</span>
+            <div class="flex-1">
+                <p class="font-semibold text-amber-800">No fitness plan found</p>
+                <p class="text-sm text-amber-700 mt-0.5">Go to your profile to generate your personalised AI plan.</p>
+            </div>
+            <a href="profile.html" class="px-4 py-2 rounded-lg text-sm font-semibold text-white flex-shrink-0"
+               style="background:var(--primary)">Go to Profile</a>
+        </div>
+
+        <!-- Sick Mode Banner -->
+        <div id="sickBanner" class="hidden mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-4">
+            <span class="text-2xl">🤒</span>
+            <div class="flex-1">
+                <p class="font-semibold text-red-800">Recovery Mode — Take it easy today</p>
+                <p class="text-sm text-red-700 mt-0.5">Exercise and strict meal targets are paused. Focus on rest and hydration.</p>
+            </div>
+            <button onclick="toggleSick(false)" class="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white flex-shrink-0 hover:bg-red-700">I'm Better</button>
+        </div>
+
+        <!-- Top stat row: streak + sleep + antioxidant + sick toggle -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <!-- Streak -->
+            <div class="stat-card">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-medium text-gray-400">Logging streak</span>
+                    <div class="icon-badge" style="background:#fefce8;color:#ca8a04;">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-gray-900 mb-1 leading-none">
+                    <span id="sc-streak-val">—</span><span class="text-base font-medium text-gray-400"> days</span>
+                </div>
+                <p class="text-xs mt-1.5" id="sc-streak-sub"></p>
+            </div>
+            <!-- Sleep avg -->
+            <div class="stat-card">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-medium text-gray-400">Avg sleep this week</span>
+                    <div class="icon-badge" style="background:#eff6ff;color:#6366f1;"><i class="fa-solid fa-moon"></i></div>
+                </div>
+                <div class="text-2xl font-bold text-gray-900 mb-1 leading-none" id="sc-sleep-val">—</div>
+                <p class="text-xs mt-1.5" id="sc-sleep-sub"></p>
+            </div>
+            <!-- Antioxidant today -->
+            <div class="stat-card">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-medium text-gray-400">Antioxidant score today</span>
+                    <div class="icon-badge" style="background:#fdf4ff;color:#9333ea;"><i class="fa-solid fa-seedling"></i></div>
+                </div>
+                <div class="text-2xl font-bold text-gray-900 mb-1 leading-none" id="sc-antiox-val">—<span class="text-sm text-gray-400">/10</span></div>
+                <p class="text-xs mt-1.5" id="sc-antiox-sub"></p>
+            </div>
+            <!-- Sick mode toggle -->
+            <div class="stat-card flex flex-col justify-between">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-medium text-gray-400">Recovery mode</span>
+                    <div class="icon-badge" style="background:#fff1f2;color:#e11d48;"><i class="fa-solid fa-kit-medical"></i></div>
+                </div>
+                <div class="flex items-center justify-between mt-2">
+                    <span class="text-sm text-gray-600" id="sickLabel">Feeling fine</span>
+                    <button id="sickToggleBtn" onclick="toggleSick()" role="switch"
+                        class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                        style="background:#d1d5db;">
+                        <span id="sickThumb" class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform translate-x-1"></span>
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400 mt-2" id="sickSub">Toggle when you're unwell</p>
+            </div>
+        </div>
 
         <!-- 4 stat cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -204,6 +281,33 @@
                 </div>
                 <div class="text-2xl font-bold text-gray-900 mb-1 leading-none" id="sc-weight-val">—</div>
                 <p class="text-xs mt-1.5" id="sc-weight-sub"></p>
+            </div>
+        </div>
+
+        <!-- Water Intake Tracker -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div class="flex items-center gap-3 flex-1">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#eff6ff;">
+                        <i class="fa-solid fa-glass-water text-blue-500"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-baseline mb-1">
+                            <span class="text-sm font-semibold text-gray-700">Water Intake</span>
+                            <span class="text-sm font-bold text-blue-600"><span id="waterTotal">0</span> / <span id="waterTarget">2500</span> ml</span>
+                        </div>
+                        <div class="w-full bg-blue-50 rounded-full h-2.5">
+                            <div id="waterBar" class="h-2.5 rounded-full transition-all duration-500 bg-blue-500" style="width:0%"></div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1" id="waterStatus">Keep going! Stay hydrated.</p>
+                    </div>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="logWater(250)" class="px-3 py-2 text-xs font-semibold rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition">+250ml</button>
+                    <button onclick="logWater(500)" class="px-3 py-2 text-xs font-semibold rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition">+500ml</button>
+                    <button onclick="logWater(750)" class="px-3 py-2 text-xs font-semibold rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition">+750ml</button>
+                    <button onclick="logWaterCustom()" class="px-3 py-2 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Custom</button>
+                </div>
             </div>
         </div>
 
@@ -357,34 +461,42 @@
         try {
             const today = new Date().toISOString().split('T')[0];
 
-            // Last 7 days for trend chart
+            // weekDates needed by both phase 1 chart and phase 2 background load
             const weekDates = Array.from({ length: 7 }, (_, i) => {
                 const d = new Date();
                 d.setDate(d.getDate() - (6 - i));
                 return d.toISOString().split('T')[0];
             });
 
-            // All fetches in parallel
-            const results = await Promise.all([
+            // ── PHASE 1: Critical data only (show dashboard fast) ──────────────
+            const [planData, mealsData, progressData, exerciseTodayData] = await Promise.all([
                 safeFetch(`/user/${userId}/plan`),
                 safeFetch(`/user/${userId}/meals?date=${today}`),
-                safeFetch(`/user/${userId}/exercise/summary`),
                 safeFetch(`/user/${userId}/progress`),
-                safeFetch(`/user/${userId}/exercise?date=${today}`),
-                ...weekDates.map(d => safeFetch(`/user/${userId}/meals?date=${d}`))
+                safeFetch(`/user/${userId}/exercise?date=${today}`)
             ]);
 
-            const [planData, mealsData, exerciseSumData, progressData, exerciseTodayData, ...weeklyMealsArr] = results;
-
             if (!planData.success) {
-                alert('Failed to load plan. Please complete your profile.');
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                document.getElementById('noPlanBanner').classList.remove('hidden');
                 return;
             }
+
+            // Use placeholder for secondary data while phase 2 loads
+            const exerciseSumData = { success: false, data: null };
+            const weeklyMealsArr  = Array(7).fill({ success: true, data: [] });
 
             const plan = planData.data;
             const dailyTarget = plan.plan_overview.daily_calories;
             const proteinTarget = plan.plan_overview.macros.protein_g;
             const wktTarget = plan.workout_schedule.days.length;
+
+            // Set water target from plan
+            if (plan.weekly_targets && plan.weekly_targets.water_intake) {
+                waterTargetMl = Math.round(parseFloat(plan.weekly_targets.water_intake) * 1000);
+                document.getElementById('waterTarget').textContent = waterTargetMl;
+            }
 
             // ── Compute today's consumed data ──
             const todayMeals = mealsData.success && Array.isArray(mealsData.data) ? mealsData.data : [];
@@ -402,6 +514,7 @@
                 const bucket = byType[t] || byType.snack;
                 bucket.cal += c; bucket.protein += p;
             });
+            updateAntioxKPI(todayMeals);
 
             // ── Stat card 1: Calories ──
             document.getElementById('sc-cal-consumed').textContent = fmtN(totalCal);
@@ -665,18 +778,218 @@
                 }
             });
 
-            // Show
+            // Show dashboard immediately after phase 1
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('mainContent').classList.remove('hidden');
+            loadWater();
+
+            // ── PHASE 2: Background — exercise summary + weekly chart ──────────
+            // weekDates already defined at top of loadDashboard
+
+            Promise.all([
+                safeFetch(`/user/${userId}/exercise/summary`),
+                ...weekDates.map(d => safeFetch(`/user/${userId}/meals?date=${d}`))
+            ]).then(([exSum, ...weekMeals]) => {
+                // Update workout count
+                if (exSum.success && exSum.data) {
+                    const d = exSum.data;
+                    const done = d.total_sessions ?? d.sessions_count ?? d.count ?? 0;
+                    document.getElementById('sc-wkt-done').textContent = done;
+                    const left = Math.max(0, parseInt(document.getElementById('sc-wkt-target').textContent) - done);
+                    document.getElementById('sc-wkt-sub').innerHTML = left > 0
+                        ? `<span style="color:var(--info)">${left} left this week</span>`
+                        : `<span style="color:var(--success)">Week goal complete!</span>`;
+                }
+                // Update weekly trend chart
+                const weekCals = weekMeals.map(day =>
+                    day.success && day.data ? Math.round(day.data.reduce((s, m) => s + (m.calories || 0), 0)) : 0
+                );
+                if (trendChart) {
+                    trendChart.data.datasets[0].data = weekCals;
+                    trendChart.update();
+                }
+            }).catch(() => {});
 
         } catch (err) {
             console.error('Dashboard error:', err);
-            alert('Error loading dashboard. Please make sure the server is running.');
+            document.getElementById('loadingState').innerHTML = `
+                <div class="text-center py-24">
+                    <p class="text-red-500 font-semibold mb-2">Dashboard error</p>
+                    <p class="text-sm font-mono bg-red-50 text-red-700 px-4 py-2 rounded mb-4 max-w-lg mx-auto text-left">${err.name}: ${err.message}<br><small>${(err.stack||'').split('\n')[1]||''}</small></p>
+                    <button onclick="loadDashboard()" class="px-4 py-2 rounded-lg text-white text-sm" style="background:var(--primary)">Retry</button>
+                    <a href="login.html" class="ml-3 px-4 py-2 rounded-lg text-sm bg-gray-100 text-gray-600">Re-login</a>
+                </div>`;
         }
     }
 
-    loadDashboard();
-</script>
+    // ── Water Tracking ─────────────────────────────────────────────────────────
+    let waterTargetMl = 2500;
 
+    async function loadWater() {
+        try {
+            const r = await authFetch(`/user/${userId}/water`);
+            const d = await r.json();
+            if (d.success) updateWaterUI(d.data.total_ml);
+        } catch(e) {}
+    }
+
+    function updateWaterUI(totalMl) {
+        const pct = Math.min(100, Math.round((totalMl / waterTargetMl) * 100));
+        document.getElementById('waterTotal').textContent = totalMl;
+        document.getElementById('waterBar').style.width = pct + '%';
+        const status = document.getElementById('waterStatus');
+        if (pct >= 100) {
+            status.textContent = 'Goal reached! Great hydration today.';
+            document.getElementById('waterBar').classList.replace('bg-blue-500','bg-green-500');
+        } else if (pct >= 60) {
+            status.textContent = `${pct}% done — keep sipping!`;
+        } else {
+            status.textContent = `${pct}% done — drink more water.`;
+        }
+    }
+
+    async function logWater(ml) {
+        try {
+            const r = await authFetch(`/user/${userId}/water`, {
+                method: 'POST',
+                body: JSON.stringify({ amount_ml: ml })
+            });
+            const d = await r.json();
+            if (d.success) updateWaterUI(d.data.total_today);
+        } catch(e) { alert('Error logging water'); }
+    }
+
+    function logWaterCustom() {
+        const ml = parseInt(prompt('Enter amount in ml (e.g. 350):'));
+        if (ml && ml > 0) logWater(ml);
+    }
+
+    // ── Sick Mode ──────────────────────────────────────────────────────────────
+    let isSick = false;
+
+    async function loadSickStatus() {
+        try {
+            const r = await authFetch(`/user/${userId}/sick`);
+            const d = await r.json();
+            if (d.success) setSickUI(d.data.is_sick);
+        } catch(e) {}
+    }
+
+    async function toggleSick(forceTo) {
+        const newState = (forceTo !== undefined) ? forceTo : !isSick;
+        try {
+            const r = await authFetch(`/user/${userId}/sick`, {
+                method: 'POST',
+                body: JSON.stringify({ is_sick: newState })
+            });
+            const d = await r.json();
+            if (d.success) setSickUI(d.data.is_sick);
+        } catch(e) {}
+    }
+
+    function setSickUI(sick) {
+        isSick = sick;
+        const btn    = document.getElementById('sickToggleBtn');
+        const thumb  = document.getElementById('sickThumb');
+        const label  = document.getElementById('sickLabel');
+        const sub    = document.getElementById('sickSub');
+        const banner = document.getElementById('sickBanner');
+        if (!btn) return;
+        if (sick) {
+            btn.style.background   = '#e11d48';
+            thumb.style.transform  = 'translateX(1.25rem)';
+            label.textContent      = 'Recovery mode ON';
+            sub.textContent        = 'Turn off when you feel better';
+            banner.classList.remove('hidden');
+        } else {
+            btn.style.background   = '#d1d5db';
+            thumb.style.transform  = 'translateX(0.25rem)';
+            label.textContent      = 'Feeling fine';
+            sub.textContent        = "Toggle when you're unwell";
+            banner.classList.add('hidden');
+        }
+    }
+
+    // ── Streak ─────────────────────────────────────────────────────────────────
+    async function loadStreak() {
+        try {
+            const r = await authFetch(`/user/${userId}/streak`);
+            const d = await r.json();
+            if (!d.success) return;
+            const { current_streak, active_today } = d.data;
+            const el  = document.getElementById('sc-streak-val');
+            const sub = document.getElementById('sc-streak-sub');
+            if (!el) return;
+            el.textContent = current_streak;
+            if (current_streak === 0) {
+                sub.innerHTML = 'Log a meal or exercise to start';
+            } else if (active_today) {
+                sub.innerHTML = current_streak >= 7
+                    ? `<span style="color:var(--success)">${current_streak} days — keep it up!</span>`
+                    : `<span style="color:#ca8a04">Logged today — on track!</span>`;
+            } else {
+                sub.innerHTML = `<span style="color:var(--warning)">Log today to keep streak!</span>`;
+            }
+        } catch(e) {}
+    }
+
+    // ── Sleep KPI ──────────────────────────────────────────────────────────────
+    function loadSleepKPI() {
+        const days = Array.from({ length: 7 }, (_, i) => {
+            const d = new Date(); d.setDate(d.getDate() - i);
+            return d.toISOString().split('T')[0];
+        });
+        const vals = days.map(d => parseFloat(localStorage.getItem('fitai_sleep_' + d))).filter(v => !isNaN(v));
+        const avg  = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : null;
+        const el   = document.getElementById('sc-sleep-val');
+        const sub  = document.getElementById('sc-sleep-sub');
+        if (!el) return;
+        if (avg) {
+            el.innerHTML = `${avg}<span class="text-sm text-gray-400"> hrs</span>`;
+            sub.innerHTML = parseFloat(avg) >= 7
+                ? `<span style="color:var(--success)">On target — great recovery</span>`
+                : `<span style="color:var(--warning)">Below 7 hrs — prioritise sleep</span>`;
+        } else {
+            el.textContent = '—';
+            sub.textContent = 'Log sleep on Progress page';
+        }
+    }
+
+    // ── Antioxidant KPI ────────────────────────────────────────────────────────
+    function updateAntioxKPI(meals) {
+        const ANTIOXIDANT_FOODS = {
+            blueberry:5,blueberries:5,strawberry:4,strawberries:4,raspberry:4,
+            pomegranate:5,cranberry:3,cherry:3,grapes:3,apple:2,orange:2,
+            mango:3,papaya:3,guava:4,amla:5,kiwi:3,jamun:5,
+            spinach:4,palak:4,kale:5,methi:4,broccoli:4,carrot:2,
+            gajar:2,tomato:3,tamatar:3,beetroot:4,capsicum:3,cauliflower:2,
+            garlic:3,ginger:3,turmeric:4,haldi:4,almonds:2,walnuts:3,
+            'dark chocolate':3,'green tea':4,rajma:2,dal:1
+        };
+        let score = 0;
+        (meals || []).forEach(m => {
+            const name = (m.meal_name || '').toLowerCase();
+            Object.entries(ANTIOXIDANT_FOODS).forEach(([food, pts]) => {
+                if (name.includes(food)) score += pts;
+            });
+        });
+        score = Math.min(10, Math.round(score * 10) / 10);
+        const el  = document.getElementById('sc-antiox-val');
+        const sub = document.getElementById('sc-antiox-sub');
+        if (!el) return;
+        el.innerHTML = `${score}<span class="text-sm text-gray-400">/10</span>`;
+        sub.innerHTML = score === 0 ? 'Log fruits & veggies to score'
+            : score < 4 ? `<span style="color:var(--warning)">Low — add more colour</span>`
+            : score < 7 ? `<span style="color:var(--info)">Good variety today</span>`
+            : `<span style="color:var(--success)">Excellent intake!</span>`;
+    }
+
+    // ── Init all KPIs ──────────────────────────────────────────────────────────
+    loadDashboard();
+    loadSickStatus();
+    loadStreak();
+    loadSleepKPI();
+
+</script>
 </body>
 </html>
