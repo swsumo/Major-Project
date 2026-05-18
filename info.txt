@@ -1,0 +1,21 @@
+cockroachdb://swapnil:43nfgnqXavOT1KspxdbOmw@redeye-kraken-26260.j77.aws-ap-south-1.cockroachlabs.cloud:26257/defaultdb?sslmode=require
+
+Yes, via CockroachDB dashboard directly.
+
+Go to cockroachlabs.cloud → your cluster → SQL Shell (browser-based) or use the connection string with any SQL client.
+
+Useful queries to see your data:
+
+
+-- See all users
+SELECT id, username, email, created_at FROM users;
+
+-- See meal logs count per user
+SELECT user_id, COUNT(*) FROM meal_logs GROUP BY user_id;
+
+-- See water logs today
+SELECT * FROM water_logs WHERE date = CURRENT_DATE;
+
+-- See progress logs
+SELECT user_id, week_number, date FROM progress_logs ORDER BY date DESC;
+You can also use TablePlus or DBeaver (free desktop apps) — just paste your connection string and you get a full visual DB browser to see all tables and data.
